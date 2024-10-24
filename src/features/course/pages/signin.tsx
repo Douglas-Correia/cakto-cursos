@@ -71,7 +71,7 @@ export default function Signin() {
                     h={{ base: "38%", md: "full" }}
                 >
                     <Image
-                        src="../../../../public/fundo-login-members.png"
+                        src="/fundo-login-members.png"
                         width="100%"
                         height="100%"
                     />
