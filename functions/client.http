@@ -1,0 +1,110 @@
+@baseUrl = http://127.0.0.1:5000/cakto-7d198/us-central1/api
+@baseUrl2 = http://127.0.0.1:5001/cakto-7d198/us-central1/api
+@base = http://127.0.0.1:4000/functions
+@authToken = {{login.response.body.token}}
+@authTokenUser = {{login_user.response.body.token}}
+@userId = 08lOjAswRtQOOJMn1U91
+@courseId = {{get_course_by_id.response.body.id}}
+@userIdWithCourse = Vtt4cLguy7OJXprKCuSF
+@userIdWithoutCourse = tezkjtQOXckif39S4zSd
+@date = 2024-10-10
+
+### COURSES
+# @name get_course_by_id
+GET {{baseUrl}}/cursos/4fa15aed-620f-4a3b-92b8-1171c7517250
+Content-Type: application/json
+Authorization: Bearer {{authTokenUser}}
+
+###
+# @name get_courses
+GET {{baseUrl}}/cursos
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+### USERS
+# @name get_usuarios
+GET {{baseUrl}}/usuarios/atual
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+###
+# @name login_admin
+POST {{baseUrl}}/usuarios/acessoAdmin
+Content-Type: application/json
+
+{
+    "senha": "Fabiano"
+}
+
+###
+# @name create_admin
+POST {{baseUrl}}/usuarios/loginAdmin
+Content-Type: application/json
+
+{
+    "senha": "senha"
+}
+
+###
+# @name login
+POST {{baseUrl}}/usuarios/loginAdmin
+Content-Type: application/json
+
+{
+    "senha": "senha"
+}
+
+###
+# @name login_user
+POST {{baseUrl}}/usuarios/loginUser
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "userId": "{{userIdWithCourse}}"
+}
+
+###
+# @name create_user
+POST {{baseUrl}}/usuarios/createUser
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "email": "teste@gmail.com"
+}
+
+###
+# @name add_course_to_user
+POST {{baseUrl}}/usuarios/addCourseToUser
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "userId": "{{userIdWithCourse}}",
+    "cursoId": "{{courseId}}",
+    "acesso": "{{date}}"
+}
+
+###
+# @name add_course
+POST {{baseUrl}}/cursos
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "capa": "https://discord.com/channels/@me/1172158962511138888",
+    "nome": "nome",
+    "modulos": [{ "nome": "module 1" }, { "nome": "module 2" }],
+    "externalId": 1
+}
+
+### MODULES
+# @name add_module
+POST {{baseUrl}}/cursos/{{userId}}/modulos
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+    "modulos": ["module 1", "module2"]
+}

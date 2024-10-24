@@ -1,0 +1,9 @@
+{
+  "aws": {
+    "access_key_id": "",
+    "secret_access_key": "",
+    "storage_bucket_name": "",
+    "s3_endpoint_url": "",
+    "s3_region_name": ""
+  }
+}
