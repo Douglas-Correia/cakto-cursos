@@ -103,7 +103,7 @@ export default function Signin() {
                                     w={{ base: '60%', md: '40%' }}
                                 >
                                     <Image
-                                        src="../../../../public/Rectangle 558.png"
+                                        src="/Rectangle 558.png"
                                         alt="Logo"
                                         w={{ base: "8", md: "10" }}
                                         h={{ base: "8", md: "10" }}
