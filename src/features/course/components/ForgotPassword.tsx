@@ -138,7 +138,7 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
                     w={{ base: '60%', md: '70%' }}
                 >
                     <Image
-                        src="../../../../public/Rectangle 558.png"
+                        src="/Rectangle 558.png"
                         alt="Logo"
                         w={{ base: "8", md: "10" }}
                         h={{ base: "8", md: "10" }}
@@ -158,7 +158,7 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
                     {!showAlterPassword ? (
                         <>
                             <Image
-                                src="../../../../public/send 1.png"
+                                src="/send 1.png"
                             />
                             <Text fontSize={24}>Pedido enviado com sucesso.</Text>
                             <Text fontSize={16} color="#919EAB" textAlign="center">
@@ -263,7 +263,7 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
                     ) : (
                         <>
                             <Image
-                                src="../../../../public/lock 1.png"
+                                src="/lock 1.png"
                             />
                             <Text fontSize={24}>Esqueceu sua senha?</Text>
                             <Text fontSize={16} color="#919EAB" textAlign="center">
