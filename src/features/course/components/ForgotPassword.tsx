@@ -8,8 +8,6 @@ import { useForm } from 'react-hook-form';
 import { api } from "../services/axios";
 import { toast } from "react-toastify";
 import { LoaderSpin } from "./loaderSpin";
-import { useNavigate } from "react-router-dom";
-
 interface ForgotPasswordProps {
     handleShowForgotPassword: () => void;
 }
@@ -37,7 +35,6 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
     const securityFour = useRef<HTMLInputElement>(null);
     const securityFive = useRef<HTMLInputElement>(null);
     const securitySix = useRef<HTMLInputElement>(null);
-    const navigate = useNavigate();
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>, nextRef: React.RefObject<HTMLInputElement> | null) => {
         if (e.target.value.length === 1 && nextRef!.current) {

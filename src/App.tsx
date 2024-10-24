@@ -1,5 +1,3 @@
-import { AuthProvider } from "@/features/auth/contexts/AuthContext";
-import Routes from "@/router";
 import theme from "@/theme";
 import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -22,9 +20,6 @@ function App() {
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <ChakraProvider theme={theme} resetCSS>
         <BrowserRouter>
-          {/* <AuthProvider>
-            <Routes />
-          </AuthProvider> */}
           <Router />
         </BrowserRouter>
       </ChakraProvider>

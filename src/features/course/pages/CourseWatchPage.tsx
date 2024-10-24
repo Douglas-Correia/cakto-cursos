@@ -9,7 +9,6 @@ import useCompleteLesson from '@/features/course/hooks/UseCompleteLesson';
 import { PlayerType } from '@/features/course/types';
 import { CheckIcon, DownloadIcon } from '@chakra-ui/icons';
 import {
-  Avatar,
   Box,
   Button,
   ButtonGroup,

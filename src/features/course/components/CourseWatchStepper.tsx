@@ -32,7 +32,8 @@ const CourseWatchStepper = () => {
       if (prev.includes(item)) {
         return prev.filter((state) => state !== item);
       }
-
+      
+      console.log(isOpen)
       return [...prev, item];
     });
   };
@@ -93,130 +94,6 @@ const CourseWatchStepper = () => {
           <FiChevronRight />
         </Button>
       </Flex>
-      {/* <HStack w="full" flexWrap="wrap">
-        <CircularProgress value={progress} color={color + '.500'} trackColor={trackColor}>
-          <CircularProgressLabel>{progress}%</CircularProgressLabel>
-        </CircularProgress>
-        <Text noOfLines={1} fontSize="md" fontWeight="semibold">
-          {course?.name}
-        </Text>
-      </HStack> */}
-      {/* <Divider mb={2} borderStyle="dashed" /> */}
-      {/* <Stepper
-        size="sm"
-        index={course?.modules.findIndex((module) => module.id === current.module?.id) || 0}
-        colorScheme="primary"
-        orientation="vertical"
-        gap={0}
-      >
-        {course?.modules.map((module, moduleIndex) => (
-          <Step key={moduleIndex}>
-            <StepIndicator
-              color="primary.500"
-              border="none"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              marginBottom={10}
-            >
-              <StepStatus active={<Icon as={FaCircle} fontSize={12} />} complete={<StepIcon />} />
-              <CircularProgress
-                value={Math.max(module.progress, 15)}
-                color="primary.500"
-                size="35px"
-                trackColor={trackColor}
-                position="absolute"
-              />
-            </StepIndicator>
-            <Stack
-              w={{
-                base: 230,
-                md: 280,
-              }}
-            >
-              <Stack direction="row" alignItems="center" justify="space-between" w="100%">
-                <StepTitle
-                  {...(module.id === current.module?.id && {
-                    color: 'primary.500',
-                  })}
-                  style={{
-                    fontSize: 'large',
-                  }}
-                >
-                  {module.name}
-                </StepTitle>
-                <Button
-                  w={10}
-                  h={10}
-                  onClick={() => toggleCollapse(module.name)}
-                  ml={4}
-                  isDisabled={!module.lessons.length}
-                >
-                  <Icon as={isOpen.includes(module.name) ? ChevronUpIcon : ChevronDownIcon} />
-                </Button>
-              </Stack>
-
-              <Collapse
-                in={isOpen.includes(module.name)}
-                animateOpacity
-                style={{ marginBottom: 10 }}
-              >
-                <List>
-                  {module.lessons.map((lesson) => (
-                    <Tooltip
-                      key={lesson.id}
-                      label={`Assistir ${lesson.name}`}
-                      aria-label={lesson.name}
-                      hasArrow
-                      variant="solid"
-                    >
-                      <ListItem
-                        as={motion.div}
-                        whileHover={{ scale: 1.05 }}
-                        transition="all 0.3s"
-                        role="group"
-                        cursor="pointer"
-                        onClick={() =>
-                          goTo({
-                            lesson,
-                            module,
-                          })
-                        }
-                        fontSize="large"
-                        // noOfLines={1}
-                        bg={lesson.id === current.lesson?.id ? 'primary.400' : 'transparent'}
-                        borderRadius="md"
-                        py={2}
-                      >
-                        <Flex align="center" gap={2}>
-                          <ListIcon
-                            as={lesson.completed ? CheckCircleIcon : FiCircle}
-                            color={lesson.completed ? 'primary.500' : 'gray.500'}
-                            rounded="full"
-                            marginLeft={5}
-                          />
-                          <Avatar size="sm" name={lesson.cover} src={lesson.cover} />
-                          <Text isTruncated>{lesson.name}</Text>
-                        </Flex>
-                      </ListItem>
-                    </Tooltip>
-                  ))}
-                </List>
-              </Collapse>
-            </Stack>
-            <StepSeparator />
-          </Step>
-        ))}
-        <Step>
-          <StepIndicator bg="white" color="primary.500">
-            <Icon as={PiCertificateFill} />
-          </StepIndicator>
-          <Stack>
-            <StepTitle>Conclusão</StepTitle>
-          </Stack>
-          <StepSeparator />
-        </Step>
-      </Stepper> */}
       <Flex
         alignItems="center"
         justifyContent="space-between"
