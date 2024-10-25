@@ -1,4 +1,3 @@
-import { useCourseEnrollment } from '@/features/course/contexts/CourseEnrollmentContext';
 import { useCourseProgress } from '@/features/course/hooks/UseCourseProgress';
 import {
   Container,
@@ -15,30 +14,88 @@ import {
 } from '@chakra-ui/react';
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { Navigation } from 'swiper/modules';
 import { Swiper as SwiperType, SwiperSlide } from 'swiper/react';
+import { useEffect, useRef, useState } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/navigation';
-import { useRef, useState } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import { api } from '../services/axios';
+import { ClassesProps, LastClasse, ModulesProps } from '../types/courses';
+import Header from '@/features/common/components/layout/Header';
 
 const CoursePage = () => {
+  const [course, setCourse] = useState<ClassesProps[]>([]);
+  const [modules, setModules] = useState<ModulesProps | null>(null);
+  const [lastClasses, setLastClasses] = useState<LastClasse[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
-  const { course, isFetching } = useCourseEnrollment();
   const swiperRefContinue = useRef<any | null>(null);
   const swiperRefModulos = useRef<any | null>(null);
+  const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
+  const userId = userStorage?.id;
+  const { name, courseId } = useParams();
+
 
   const { color, progress } = useCourseProgress();
 
-  if (isFetching) {
-    return <Progress size="xs" colorScheme="primary" isIndeterminate />;
-  }
+  // if (isFetching) {
+  //   return <Progress size="xs" colorScheme="primary" isIndeterminate />;
+  // }
 
-  if (!course) {
+  if (!courseId && !name) {
     return null;
   }
+
+  useEffect(() => {
+    const fetchCourseData = async () => {
+      try {
+        // setIsFetching(true);
+
+        const responseModules = await api.get(`/user/getAllModulosByUser/${userId}/${courseId}`);
+
+        if (responseModules.data) {
+          setModules(responseModules.data[0]);
+        }
+
+        // Exemplo de obtenção de aulas de um módulo específico
+        if (responseModules.data[0].modulos.length) {
+          const allClasses: ClassesProps[] = [];  // Array para acumular todas as aulas
+          for (let i = 0; i <= responseModules.data[0].modulos.length; i++) {
+            const moduleId = responseModules.data[0].modulos[i]?.id;
+            if (moduleId !== undefined) {
+              const responseClasses = await api.get(`/user/aulas/${moduleId}/${userId}`);
+              // Verifica se tem dados de aulas e adiciona ao array acumulador
+              if (responseClasses.data !== undefined) {
+                allClasses.push(...responseClasses.data);
+              }
+            }
+          }
+          setCourse(allClasses);
+          console.log(allClasses)
+        }
+
+      } catch (error: any) {
+        console.error(error.response?.data?.message || error.message);
+      }
+    };
+
+    const fetchGetLastAulas = async () => {
+      try {
+        const responseLastClasses = await api.get(`/user/getLastAulasWithModulosByUser/${userId}/${courseId}`);
+        if (responseLastClasses.data) {
+          setLastClasses(responseLastClasses.data);
+        }
+      } catch (error: any) {
+        console.log(error.response.data.message || error.response.data.error);
+      }
+    }
+    fetchCourseData();
+    fetchGetLastAulas();
+  }, [userId, courseId]);
 
   const mouseEnter = (index: number) => {
     setIndexModulo(index);
@@ -48,29 +105,29 @@ const CoursePage = () => {
     setIndexModulo(null);
   };
 
-  const imageTeste = "../../../../public/overlay_2 1.png"
-
-  console.log(course);
+  const imageTeste = "/overlay_2 1.png"
 
   return (
-    <Stack w="full">
+    <Stack w="full" overflowX={'hidden'}>
       <Helmet>
-        <title>{course.name}</title>
-        <meta name="name" content={course.name} />
+        <title>{name}</title>
+        <meta name="name" content={name} />
       </Helmet>
       <Box
         w="full"
-        h={{ base: '60svh', md: '45svh' }}
+        h={{ base: '70svh', md: '50svh' }}
         mb={10}
+        position="relative"
       >
         <Image
           src={imageTeste}
-          alt={course.name}
+          alt={name}
           w="full"
           h="full"
           objectFit="fill"
           mt={-20}
         />
+        <Header />
       </Box>
 
       <Container maxW={1500}>
@@ -84,218 +141,195 @@ const CoursePage = () => {
         <Stack py={'60px'} gap={8} zIndex={1}>
           <Stack gap={8} py={2}>
             <Stack gap={5} overflow="hidden" position="relative">
-              {course.modules?.length === 0 ? (
-                <Text color="gray.500" fontSize="sm">
-                  Nenhum conteúdo disponível
-                </Text>
-              ) : (
-                <>
-                  <Stack w="100%">
-                    <Flex justifyContent="space-between" alignItems="center" width="full">
-                      <Text fontSize={24} fontWeight="bold" mb={4}>
-                        Continue assistindo
-                      </Text>
+              <Stack w="100%">
+                <Flex justifyContent="space-between" alignItems="center" width="full">
+                  <Text fontSize={24} fontWeight="bold" mb={4}>
+                    Continue assistindo
+                  </Text>
+
+                  <Flex justifyContent="flex-end" gap={2} mt={2}>
+                    <Box as="button" p={1} borderRadius="full">
+                      <ChevronLeftIcon
+                        boxSize={7}
+                        onClick={() => swiperRefContinue.current?.slidePrev()}
+                      />
+                    </Box>
+                    <Box as="button" p={1} borderRadius="full">
+                      <ChevronRightIcon
+                        boxSize={7}
+                        onClick={() => swiperRefContinue.current?.slideNext()}
+                      />
+                    </Box>
+                  </Flex>
+                </Flex>
+
+                <HStack
+                  ref={swiperRefContinue}
+                  as={SwiperType}
+                  slidesPerView={1}
+                  breakpoints={{
+                    320: { slidesPerView: 1 },
+                    640: { slidesPerView: 2 },
+                    768: { slidesPerView: 3 },
+                    1024: { slidesPerView: 4, spaceBetween: 10 },
+                  }}
+                  modules={[Navigation]}
+                  w="full"
+                >
+                  {lastClasses?.map((lesson, index) => (
+                    <SwiperSlide key={index}>
+                      <Card
+                        rounded="xl"
+                        w="300px"
+                        height="130px"
+                        overflow="hidden"
+                      >
+                        <Flex flexDirection="row" width="100%" height="130px">
+
+                          <Box flex="0 0 40%" height="100%">
+                            <Image
+                              src={lesson?.thumbnail}
+                              alt="A lesson"
+                              objectFit="cover"
+                              w="100%"
+                              h="100%"
+                            />
+                          </Box>
+
+
+                          <Box
+                            flex="1"
+                            bg="#212B36"
+                            color="white"
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="end"
+                            p="4"
+                          >
+                            <Text fontWeight="bold" fontSize="md" mb="2">
+                              {lesson?.ModuloNome}
+                            </Text>
+                            <Text fontWeight="bold" fontSize="md" mb="2">
+                              {lesson?.nomeAula}
+                            </Text>
+                            <Progress
+                              value={25}
+                              colorScheme={color}
+                              height="6px"
+                              borderRadius="6px"
+                              width="100%"
+                              mb={3}
+                            >
+                              <Box
+                                position="absolute"
+                                left="50%"
+                                transform="translateX(-50%)"
+                                fontSize={13}
+                                fontFamily="mono"
+                                color="white"
+                              >
+                                {progress}
+                              </Box>
+                            </Progress>
+                          </Box>
+                        </Flex>
+                      </Card>
+                    </SwiperSlide>
+                  ))}
+                </HStack>
+              </Stack>
+
+              {/* MODULOS */}
+              {modules?.modulos.map((lesson, index) => (
+                <Stack my={6} key={index}>
+                  <Flex w="full" justifyContent="space-between">
+                    <Flex
+                      gap={5}
+                      alignItems="center"
+                    >
+                      <Image
+                        src={lesson?.capa}
+                        alt={`Imagem ${lesson?.nome}`}
+                        w="55px"
+                        h="55px"
+                        rounded={12}
+                        objectFit="fill"
+                      />
+                      <Box>
+                        <Text>{lesson?.nome}</Text>
+                        <Flex gap={1}>
+                          <Text color="gray">{lesson?.aulas} Aulas . 05h23m</Text>
+                          {/* <Text color="green">R$ 0.00</Text> */}
+                        </Flex>
+                      </Box>
+                    </Flex>
+                    <Box>
+                      <Text>75% do módulo concluido</Text>
+                      <Progress
+                        value={75}
+                        colorScheme={color}
+                        height="6px"
+                        borderRadius="6px"
+                        width="100%"
+                        mb={3}
+                      >
+                        <Box
+                          position="absolute"
+                          left="50%"
+                          transform="translateX(-50%)"
+                          fontSize={13}
+                          fontFamily="mono"
+                          color="white"
+                        >
+                          {progress}
+                        </Box>
+                      </Progress>
                       {/* Botões de navegação */}
                       <Flex justifyContent="flex-end" gap={2} mt={2}>
                         <Box as="button" p={1} borderRadius="full">
                           <ChevronLeftIcon
                             boxSize={7}
-                            onClick={() => swiperRefContinue.current?.slidePrev()}
+                            onClick={() => swiperRefModulos.current?.slidePrev()}
                           />
                         </Box>
                         <Box as="button" p={1} borderRadius="full">
                           <ChevronRightIcon
                             boxSize={7}
-                            onClick={() => swiperRefContinue.current?.slideNext()}
+                            onClick={() => swiperRefModulos.current?.slideNext()}
                           />
                         </Box>
                       </Flex>
-                    </Flex>
+                    </Box>
+                  </Flex>
 
-                    <HStack
-                      ref={swiperRefContinue}
-                      py={2}
-                      as={SwiperType}
-                      grabCursor
-                      slidesPerView={1}
-                      navigation={false}
-                      onSwiper={(swiper: any) => (swiperRefContinue.current = swiper)}
-                      breakpoints={{
-                        320: {
-                          slidesPerView: 1,
-                        },
-                        640: {
-                          slidesPerView: 1,
-                        },
-                        768: {
-                          slidesPerView: 2,
-                        },
-                        1024: {
-                          slidesPerView: 4,
-                          spaceBetween: 5,
-                        },
-                      }}
-                      modules={[Navigation]}
-                      w="full"
-                    >
-                      {Array.from({ length: 10 }, (_) => (
-                        course.modules?.map((lesson, index) => (
-                          <SwiperSlide key={index}>
-                            <Card
-                              as={Link}
-                              to={{
-                                pathname: `/courses/${course.id}/watch`,
-                              }}
-                              state={{ lesson }}
-                              rounded="xl"
-                              w="300px"
-                              height="130px"
-                              overflow="hidden"
-                            >
-                              <Flex flexDirection="row" width="100%" height="130px">
-                                {/* A imagem ocupa 40% da largura */}
-                                <Box flex="0 0 40%" height="100%">
-                                  <Image
-                                    src={lesson.cover}
-                                    alt="A lesson"
-                                    objectFit="cover"
-                                    w="100%"
-                                    h="100%"
-                                  />
-                                </Box>
-
-                                {/* O conteúdo ocupa 60% */}
-                                <Box
-                                  flex="1"
-                                  bg="#212B36"
-                                  color="white"
-                                  display="flex"
-                                  flexDirection="column"
-                                  justifyContent="end"
-                                  p="4"
-                                >
-                                  <Text fontWeight="bold" fontSize="md" mb="2">
-                                    {lesson.name}
-                                  </Text>
-                                  <Text fontWeight="bold" fontSize="md" mb="2">
-                                    Nome da aula
-                                  </Text>
-                                  <Progress
-                                    value={25}
-                                    colorScheme={color}
-                                    height="6px"
-                                    borderRadius="6px"
-                                    width="100%"
-                                    mb={3}
-                                  >
-                                    <Box
-                                      position="absolute"
-                                      left="50%"
-                                      transform="translateX(-50%)"
-                                      fontSize={13}
-                                      fontFamily="mono"
-                                      color="white"
-                                    >
-                                      {progress}
-                                    </Box>
-                                  </Progress>
-                                </Box>
-                              </Flex>
-                            </Card>
-                          </SwiperSlide>
-                        ))
-                      ))}
-                    </HStack>
-                  </Stack>
-
-                  {/* MODULOS */}
-                  {course.modules?.map((lesson, index) => (
-                    <Stack my={6}>
-                      <Flex w="full" justifyContent="space-between">
-                        <Flex
-                          gap={5}
-                          alignItems="center"
-                        >
-                          <Image
-                            src='../../../../public/similiar.png'
-                            w="55px"
-                            h="55px"
-                            rounded={12}
-                            objectFit="fill"
-                          />
-                          <Box>
-                            <Text>Borboletas Albinas - Módulo 1</Text>
-                            <Flex gap={1}>
-                              <Text color="gray">6 Aulas . 05h23m .</Text>
-                              <Text color="green">R$ 0.00</Text>
-                            </Flex>
-                          </Box>
-                        </Flex>
-                        <Box>
-                          <Text>75% do módulo concluido</Text>
-                          <Progress
-                            value={75}
-                            colorScheme={color}
-                            height="6px"
-                            borderRadius="6px"
-                            width="100%"
-                            mb={3}
-                          >
-                            <Box
-                              position="absolute"
-                              left="50%"
-                              transform="translateX(-50%)"
-                              fontSize={13}
-                              fontFamily="mono"
-                              color="white"
-                            >
-                              {progress}
-                            </Box>
-                          </Progress>
-                          {/* Botões de navegação */}
-                          <Flex justifyContent="flex-end" gap={2} mt={2}>
-                            <Box as="button" p={1} borderRadius="full">
-                              <ChevronLeftIcon
-                                boxSize={7}
-                                onClick={() => swiperRefModulos.current?.slidePrev()}
-                              />
-                            </Box>
-                            <Box as="button" p={1} borderRadius="full">
-                              <ChevronRightIcon
-                                boxSize={7}
-                                onClick={() => swiperRefModulos.current?.slideNext()}
-                              />
-                            </Box>
-                          </Flex>
-                        </Box>
-                      </Flex>
-
-                      <HStack
-                        ref={swiperRefModulos}
-                        py={2}
-                        as={SwiperType}
-                        grabCursor
-                        slidesPerView={1}
-                        spaceBetween={20}
-                        navigation={false}
-                        onSwiper={(swiper: any) => (swiperRefModulos.current = swiper)}
-                        breakpoints={{
-                          320: {
-                            slidesPerView: 2,
-                          },
-                          640: {
-                            slidesPerView: 3,
-                          },
-                          768: {
-                            slidesPerView: 4,
-                          },
-                          1024: {
-                            slidesPerView: 6,
-                          },
-                        }}
-                        modules={[Navigation]}
-                        w="full"
-                      >
+                  <HStack
+                    ref={swiperRefModulos}
+                    py={2}
+                    as={SwiperType}
+                    grabCursor
+                    slidesPerView={1}
+                    spaceBetween={20}
+                    navigation={false}
+                    onSwiper={(swiper: any) => (swiperRefModulos.current = swiper)}
+                    breakpoints={{
+                      320: {
+                        slidesPerView: 2,
+                      },
+                      640: {
+                        slidesPerView: 3,
+                      },
+                      768: {
+                        slidesPerView: 4,
+                      },
+                      1024: {
+                        slidesPerView: 6,
+                      },
+                    }}
+                    modules={[Navigation]}
+                    w="full"
+                  >
+                    {course?.map((course, index) => (
+                      course.moduloId === lesson.id && (
                         <SwiperSlide key={index}>
                           <Box as={motion.div} whileHover={{ translateY: -5 }}>
                             <AspectRatio ratio={9 / 12} as={motion.div}>
@@ -304,7 +338,7 @@ const CoursePage = () => {
                                 to={{
                                   pathname: `/courses/${course.id}/watch`,
                                 }}
-                                state={{ lesson }}
+                                state={{ course }}
                                 rounded="xl"
                                 onMouseEnter={() => {
                                   mouseEnter(index)
@@ -320,12 +354,11 @@ const CoursePage = () => {
                                   right="10px"
                                   borderRadius={5}
                                 >
-                                  Aula {lesson?.lessons?.length}
-                                  {(lesson.lessons.length > 1 || lesson.lessons.length === 0) && 's'}
+                                  Aula {course.posicao}
                                 </Badge>
                                 <Image
-                                  src={lesson.cover}
-                                  alt="A lesson"
+                                  src={course.thumbnail}
+                                  alt={course?.nome}
                                   objectFit="cover"
                                   w="full"
                                   h="full"
@@ -343,10 +376,10 @@ const CoursePage = () => {
                                   p="4"
                                 >
                                   <Text fontWeight="bold" fontSize="xl" mb="2">
-                                    {lesson.name}
+                                    {course?.nome}
                                   </Text>
                                   <Progress
-                                    value={progress}
+                                    value={index * 20}
                                     colorScheme={color}
                                     height="6px"
                                     borderRadius="6px"
@@ -361,7 +394,7 @@ const CoursePage = () => {
                                       fontFamily="mono"
                                       color="white"
                                     >
-                                      {progress}
+                                      {index * 20}
                                     </Box>
                                   </Progress>
                                   <Box
@@ -391,11 +424,11 @@ const CoursePage = () => {
                             </AspectRatio>
                           </Box>
                         </SwiperSlide>
-                      </HStack>
-                    </Stack>
-                  ))}
-                </>
-              )}
+                      )
+                    ))}
+                  </HStack>
+                </Stack>
+              ))}
             </Stack>
           </Stack>
         </Stack>

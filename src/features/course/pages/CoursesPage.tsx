@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { GetUserProps } from "../types/userStorage";
 import { api } from "../services/axios";
 import { HeaderCurses } from "../components/header_curses";
-import { Flex, HStack, Image, Input, InputGroup, InputRightElement, Select, Text } from "@chakra-ui/react";
+import { Flex, HStack, Image, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
-import { SwiperSlide } from "swiper/react";
 import { BoxCourses } from "../components/box_courses";
 import { CoursesProps } from "../types/courses";
 
@@ -105,17 +104,6 @@ const CoursesPage = () => {
                 children={<SearchIcon color="gray.300" fontSize="xl" />}
               />
             </InputGroup>
-            <Select
-              h={14}
-              placeholder="Filtrar por"
-              borderColor="#919EAB33"
-              focusBorderColor="#919EAB33"
-              _focus={{ boxShadow: 'none' }}
-            >
-              <option value="option1">Ativo</option>
-              <option value="option2">Opção 2</option>
-              <option value="option3">Opção 3</option>
-            </Select>
           </Flex>
 
           <Flex
@@ -125,7 +113,6 @@ const CoursesPage = () => {
             pb={16}
           >
             {coursesByUser?.map((course, index) => (
-              <SwiperSlide key={index}>
                 <BoxCourses
                   img={course?.logoCurso}
                   index={index}
@@ -136,8 +123,8 @@ const CoursesPage = () => {
                   mouseLeave={mouseLeave}
                   name={course?.nome}
                   textBtn="Acessar conteúdo"
+                  courseId={course.id}
                 />
-              </SwiperSlide>
             ))}
           </Flex>
         </Flex>

@@ -40,13 +40,9 @@ const CourseWatchContext = createContext<CourseWatchContextType>({} as CourseWat
 
 const CourseWatchProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { course } = useCourseEnrollment();
-
   const { state } = useLocation();
-
   const [params] = useSearchParams();
-
   const { mutateAsync: completeLesson } = useCompleteLesson();
-
   const { progress, setUrl } = useContext(VideoPlayerContext);
 
   const lessons = useMemo(
@@ -68,27 +64,22 @@ const CourseWatchProvider: React.FC<PropsWithChildren> = ({ children }) => {
   }, [lessons]);
 
   const getFirstLesson = useCallback(() => {
-    return lessons.shift();
+    return lessons[0];
   }, [lessons]);
 
   const getDefaultWatchState = useCallback(() => {
-    return (
+    const initialLesson =
       getLessonById(params.get('lesson') || state?.lesson?.id) ||
       getFirstPendingLesson() ||
-      getFirstLesson() ||
-      EmptyWatchState
-    );
-  }, [getFirstLesson, getFirstPendingLesson, getLessonById, params, state?.lesson?.id]);
+      getFirstLesson();
+      
+    return initialLesson || EmptyWatchState;
+  }, [getFirstLesson, getFirstPendingLesson, getLessonById, params, state?.lesson?.id]);  
 
-  const [current, setCurrent] = useState<CurrentWatchState>({
-    lesson: null,
-    module: null,
-  });
+  const [current, setCurrent] = useState<CurrentWatchState>(EmptyWatchState);
 
   const next = useCallback(() => {
-    if (!course || !current.lesson) {
-      return;
-    }
+    if (!course || !current.lesson) return;
 
     if (progress >= MIN_PROGRESS_TO_COMPLETE && !current.lesson.completed) {
       completeLesson({
@@ -98,41 +89,19 @@ const CourseWatchProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
 
     const currentIndex = lessons.findIndex(({ lesson }) => lesson.id === current.lesson?.id);
-
-    if (currentIndex === lessons.length - 1 || currentIndex === -1) {
-      return;
-    }
+    if (currentIndex === -1 || currentIndex === lessons.length - 1) return;
 
     setCurrent(lessons[currentIndex + 1]);
-
-    // If it's the last lesson in the current module, move to the first lesson of the next module
-    if (
-      currentIndex === lessons.length - 1 ||
-      lessons[currentIndex + 1].module.id !== current.module?.id
-    ) {
-      const nextModuleIndex =
-        course.modules.findIndex((module) => module.id === current.module?.id) + 1;
-      if (nextModuleIndex < course.modules.length) {
-        const nextModule = course.modules[nextModuleIndex];
-        const nextLesson = nextModule.lessons[0];
-        setCurrent({ lesson: nextLesson, module: nextModule });
-      }
-    }
   }, [course, current.lesson, lessons, progress]);
 
   const previous = useCallback(() => {
-    if (!course || !current.lesson) {
-      return;
-    }
+    if (!course || !current.lesson) return;
 
     const currentIndex = lessons.findIndex(({ lesson }) => lesson.id === current.lesson?.id);
-
-    if (currentIndex === 0 || currentIndex === -1) {
-      return;
-    }
+    if (currentIndex <= 0) return;
 
     setCurrent(lessons[currentIndex - 1]);
-  }, [course, current, lessons]);
+  }, [course, current.lesson, lessons]);
 
   const goTo = useCallback((current: CurrentWatchState) => {
     setCurrent(current);
@@ -142,7 +111,7 @@ const CourseWatchProvider: React.FC<PropsWithChildren> = ({ children }) => {
     if (!current.lesson) {
       setCurrent(getDefaultWatchState());
     }
-  }, [current, getDefaultWatchState, setCurrent]);
+  }, [current.lesson, getDefaultWatchState]);
 
   const { data: currentLesson, isFetching } = useQuery({
     queryKey: ['lesson', { id: current.lesson?.id }],
@@ -154,7 +123,7 @@ const CourseWatchProvider: React.FC<PropsWithChildren> = ({ children }) => {
     if (currentLesson) {
       setUrl(currentLesson.video || '');
     }
-  }, [currentLesson]);
+  }, [currentLesson, setUrl]);
 
   const value = useMemo(
     () => ({
@@ -162,16 +131,13 @@ const CourseWatchProvider: React.FC<PropsWithChildren> = ({ children }) => {
       current: {
         ...current,
         lesson: currentLesson,
-      } || {
-        lesson: null,
-        module: null,
       },
       next,
       previous,
       goTo,
       isFetching,
     }),
-    [course, current, goTo, next, previous, currentLesson, isFetching]
+    [course, current, currentLesson, goTo, next, previous, isFetching]
   );
 
   return <CourseWatchContext.Provider value={value}>{children}</CourseWatchContext.Provider>;
@@ -179,11 +145,7 @@ const CourseWatchProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
 const useCourseWatch = () => {
   const context = useContext(CourseWatchContext);
-
-  if (!context) {
-    throw new Error('useCourseWatch must be used within a CourseWatchProvider');
-  }
-
+  if (!context) throw new Error('useCourseWatch must be used within a CourseWatchProvider');
   return context;
 };
 

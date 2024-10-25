@@ -46,6 +46,9 @@ const Header = ({ ...rest }: HeaderProps) => {
   return (
     <Box
       width="100%"
+      position="absolute"
+      top={0}
+      left={0}
       {...rest}
     >
       <Flex
@@ -72,7 +75,7 @@ const Header = ({ ...rest }: HeaderProps) => {
             w={{ base: '50%', md: '50%' }}
           >
             <Image
-              src="../../../../../public/Rectangle 558.png"
+              src="/Rectangle 558.png"
               alt="Logo"
               w={{ base: "8", md: "10" }}
               h={{ base: "8", md: "10" }}
@@ -87,7 +90,7 @@ const Header = ({ ...rest }: HeaderProps) => {
               cursor="pointer"
               gap={3}
               w="100%"
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/courses')}
             >
               <FaArrowLeft fontSize={22} />
               <Text fontSize={18}>Voltar</Text>
@@ -172,7 +175,7 @@ const Header = ({ ...rest }: HeaderProps) => {
           position={{ base: 'absolute', md: 'static' }}
           right={{ base: 4, md: 4 }}
         >
-          <HStack spacing={{ base: '0', md: '6' }}>
+          <HStack spacing={{ base: 4, md: 6 }}>
             <ToggleThemeButton />
             <Menu>
               <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>

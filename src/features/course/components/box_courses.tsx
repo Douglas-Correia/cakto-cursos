@@ -1,4 +1,5 @@
 import { AspectRatio, Box, Card, Image, Text } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 interface BoxCoursesProps {
     mouseEnter: () => void;
@@ -8,6 +9,7 @@ interface BoxCoursesProps {
     indexModulo: number | null;
     index: number;
     textBtn: string;
+    courseId: string
 }
 
 export function BoxCourses({
@@ -18,7 +20,13 @@ export function BoxCourses({
     indexModulo,
     index,
     textBtn,
+    courseId,
 }: BoxCoursesProps) {
+    const navigate = useNavigate();
+    const handleAcessCouse = (courseId: string) => {
+        navigate(`/courses/${name}/${courseId}`);
+    }
+
     return (
         <Box w="364px">
             <AspectRatio ratio={12 / 10}>
@@ -71,6 +79,7 @@ export function BoxCourses({
                                     color="white"
                                     fontSize={17}
                                     fontWeight="bold"
+                                    onClick={() => handleAcessCouse(courseId)}
                                 >
                                     {textBtn}
                                     <Image
