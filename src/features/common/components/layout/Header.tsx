@@ -29,7 +29,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 type HeaderProps = FlexProps;
 
 const Header = ({ ...rest }: HeaderProps) => {
-  const { revoke, user } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation(); // Captura o objeto de localização
   const [courseWatch, setCourseWatch] = useState(false);
@@ -49,6 +49,7 @@ const Header = ({ ...rest }: HeaderProps) => {
       position="absolute"
       top={0}
       left={0}
+      zIndex={999}
       {...rest}
     >
       <Flex
@@ -204,22 +205,22 @@ const Header = ({ ...rest }: HeaderProps) => {
                 </Box>
                 <Divider borderStyle="dashed" />
                 <Stack pt={2}>
-                  <MenuItem onClick={() => revoke()} fontSize="sm">
+                  <MenuItem onClick={() => navigate('/courses')} fontSize="sm">
                     Página Inicial
                   </MenuItem>
                 </Stack>
                 <Stack pt={2}>
-                  <MenuItem onClick={() => revoke()} fontSize="sm">
+                  <MenuItem onClick={() => navigate('')} fontSize="sm">
                     Minha conta
                   </MenuItem>
                 </Stack>
                 <Stack pt={2}>
-                  <MenuItem onClick={() => revoke()} fontSize="sm">
+                  <MenuItem onClick={() => navigate('')} fontSize="sm">
                     Minhas compras
                   </MenuItem>
                 </Stack>
                 <Stack pt={2}>
-                  <MenuItem onClick={() => revoke()} fontSize="sm">
+                  <MenuItem onClick={() => navigate('')} fontSize="sm">
                     Central de ajuda
                   </MenuItem>
                 </Stack>

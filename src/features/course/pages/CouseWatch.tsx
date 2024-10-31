@@ -14,14 +14,17 @@ import { api } from "../services/axios";
 import { ClassesProps, ModuleSingleProps } from "../types/courses";
 import { CourseWatchContext } from "../contexts/CourseWatchContext";
 import { toast, ToastContainer } from "react-toastify";
+import { LoaderSpin } from "../components/loaderSpin";
 
 export default function CourseWatch() {
+    const [isLoadingMarkFinished, setIsLoadingMarkFinished] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
     const [showMaterial, setShowMaterial] = useState(false);
     const [classesData, setClassesData] = useState<ClassesProps[]>([]);
     const [moduleSelected, setModuleSelected] = useState<ModuleSingleProps | null>(null);
     const [quantityClasses, setQuantityClasses] = useState(0);
     const [urlVideo, setUrlVideo] = useState('');
+    const [valueRating, setValueRating] = useState(0);
     const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '');
     const userId = userStorage?.id;
     const context = useContext(CourseWatchContext);
@@ -46,16 +49,6 @@ export default function CourseWatch() {
     }, [courseWatchIds?.classeId, urlVideo]);
 
     useEffect(() => {
-        const getAllClassesByModuleByUser = async () => {
-            try {
-                const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
-                if (response.data) {
-                    setClassesData(response.data);
-                }
-            } catch (error: any) {
-                console.log(error);
-            }
-        }
         const getAllModuleByUser = async () => {
             try {
                 const response = await api.get(`/user/getAllModulosByUser/${userId}/${courseWatchIds?.courseId}`);
@@ -72,29 +65,89 @@ export default function CourseWatch() {
         getAllModuleByUser();
     }, []);
 
+    const getAllClassesByModuleByUser = async () => {
+        try {
+            const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
+            if (response.data) {
+                setClassesData(response.data);
+            }
+        } catch (error: any) {
+            console.log(error);
+        }
+    }
+
     const handleDescriptionOrMaterial = (description: boolean, material: boolean) => {
         setShowDescription(description);
         setShowMaterial(material);
     }
 
-    const handleNextClasse = (classeId: string, classeUrlVideo: string) => {
-        const newCouseWatchIds = {
-            courseId: courseWatchIds?.courseId,
-            moduloId: courseWatchIds?.moduloId,
-            classeId: classeId,
+    const handleNextClasse = () => {
+        const currentIndex = classesData.findIndex((classe) => classe.id === courseWatchIds?.classeId);
+
+        if (currentIndex !== -1 && currentIndex < classesData.length - 1) {
+            const nextClasse = classesData[currentIndex + 1];
+
+            const newCouseWatchIds = {
+                courseId: courseWatchIds?.courseId,
+                moduloId: courseWatchIds?.moduloId,
+                classeId: nextClasse.id,
+            }
+            handleGetCourseWatchIds(newCouseWatchIds);
+            setUrlVideo(nextClasse.urlVideo);
+        } else {
+            toast.warn("Você já está na última aula.");
         }
-        handleGetCourseWatchIds(newCouseWatchIds);
-        setUrlVideo(classeUrlVideo);
     }
 
-    const handlepreviousClasse = (classeId: string, classeUrlVideo: string) => {
-        const newCouseWatchIds = {
-            courseId: courseWatchIds?.courseId,
-            moduloId: courseWatchIds?.moduloId,
-            classeId: classeId,
+    const handlepreviousClasse = () => {
+        const currentIndex = classesData.findIndex(
+            (classe) => classe.id === courseWatchIds?.classeId
+        );
+
+        if (currentIndex > 0) { // permiti voltar à aula anterior
+            const previousClasse = classesData[currentIndex - 1];
+
+            const newCouseWatchIds = {
+                courseId: courseWatchIds?.courseId,
+                moduloId: courseWatchIds?.moduloId,
+                classeId: previousClasse.id,
+            }
+            handleGetCourseWatchIds(newCouseWatchIds);
+            setUrlVideo(previousClasse.urlVideo);
+        } else {
+            toast.warn("Você já está na primeira aula.");
         }
-        handleGetCourseWatchIds(newCouseWatchIds);
-        setUrlVideo(classeUrlVideo);
+    }
+
+    const markClasseFinished = async () => {
+        const verifyClasseIsFinished = classesData.find(classe => classe.id === courseWatchIds?.classeId);
+        if (verifyClasseIsFinished?.assistida) {
+            return toast.error('Está aula já foi marcada como concluída.');
+        }
+        setIsLoadingMarkFinished(true);
+        try {
+            const response = await api.post(`/user/createMarcaAulaConcluidaByUser/${courseWatchIds?.classeId}`, {
+                usuarioId: userId,
+                nota: valueRating,
+            });
+            if (response.data) {
+                console.log(response.data);
+                toast.success('Aula marcada como concluída.');
+                await getAllClassesByModuleByUser();
+                setValueRating(0);
+                const currentIndex = classesData.findIndex((classe) => classe.id === courseWatchIds?.classeId);
+                if (currentIndex !== -1 && currentIndex < classesData.length - 1) {
+                    //
+                } else {
+                    return toast.success('Você concluíu todas as aulas.');
+                }
+                handleNextClasse();
+            }
+        } catch (error: any) {
+            console.log(error);
+        } finally {
+            setIsLoadingMarkFinished(false);
+        }
     }
 
     return (
@@ -152,19 +205,7 @@ export default function CourseWatch() {
                             color="white"
                             leftIcon={<FiArrowLeft />}
                             // isDisabled={current.lesson?.position === 1 && current.module?.position === 1}
-                            onClick={() => {
-                                const currentIndex = classesData.findIndex(
-                                    (classe) => classe.id === courseWatchIds?.classeId
-                                );
-
-                                if (currentIndex > 0) { // permiti voltar à aula anterior
-                                    const previousClasse = classesData[currentIndex - 1];
-                                    // Chame a função handlepreviousClasse() com a aula anterior (previousClasse)
-                                    handlepreviousClasse(previousClasse.id, previousClasse.urlVideo);
-                                } else {
-                                    toast.warn("Você já está na primeira aula.");
-                                }
-                            }}
+                            onClick={handlepreviousClasse}
                         >
                             Aula anterior
                         </Button>
@@ -180,17 +221,7 @@ export default function CourseWatch() {
                             //     current.lesson?.position === current.module?.lessons.length &&
                             //     current.module?.position === course?.modules.length
                             // }
-                            onClick={() => {
-                                const currentIndex = classesData.findIndex((classe) => classe.id === courseWatchIds?.classeId);
-
-                                if (currentIndex !== -1 && currentIndex < classesData.length - 1) {
-                                    const nextClasse = classesData[currentIndex + 1];
-                                    // Chame a função handleNextClasse() com a próxima aula (nextClasse)
-                                    handleNextClasse(nextClasse.id, nextClasse.urlVideo);
-                                } else {
-                                    toast.warn("Você já está na última aula.");
-                                }
-                            }}
+                            onClick={handleNextClasse}
                         >
                             Próxima aula
                         </Button>
@@ -224,7 +255,7 @@ export default function CourseWatch() {
                                     <LessonRating
                                         fontSize="sm"
                                         defaultRating={0}
-                                        onChange={(rating) => { console.log(rating) }}
+                                        onChange={(rating) => { setValueRating(rating) }}
                                     />
                                     <Button
                                         rounded="full"
@@ -232,19 +263,9 @@ export default function CourseWatch() {
                                         backgroundColor="#152e31"
                                         color="#32a274"
                                         _hover={{ backgroundColor: '#152e37' }}
-                                        leftIcon={<CheckIcon />}
+                                        leftIcon={isLoadingMarkFinished ? <LoaderSpin /> : <CheckIcon />}
                                         variant="solid"
-                                    // isDisabled={current.lesson?.completed || !!current.lesson?.error?.length}
-                                    // isLoading={complete.isPending}
-                                    // onClick={() => {
-                                    //     if (!current.lesson || !course) {
-                                    //         return;
-                                    //     }
-                                    //     complete.mutateAsync({
-                                    //         courseId: course?.id,
-                                    //         lessonId: current.lesson.id,
-                                    //     });
-                                    // }}
+                                        onClick={markClasseFinished}
                                     >
                                         Marcar como concluído
                                     </Button>
