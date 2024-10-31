@@ -1,4 +1,3 @@
-import ToggleThemeButton from '@/features/common/components/theme/ToggleThemeButton';
 import { api } from '@/features/course/services/axios';
 import { GetUserProps } from '@/features/course/types/userStorage';
 import { SearchIcon } from '@chakra-ui/icons';
