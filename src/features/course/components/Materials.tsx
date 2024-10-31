@@ -1,14 +1,13 @@
 import { Box, Button, HStack, Image, Skeleton, Text, VStack } from "@chakra-ui/react";
 import { FaDownload } from "react-icons/fa";
-import { CurrentWatchState } from "../contexts/CourseWatchContext";
 
 interface MaterialsProps {
-  current?: CurrentWatchState;
+  current?: any;
   isFetching?: boolean;
   mutateDownloadLessonFile?: any;
 }
 
-export function Materials({ current, isFetching,mutateDownloadLessonFile }: MaterialsProps) {
+export function Materials({ current, mutateDownloadLessonFile }: MaterialsProps) {
   // const current = {
   //   lesson: {
   //     id: "lesson123",
@@ -21,7 +20,7 @@ export function Materials({ current, isFetching,mutateDownloadLessonFile }: Mate
   //   }
   // };
 
-  // const isFetching = false;
+  const isFetching = false;
 
   return (
     <>
@@ -29,7 +28,7 @@ export function Materials({ current, isFetching,mutateDownloadLessonFile }: Mate
         <Skeleton isLoaded={!isFetching}>
           <Box maxWidth="100%" overflowX="auto">
             <HStack spacing={4} align="start">
-              {current?.lesson?.files.map((file, index) => (
+              {current?.lesson?.files.map((file: any, index: any) => (
                 <HStack
                   key={index}
                   flexDirection="row"

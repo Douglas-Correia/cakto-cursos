@@ -9,10 +9,9 @@ type Props = {
 };
 
 const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
-  const [isFetching, setIsFetching] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  if (isFetching) {
+  if (!url) {
     return (
       <Box padding="6" boxShadow="lg">
         <AspectRatio ratio={16 / 9}>
@@ -29,12 +28,12 @@ const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
 
   return (
     <AspectRatio ratio={16 / 9} w="full" rounded="xl">
-      <ReactPlayer 
-        url={url} 
-        playing={isPlaying} 
-        controls 
-        width="100%" 
-        height="100%" 
+      <ReactPlayer
+        url={url}
+        playing={isPlaying}
+        controls
+        width="100%"
+        height="100%"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />

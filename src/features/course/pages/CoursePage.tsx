@@ -31,7 +31,7 @@ const CoursePage = () => {
   const [course, setCourse] = useState<ClassesProps[]>([]);
   const [modules, setModules] = useState<ModulesProps | null>(null);
   const [lastClasses, setLastClasses] = useState<LastClasse[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
+  // const [isFetching, setIsFetching] = useState(false);
 
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
   const swiperRefContinue = useRef<any | null>(null);
