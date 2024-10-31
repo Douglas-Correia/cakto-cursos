@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Container, Flex, HStack, Stack, Text } from "@chakra-ui/react";
+import { Button, ButtonGroup, Container, Flex, HStack, Progress, Stack, Text } from "@chakra-ui/react";
 import { FaArrowLeft } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { LoaderSpin } from "../components/loaderSpin";
 
 export default function CourseWatch() {
+    const [isFetching, setIsFetching] = useState(false);
     const [isLoadingMarkFinished, setIsLoadingMarkFinished] = useState(false);
     const [showDescription, setShowDescription] = useState(true);
     const [showMaterial, setShowMaterial] = useState(false);
@@ -37,7 +38,7 @@ export default function CourseWatch() {
     const { courseWatchIds, handleGetCourseWatchIds } = context;
 
     useEffect(() => {
-        if(courseWatchIds === null || courseWatchIds === undefined) {
+        if (courseWatchIds === null || courseWatchIds === undefined) {
             navigate('/courses');
         }
     }, []);
@@ -67,6 +68,7 @@ export default function CourseWatch() {
     }, [courseWatchIds?.classeId, urlVideo]);
 
     useEffect(() => {
+        setIsFetching(true);
         const getAllModuleByUser = async () => {
             try {
                 const response = await api.get(`/user/getAllModulosByUser/${userId}/${courseWatchIds?.courseId}`);
@@ -79,8 +81,12 @@ export default function CourseWatch() {
                 console.log(error);
             }
         }
-        getAllClassesByModuleByUser();
-        getAllModuleByUser();
+        const getAllPromise = async () => {
+            await getAllClassesByModuleByUser();
+            await getAllModuleByUser();
+            setIsFetching(false);
+        }
+        getAllPromise();
     }, []);
 
     const getAllClassesByModuleByUser = async () => {
@@ -172,12 +178,16 @@ export default function CourseWatch() {
         setWidthWatchStepper(width);
     }
 
+    if (isFetching) {
+        return <Progress size="xs" colorScheme="primary" isIndeterminate />;
+    }
+
     return (
         <HStack
             position={{ base: 'absolute', lg: 'static' }}
             overflow="hidden"
         >
-            <Container  maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6}>
+            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6}>
                 <ToastContainer theme="dark" />
                 <Stack
                     w="full"
@@ -279,7 +289,7 @@ export default function CourseWatch() {
                                             />
                                             <Button
                                                 rounded="full"
-                                                size={{base: 'md', lg: 'lg'}}
+                                                size={{ base: 'md', lg: 'lg' }}
                                                 backgroundColor="#152e31"
                                                 color="#32a274"
                                                 _hover={{ backgroundColor: '#152e37' }}

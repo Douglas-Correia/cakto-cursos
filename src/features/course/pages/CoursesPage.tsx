@@ -2,13 +2,14 @@ import { useContext, useEffect, useState } from "react";
 import { GetUserProps } from "../types/userStorage";
 import { api } from "../services/axios";
 import { HeaderCurses } from "../components/header_curses";
-import { Flex, HStack, Image, Input, InputGroup, InputRightElement, Text } from "@chakra-ui/react";
+import { Flex, HStack, Image, Input, InputGroup, InputRightElement, Progress, Text } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { BoxCourses } from "../components/box_courses";
 import { CoursesProps } from "../types/courses";
 import { CourseWatchContext } from "../contexts/CourseWatchContext";
 
 const CoursesPage = () => {
+  const [isFetching, setIsFetching] = useState(false);
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const [coursesByUser, setCourses] = useState<CoursesProps[]>([]);
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
@@ -23,10 +24,7 @@ const CoursesPage = () => {
   const { handleGetCourseSelected } = context;
 
   useEffect(() => {
-    getDataByUser();
-  }, []);
-
-  useEffect(() => {
+    setIsFetching(true);
     const getAllCourses = async () => {
       try {
         const response = await api.get(`/user/getAllCursosByUser/${userId}`);
@@ -38,7 +36,12 @@ const CoursesPage = () => {
         console.log(error);
       }
     }
-    getAllCourses();
+    const handleChamarAllPromise = async () => {
+      await getDataByUser();
+      await getAllCourses();
+      setIsFetching(false);
+    }
+    handleChamarAllPromise();
   }, []);
 
   const getDataByUser = async () => {
@@ -59,6 +62,10 @@ const CoursesPage = () => {
   const mouseLeave = () => {
     setIndexModulo(null);
   };
+
+  if (isFetching) {
+    return <Progress size="xs" colorScheme="primary" isIndeterminate />;
+  }
 
   return (
     <Flex
