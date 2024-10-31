@@ -34,6 +34,7 @@ const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
         controls
         width="100%"
         height="100%"
+        style={{borderRadius: 12}}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
       />

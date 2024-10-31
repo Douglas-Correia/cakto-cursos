@@ -7,3 +7,7 @@
         transform: rotate(360deg);
     }
 }
+
+.see-content {
+    transition: all ease-in-out 0.2s;
+}

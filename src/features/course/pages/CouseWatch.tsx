@@ -25,6 +25,7 @@ export default function CourseWatch() {
     const [quantityClasses, setQuantityClasses] = useState(0);
     const [urlVideo, setUrlVideo] = useState('');
     const [valueRating, setValueRating] = useState(0);
+    const [widthWatchStepper, setWidthWatchStepper] = useState('27%');
     const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '');
     const userId = userStorage?.id;
     const context = useContext(CourseWatchContext);
@@ -150,6 +151,10 @@ export default function CourseWatch() {
         }
     }
 
+    const handleChangeWidthStepper = (width: string) => {
+        setWidthWatchStepper(width);
+    }
+
     return (
         <Container maxW="container.xxl" py={6}>
             <ToastContainer theme="dark" />
@@ -231,16 +236,24 @@ export default function CourseWatch() {
                 <HStack gap={4} align="flex-start">
                     <Stack gap={4} flex={1}>
                         <Flex gap={6}>
-                            <HStack w="77%">
+                            <HStack w="100%" rounded="xl">
                                 <PandaVideoPlayer url={urlVideo} />
                             </HStack>
-                            <HStack w="23%" bg="#212B36" p={6} rounded="xl">
+                            <HStack
+                                w={widthWatchStepper}
+                                bg="#212B36"
+                                p={widthWatchStepper === '27%' ? 6 : 2}
+                                rounded="xl"
+                                className='see-content'
+                            >
                                 <CourseWatchStepper
                                     classesData={classesData}
                                     videoId={courseWatchIds?.classeId}
                                     nameModule={moduleSelected?.nome}
                                     quantityClasses={quantityClasses}
                                     setUrlVideo={setUrlVideo}
+                                    handleChangeWidthStepper={handleChangeWidthStepper}
+                                    widthWatchStepper={widthWatchStepper}
                                 />
                             </HStack>
                         </Flex>

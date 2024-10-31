@@ -1,5 +1,5 @@
 import { Button, HStack, Stack, Text, Flex, Box, Image } from '@chakra-ui/react';
-import { FiChevronRight } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa';
 import { ClassesProps } from '../types/courses';
 import { useContext, useEffect, useState } from 'react';
@@ -11,6 +11,8 @@ interface CourseWatchStepperProps {
   nameModule: string | undefined;
   quantityClasses: number;
   setUrlVideo: (text: string) => void;
+  handleChangeWidthStepper: (width: string) => void;
+  widthWatchStepper: string;
 }
 
 const CourseWatchStepper = ({
@@ -19,6 +21,8 @@ const CourseWatchStepper = ({
   nameModule,
   quantityClasses,
   setUrlVideo,
+  handleChangeWidthStepper,
+  widthWatchStepper,
 }: CourseWatchStepperProps) => {
   const [indexCurrentClasse, setIndexCurrentClasse] = useState(0);
 
@@ -50,7 +54,7 @@ const CourseWatchStepper = ({
   return (
     <Stack gap={5} w="full" h="full">
       <Flex justifyContent="space-between" alignItems="center">
-        <Text fontSize="2xl">Conteúdo</Text>
+        {widthWatchStepper === '27%' && <Text fontSize="2xl">Conteúdo</Text>}
         <Button
           variant="primary"
           borderWidth={1}
@@ -60,12 +64,28 @@ const CourseWatchStepper = ({
           justifyContent="space-between"
           gap={2}
           rounded="xl"
+          onClick={() => {
+            if (widthWatchStepper === '27%') {
+              handleChangeWidthStepper('8%');
+            } else {
+              handleChangeWidthStepper('27%');
+            }
+          }}
         >
-          Esconder
-          <FiChevronRight />
+          {widthWatchStepper === '27%' ? (
+            <>
+              Esconder
+              <FiChevronRight />
+            </>
+          ) : (
+            <>
+              <FiChevronLeft />
+              Mostrar
+            </>
+          )}
         </Button>
       </Flex>
-      <Flex alignItems="center" justifyContent="space-between" borderWidth={1} padding={3} rounded="lg">
+      <Flex alignItems="center" justifyContent="space-between" flexDirection={widthWatchStepper === '27%' ? 'row' : 'column'} borderWidth={1} padding={3} rounded="lg">
         <Box display="flex" flexDirection="column" gap={2}>
           <Text color="white">{nameModule}</Text>
           <Text>{courseSelected?.nome}</Text>
@@ -99,19 +119,21 @@ const CourseWatchStepper = ({
                 objectFit="cover"
                 rounded="lg"
               />
-              <Text fontSize="md" color="white">
+              {widthWatchStepper === '27%' && <Text fontSize="md" color="white">
                 {classe?.nome}
-              </Text>
+              </Text>}
             </Flex>
-            <Box>
-              {classe.assistida ? (
-                <Box rounded="full" padding={1} bg="#38ca4f">
-                  <FaCheck size={12} />
-                </Box>
-              ) : (
-                <Box rounded="full" padding={2.5} bg="#161c24"></Box>
-              )}
-            </Box>
+            {widthWatchStepper === '27%' && (
+              <Box>
+                {classe.assistida ? (
+                  <Box rounded="full" padding={1} bg="#38ca4f">
+                    <FaCheck size={12} />
+                  </Box>
+                ) : (
+                  <Box rounded="full" padding={2.5} bg="#161c24"></Box>
+                )}
+              </Box>
+            )}
           </Flex>
         ))}
       </HStack>
