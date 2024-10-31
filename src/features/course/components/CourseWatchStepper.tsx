@@ -13,6 +13,7 @@ interface CourseWatchStepperProps {
   setUrlVideo: (text: string) => void;
   handleChangeWidthStepper: (width: string) => void;
   widthWatchStepper: string;
+  widthScreen: number;
 }
 
 const CourseWatchStepper = ({
@@ -23,6 +24,7 @@ const CourseWatchStepper = ({
   setUrlVideo,
   handleChangeWidthStepper,
   widthWatchStepper,
+  widthScreen,
 }: CourseWatchStepperProps) => {
   const [indexCurrentClasse, setIndexCurrentClasse] = useState(0);
 
@@ -53,37 +55,39 @@ const CourseWatchStepper = ({
 
   return (
     <Stack gap={5} w="full" h="full">
-      <Flex justifyContent="space-between" alignItems="center">
+      <Flex justifyContent="space-between" alignItems="center" flexWrap="wrap">
         {widthWatchStepper === '27%' && <Text fontSize="2xl">Conteúdo</Text>}
-        <Button
-          variant="primary"
-          borderWidth={1}
-          borderColor="white"
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          gap={2}
-          rounded="xl"
-          onClick={() => {
-            if (widthWatchStepper === '27%') {
-              handleChangeWidthStepper('8%');
-            } else {
-              handleChangeWidthStepper('27%');
-            }
-          }}
-        >
-          {widthWatchStepper === '27%' ? (
-            <>
-              Esconder
-              <FiChevronRight />
-            </>
-          ) : (
-            <>
-              <FiChevronLeft />
-              Mostrar
-            </>
-          )}
-        </Button>
+        {widthScreen > 768 && (
+          <Button
+            variant="primary"
+            borderWidth={1}
+            borderColor="white"
+            display="flex"
+            alignItems="center"
+            justifyContent="space-between"
+            gap={2}
+            rounded="xl"
+            onClick={() => {
+              if (widthWatchStepper === '27%') {
+                handleChangeWidthStepper('8%');
+              } else {
+                handleChangeWidthStepper('27%');
+              }
+            }}
+          >
+            {widthWatchStepper === '27%' ? (
+              <>
+                Esconder
+                <FiChevronRight />
+              </>
+            ) : (
+              <>
+                <FiChevronLeft />
+                Mostrar
+              </>
+            )}
+          </Button>
+        )}
       </Flex>
       <Flex alignItems="center" justifyContent="space-between" flexDirection={widthWatchStepper === '27%' ? 'row' : 'column'} borderWidth={1} padding={3} rounded="lg">
         <Box display="flex" flexDirection="column" gap={2}>

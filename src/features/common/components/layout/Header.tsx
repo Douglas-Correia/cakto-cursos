@@ -63,7 +63,7 @@ const Header = ({ ...rest }: HeaderProps) => {
           flexDirection="column"
           gap={6}
           w="100%"
-          pl={20}
+          pl={{base: 0, lg: 20}}
         >
           {/* Logo */}
           <Flex
@@ -74,7 +74,7 @@ const Header = ({ ...rest }: HeaderProps) => {
             mt={{ base: 20, md: 6 }}
             pr={3}
             pl={1}
-            w={{ base: '50%', md: '50%' }}
+            w={{ base: '60%', md: '50%' }}
           >
             <Image
               src="/Rectangle 558.png"
