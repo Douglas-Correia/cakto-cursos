@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter } from "react-router-dom";
 import Router from "./routes";
+import { CourseWatchProvider } from "./features/course/contexts/CourseWatchContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -20,7 +21,9 @@ function App() {
       <ColorModeScript initialColorMode={theme.config.initialColorMode} />
       <ChakraProvider theme={theme} resetCSS>
         <BrowserRouter>
-          <Router />
+          <CourseWatchProvider>
+            <Router />
+          </CourseWatchProvider>
         </BrowserRouter>
       </ChakraProvider>
       <ReactQueryDevtools initialIsOpen={false} />

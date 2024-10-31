@@ -59,7 +59,7 @@ export default function Signin() {
     }
 
     return (
-        <Stack position="relative" w="full" h="100vh">
+        <Stack position="relative" w="full" h="100vh" mt={-2}>
             <ToastContainer theme="dark" />
             <Flex
                 w="full"
@@ -100,7 +100,7 @@ export default function Signin() {
                                     rounded={8}
                                     pr={3}
                                     pl={1}
-                                    w={{ base: '60%', md: '40%' }}
+                                    w={{ base: '70%', md: '40%' }}
                                 >
                                     <Image
                                         src="/Rectangle 558.png"

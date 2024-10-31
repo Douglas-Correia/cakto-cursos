@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GetUserProps } from "../types/userStorage";
 import { api } from "../services/axios";
 import { HeaderCurses } from "../components/header_curses";
@@ -6,13 +6,21 @@ import { Flex, HStack, Image, Input, InputGroup, InputRightElement, Text } from 
 import { SearchIcon } from "@chakra-ui/icons";
 import { BoxCourses } from "../components/box_courses";
 import { CoursesProps } from "../types/courses";
+import { CourseWatchContext } from "../contexts/CourseWatchContext";
 
 const CoursesPage = () => {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const [coursesByUser, setCourses] = useState<CoursesProps[]>([]);
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
+  const context = useContext(CourseWatchContext);
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;
+
+  if (!context) {
+    throw new Error('useCourseWatch must be used within a CourseWatchProvider');
+  }
+
+  const { handleGetCourseSelected } = context;
 
   useEffect(() => {
     getDataByUser();
@@ -113,18 +121,26 @@ const CoursesPage = () => {
             pb={16}
           >
             {coursesByUser?.map((course, index) => (
-                <BoxCourses
-                  img={course?.logoCurso}
-                  index={index}
-                  indexModulo={indexModulo}
-                  mouseEnter={() => {
-                    mouseEnter(index);
-                  }}
-                  mouseLeave={mouseLeave}
-                  name={course?.nome}
-                  textBtn="Acessar conteúdo"
-                  courseId={course.id}
-                />
+              <BoxCourses
+                img={course?.logoCurso}
+                index={index}
+                indexModulo={indexModulo}
+                mouseEnter={() => {
+                  mouseEnter(index);
+                }}
+                mouseLeave={mouseLeave}
+                name={course?.nome}
+                textBtn="Acessar conteúdo"
+                courseId={course.id}
+                onClick={() => {
+                  const couseFormatted = {
+                    id: course.id,
+                    memberAt: course.memberAt,
+                    nome: course.nome
+                  }
+                  handleGetCourseSelected(couseFormatted);
+                }}
+              />
             ))}
           </Flex>
         </Flex>

@@ -1,18 +1,16 @@
-import { useCourseWatch } from '@/features/course/contexts/CourseWatchContext';
-import { usePandaPlayer } from '@/features/course/contexts/VideoPlayerContext';
 import { Icon } from '@chakra-ui/icons';
 import { AspectRatio, Box, Center, Skeleton } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import React, { useState } from 'react';
 import { FaPlay } from 'react-icons/fa';
+import ReactPlayer from 'react-player';
 
 type Props = {
   url: string;
 };
 
 const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
-  const { current, next, isFetching } = useCourseWatch();
-
-  const { player, setProgress, duration, setDuration, setSeconds } = usePandaPlayer();
+  const [isFetching, setIsFetching] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   if (isFetching) {
     return (
@@ -29,60 +27,17 @@ const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
     );
   }
 
-  const reset = () => {
-    player.current?.contentWindow?.postMessage({ message: 'currentTime', parameter: 0 }, '*');
-    setProgress(0);
-  };
-
-  const onEnd = () => {
-    next();
-    setProgress(0);
-  };
-
-  useEffect(() => {
-    if (current.lesson) {
-      reset();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [current.lesson]);
-
-  useEffect(() => {
-    window.addEventListener('message', (event) => {
-      const { data } = event;
-
-      if (data.message === 'panda_allData') {
-        setDuration(data.playerData.duration);
-      }
-
-      if (data.message === 'panda_timeupdate') {
-        const seconds = data.currentTime as number;
-        setProgress((seconds / (duration || 1)) * 100);
-        setSeconds(seconds);
-      }
-
-      if (data.message === 'panda_ended') {
-        onEnd();
-      }
-    });
-
-    return () => {
-      window.removeEventListener('message', () => {});
-    };
-  }, []);
-
   return (
-    <AspectRatio
-      ratio={16 / 9}
-      w="full"
-      overflow="hidden"
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      bg="background"
-      cursor="pointer"
-      rounded="xl"
-    >
-      <iframe ref={player} src={url} allowFullScreen style={{ width: '100%', height: '100%' }} />
+    <AspectRatio ratio={16 / 9} w="full" rounded="xl">
+      <ReactPlayer 
+        url={url} 
+        playing={isPlaying} 
+        controls 
+        width="100%" 
+        height="100%" 
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+      />
     </AspectRatio>
   );
 };

@@ -135,7 +135,7 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
                     rounded={8}
                     pr={3}
                     pl={1}
-                    w={{ base: '60%', md: '70%' }}
+                    w={{ base: '70%', md: '70%' }}
                 >
                     <Image
                         src="/Rectangle 558.png"

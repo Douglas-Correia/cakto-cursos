@@ -3,9 +3,9 @@ import { FaDownload } from "react-icons/fa";
 import { CurrentWatchState } from "../contexts/CourseWatchContext";
 
 interface MaterialsProps {
-  current: CurrentWatchState;
-  isFetching: boolean;
-  mutateDownloadLessonFile: any;
+  current?: CurrentWatchState;
+  isFetching?: boolean;
+  mutateDownloadLessonFile?: any;
 }
 
 export function Materials({ current, isFetching,mutateDownloadLessonFile }: MaterialsProps) {

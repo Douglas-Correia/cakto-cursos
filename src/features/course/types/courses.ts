@@ -44,3 +44,10 @@ export interface LastClasse {
   ModuloNome: string;
   aulaAssistidaEm: string;
 }
+
+export interface ModuleSingleProps {
+  aulas: number;
+  id: string;
+  nome: string;
+  capa: string;
+}

@@ -17,7 +17,7 @@ import { motion } from 'framer-motion';
 import { Link, useParams } from 'react-router-dom';
 import { Navigation } from 'swiper/modules';
 import { Swiper as SwiperType, SwiperSlide } from 'swiper/react';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
@@ -25,6 +25,7 @@ import 'swiper/css/navigation';
 import { api } from '../services/axios';
 import { ClassesProps, LastClasse, ModulesProps } from '../types/courses';
 import Header from '@/features/common/components/layout/Header';
+import { CourseWatchContext } from '../contexts/CourseWatchContext';
 
 const CoursePage = () => {
   const [course, setCourse] = useState<ClassesProps[]>([]);
@@ -41,6 +42,13 @@ const CoursePage = () => {
 
 
   const { color, progress } = useCourseProgress();
+  const context = useContext(CourseWatchContext);
+
+  if (!context) {
+    throw new Error('useCourseWatch must be used within a CourseWatchProvider');
+  }
+
+  const { handleGetCourseWatchIds } = context;
 
   // if (isFetching) {
   //   return <Progress size="xs" colorScheme="primary" isIndeterminate />;
@@ -75,7 +83,6 @@ const CoursePage = () => {
             }
           }
           setCourse(allClasses);
-          console.log(allClasses)
         }
 
       } catch (error: any) {
@@ -130,7 +137,7 @@ const CoursePage = () => {
         <Header />
       </Box>
 
-      <Container maxW={1500}>
+      <Container maxW={1700}>
         <HStack
           w="full"
           justify="space-between"
@@ -336,10 +343,20 @@ const CoursePage = () => {
                               <Card
                                 as={Link}
                                 to={{
-                                  pathname: `/courses/${course.id}/watch`,
+                                  pathname: `/courses/watch`,
                                 }}
                                 state={{ course }}
                                 rounded="xl"
+                                onClick={() => {
+                                  if (courseId) {
+                                    const formattedCoursesIds = {
+                                      courseId: courseId,
+                                      moduloId: course.moduloId,
+                                      classeId: course.id
+                                    }
+                                    handleGetCourseWatchIds(formattedCoursesIds);
+                                  }
+                                }}
                                 onMouseEnter={() => {
                                   mouseEnter(index)
                                 }}

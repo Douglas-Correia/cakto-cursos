@@ -62,6 +62,7 @@ const Header = ({ ...rest }: HeaderProps) => {
           flexDirection="column"
           gap={6}
           w="100%"
+          pl={20}
         >
           {/* Logo */}
           <Flex

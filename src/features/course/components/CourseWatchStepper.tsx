@@ -1,84 +1,55 @@
-import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import FlexCenter from '@/features/common/components/containers/FlexCenter';
-import { useCourseEnrollment } from '@/features/course/contexts/CourseEnrollmentContext';
-import { useCourseWatch } from '@/features/course/contexts/CourseWatchContext';
-import {
-  Button,
-  HStack,
-  Spinner,
-  Stack,
-  Text,
-  Flex,
-  useColorModeValue,
-  Box,
-  Image,
-} from '@chakra-ui/react';
-
-
+import { Button, HStack, Stack, Text, Flex, Box, Image } from '@chakra-ui/react';
 import { FiChevronRight } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa';
+import { ClassesProps } from '../types/courses';
+import { useContext, useEffect, useState } from 'react';
+import { CourseWatchContext } from '../contexts/CourseWatchContext';
 
-const CourseWatchStepper = () => {
-  const { state } = useLocation();
-  const { course, goTo } = useCourseWatch();
+interface CourseWatchStepperProps {
+  classesData: ClassesProps[];
+  videoId: string | undefined;
+  nameModule: string | undefined;
+  quantityClasses: number;
+  setUrlVideo: (text: string) => void;
+}
 
-  const { isFetching } = useCourseEnrollment();
-  const [isOpen, setIsOpen] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+const CourseWatchStepper = ({
+  classesData,
+  videoId,
+  nameModule,
+  quantityClasses,
+  setUrlVideo,
+}: CourseWatchStepperProps) => {
+  const [indexCurrentClasse, setIndexCurrentClasse] = useState(0);
 
-  const toggleCollapse = (item: string) => {
-    setIsOpen((prev) => {
-      if (prev.includes(item)) {
-        return prev.filter((state) => state !== item);
-      }
-      
-      console.log(isOpen)
-      return [...prev, item];
-    });
-  };
+  const context = useContext(CourseWatchContext);
+  if (!context) {
+    throw new Error('useCourseWatch must be used within a CourseWatchProvider');
+  }
 
+  const { courseSelected, handleGetCourseWatchIds, courseWatchIds } = context;
+
+  // Atualizar indexCurrentClasse sempre que videoId ou classesData mudar
   useEffect(() => {
-    const lessons = state.lesson.lessons;
-    const module = course?.modules.find(({ name }) => name === state.lesson.name) as any;
-
-    if (lessons?.length) {
-      toggleCollapse(state?.lesson?.name);
-
-      setTimeout(() => {
-        goTo({
-          lesson: lessons[0],
-          module,
-        });
-
-        setIsLoading(false);
-      }, 1);
-    } else {
-      const lessonsWithMoludes = course?.modules.filter(({ lessons }) => !!lessons.length) || [];
-      const lastLessonWithModules = lessonsWithMoludes[lessonsWithMoludes?.length - 1];
-      toggleCollapse(lastLessonWithModules?.name);
-      setIsLoading(false);
+    const currentIndex = classesData.findIndex((classe) => classe.id === videoId);
+    if (currentIndex !== -1) {
+      setIndexCurrentClasse(currentIndex + 1);
     }
+  }, [videoId, classesData]);
 
-    return () => {
-      setIsOpen([]);
-    };
-  }, []);
-
-  if (isFetching || isLoading) {
-    return (
-      <FlexCenter p={10}>
-        <Spinner color="primary.500" />
-      </FlexCenter>
-    );
+  const handleNextClasse = (classeId: string, classeUrlVideo: string) => {
+    const newCouseWatchIds = {
+      courseId: courseWatchIds?.courseId,
+      moduloId: courseWatchIds?.moduloId,
+      classeId: classeId,
+    }
+    handleGetCourseWatchIds(newCouseWatchIds);
+    setUrlVideo(classeUrlVideo);
   }
 
   return (
-    <Stack gap={5} h="full">
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-      >
+    <Stack gap={5} w="full" h="full">
+      <Flex justifyContent="space-between" alignItems="center">
         <Text fontSize="2xl">Conteúdo</Text>
         <Button
           variant="primary"
@@ -94,89 +65,56 @@ const CourseWatchStepper = () => {
           <FiChevronRight />
         </Button>
       </Flex>
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        borderWidth={1}
-        padding={3}
-        rounded="lg"
-      >
+      <Flex alignItems="center" justifyContent="space-between" borderWidth={1} padding={3} rounded="lg">
         <Box display="flex" flexDirection="column" gap={2}>
-          <Text color={useColorModeValue('white', 'gray.500')}>Módulo 1</Text>
-          <Text>Nome do curso</Text>
+          <Text color="white">{nameModule}</Text>
+          <Text>{courseSelected?.nome}</Text>
         </Box>
-        <Box color={useColorModeValue('white', 'gray.500')}>
-          04/06
+        <Box color="white">
+          {indexCurrentClasse < 10 ? `0${indexCurrentClasse}` : indexCurrentClasse}/{quantityClasses < 9 ? `0${quantityClasses}` : quantityClasses}
         </Box>
       </Flex>
 
       <HStack display="flex" flexDirection="column" gap={4}>
-        <Flex
-          alignItems="center"
-          justifyContent="space-between"
-          w="full"
-          mt={4}
-          bg="#333e49"
-          padding={3}
-          rounded="lg"
-        >
-          <Flex alignItems="center" gap={3}>
-            <Text color={useColorModeValue('white', 'gray.500')}>01</Text>
-            <Image
-              src='../../../../public/similiar.png'
-              alt=''
-              width={20}
-              height={16}
-              objectFit="cover"
-              rounded="lg"
-            />
-            <Text
-              fontSize="md"
-              color={useColorModeValue('white', 'gray.300')}
-            >
-              Nome da aula
-            </Text>
-          </Flex>
-          <Box>
-            <Box rounded="full" padding={2.5} bg="#161c24">
-
+        {classesData?.map((classe, index) => (
+          <Flex
+            key={classe.id}
+            alignItems="center"
+            justifyContent="space-between"
+            w="full"
+            mt={4}
+            bg={`${classe.id === videoId ? '#333e49' : ''}`}
+            padding={3}
+            rounded="lg"
+            cursor="pointer"
+            onClick={() => handleNextClasse(classe.id, classe.urlVideo)}
+          >
+            <Flex alignItems="center" gap={3}>
+              <Text color="white">{index + 1}</Text>
+              <Image
+                src={classe?.thumbnail}
+                alt={classe?.nome}
+                width={20}
+                height={16}
+                objectFit="cover"
+                rounded="lg"
+              />
+              <Text fontSize="md" color="white">
+                {classe?.nome}
+              </Text>
+            </Flex>
+            <Box>
+              {classe.assistida ? (
+                <Box rounded="full" padding={1} bg="#38ca4f">
+                  <FaCheck size={12} />
+                </Box>
+              ) : (
+                <Box rounded="full" padding={2.5} bg="#161c24"></Box>
+              )}
             </Box>
-          </Box>
-        </Flex>
-
-        <Flex
-          alignItems="center"
-          justifyContent="space-between"
-          w="full"
-          mt={4}
-          padding={3}
-          rounded="lg"
-        >
-          <Flex alignItems="center" gap={3}>
-            <Text color={useColorModeValue('white', 'gray.500')}>01</Text>
-            <Image
-              src='../../../../public/similiar.png'
-              alt=''
-              width={20}
-              height={16}
-              objectFit="cover"
-              rounded="lg"
-            />
-            <Text
-              fontSize="md"
-              color={useColorModeValue('white', 'gray.300')}
-            >
-              Nome da aula
-            </Text>
           </Flex>
-          <Box>
-            <Box rounded="full" padding={1} bg="#38ca4f">
-              <FaCheck size={12} />
-            </Box>
-          </Box>
-        </Flex>
+        ))}
       </HStack>
-
     </Stack>
   );
 };
