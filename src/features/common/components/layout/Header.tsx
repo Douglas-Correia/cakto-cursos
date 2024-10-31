@@ -1,5 +1,6 @@
-import { useAuth } from '@/features/auth/contexts/AuthContext';
 import ToggleThemeButton from '@/features/common/components/theme/ToggleThemeButton';
+import { api } from '@/features/course/services/axios';
+import { GetUserProps } from '@/features/course/types/userStorage';
 import { SearchIcon } from '@chakra-ui/icons';
 import {
   Avatar,
@@ -29,10 +30,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 type HeaderProps = FlexProps;
 
 const Header = ({ ...rest }: HeaderProps) => {
-  const { user } = useAuth();
+  const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const navigate = useNavigate();
   const location = useLocation(); // Captura o objeto de localização
   const [courseWatch, setCourseWatch] = useState(false);
+  const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
+  const userId = userStorage?.id;
 
   useEffect(() => {
     // Verifica se a URL contém "/watch"
@@ -42,6 +45,20 @@ const Header = ({ ...rest }: HeaderProps) => {
       setCourseWatch(false);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const getDataByUser = async () => {
+      try {
+        const response = await api.get(`/user/${userId}`);
+        if (response.data) {
+          setDataUser(response.data);
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    }
+    getDataByUser();
+  }, []);
 
   return (
     <Box
@@ -178,11 +195,11 @@ const Header = ({ ...rest }: HeaderProps) => {
           right={{ base: 4, md: 4 }}
         >
           <HStack spacing={{ base: 4, md: 6 }}>
-            <ToggleThemeButton />
+            {/* <ToggleThemeButton /> */}
             <Menu>
               <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
                 <HStack>
-                  <Avatar size="md" color="white" name={user?.email} src="" />
+                  <Avatar size="md" color="white" name={dataUser?.email} src={dataUser?.photoProfile || ''} />
                   <VStack
                     display={{ base: 'none', md: 'flex' }}
                     alignItems="flex-start"
@@ -195,12 +212,12 @@ const Header = ({ ...rest }: HeaderProps) => {
               <MenuList>
                 <Box px={3} pb={3} pt={1}>
                   <Text fontSize="lg" fontWeight="thin" color="gray.100">
-                    Nome aluno
+                    {dataUser?.nome}
                   </Text>
                 </Box>
                 <Box px={3} pb={3} pt={1}>
                   <Text fontSize="sm" fontWeight="thin" color="gray.500">
-                    {user?.email}
+                    {dataUser?.email}
                   </Text>
                 </Box>
                 <Divider borderStyle="dashed" />
@@ -238,7 +255,7 @@ const Header = ({ ...rest }: HeaderProps) => {
           </HStack>
 
           {!courseWatch && (
-            <HStack display={{ base: 'none', md: 'block' }}>
+            <HStack w={230} display={{ base: 'none', md: 'block' }}>
               <InputGroup>
                 <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.300" />} />
                 <Input

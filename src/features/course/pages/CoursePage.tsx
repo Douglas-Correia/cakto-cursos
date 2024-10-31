@@ -40,7 +40,6 @@ const CoursePage = () => {
   const userId = userStorage?.id;
   const { name, courseId } = useParams();
 
-
   const { color, progress } = useCourseProgress();
   const context = useContext(CourseWatchContext);
 

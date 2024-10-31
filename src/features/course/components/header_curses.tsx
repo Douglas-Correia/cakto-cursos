@@ -1,21 +1,33 @@
 import { BellIcon } from "@chakra-ui/icons";
-import { useAuth } from "@/features/auth/contexts/AuthContext";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { IconButton, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import { Avatar, Box, Divider, Flex, HStack, Menu, MenuButton, MenuItem, MenuList, Stack, Text, VStack } from "@chakra-ui/react";
-import { useState } from "react";
 import { GetUserProps } from "../types/userStorage";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { api } from "../services/axios";
 
-interface HeaderCursesProps {
-  dataUser: GetUserProps | null
-}
-
-export function HeaderCurses({ dataUser }: HeaderCursesProps) {
+export function HeaderCurses() {
+  const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const [theme, setTheme] = useState('dark');
   const { toggleColorMode } = useColorMode();
-  const { revoke, user } = useAuth();
   const navigate = useNavigate();
+  const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
+  const userId = userStorage?.id;
+
+  useEffect(() => {
+    const getDataByUser = async () => {
+      try {
+        const response = await api.get(`/user/${userId}`);
+        if (response.data) {
+          setDataUser(response.data);
+        }
+      } catch (error: any) {
+        console.log(error);
+      }
+    }
+    getDataByUser();
+  }, []);
 
   return (
     <HStack
@@ -66,7 +78,7 @@ export function HeaderCurses({ dataUser }: HeaderCursesProps) {
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
               <HStack>
-                <Avatar size="md" color="white" name={user?.email} src={dataUser?.photoProfile || ''} />
+                <Avatar size="md" color="white" name={dataUser?.email} src={dataUser?.photoProfile || ''} />
                 <VStack
                   display={{ base: 'none', md: 'flex' }}
                   alignItems="flex-start"
@@ -89,22 +101,22 @@ export function HeaderCurses({ dataUser }: HeaderCursesProps) {
               </Box>
               <Divider borderStyle="dashed" />
               <Stack pt={2}>
-                <MenuItem onClick={() => revoke()} fontSize="sm">
+                <MenuItem onClick={() => navigate('/courses')} fontSize="sm">
                   Página Inicial
                 </MenuItem>
               </Stack>
               <Stack pt={2}>
-                <MenuItem onClick={() => revoke()} fontSize="sm">
+                <MenuItem onClick={() => navigate('')} fontSize="sm">
                   Minha conta
                 </MenuItem>
               </Stack>
               <Stack pt={2}>
-                <MenuItem onClick={() => revoke()} fontSize="sm">
+                <MenuItem onClick={() => navigate('')} fontSize="sm">
                   Minhas compras
                 </MenuItem>
               </Stack>
               <Stack pt={2}>
-                <MenuItem onClick={() => revoke()} fontSize="sm">
+                <MenuItem onClick={() => navigate('')} fontSize="sm">
                   Central de ajuda
                 </MenuItem>
               </Stack>

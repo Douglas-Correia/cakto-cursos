@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { GetUserProps } from "../types/userStorage";
 import { api } from "../services/axios";
 import { HeaderCurses } from "../components/header_curses";
 import { Flex, HStack, Image, Input, InputGroup, InputRightElement, Progress, Text } from "@chakra-ui/react";
@@ -10,7 +9,6 @@ import { CourseWatchContext } from "../contexts/CourseWatchContext";
 
 const CoursesPage = () => {
   const [isFetching, setIsFetching] = useState(false);
-  const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const [coursesByUser, setCourses] = useState<CoursesProps[]>([]);
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
   const context = useContext(CourseWatchContext);
@@ -37,23 +35,11 @@ const CoursesPage = () => {
       }
     }
     const handleChamarAllPromise = async () => {
-      await getDataByUser();
       await getAllCourses();
       setIsFetching(false);
     }
     handleChamarAllPromise();
   }, []);
-
-  const getDataByUser = async () => {
-    try {
-      const response = await api.get(`/user/${userId}`);
-      if (response.data) {
-        setDataUser(response.data);
-      }
-    } catch (error: any) {
-      console.log(error);
-    }
-  }
 
   const mouseEnter = (index: number) => {
     setIndexModulo(index);
@@ -73,7 +59,7 @@ const CoursesPage = () => {
       h="full"
       flexDirection="column"
     >
-      <HeaderCurses dataUser={dataUser} />
+      <HeaderCurses />
 
       {/* BANNER */}
       <HStack
