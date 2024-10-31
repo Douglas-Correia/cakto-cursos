@@ -1,7 +1,8 @@
 import axios, { AxiosError } from "axios";
 
+// https://caktus-members.onrender.com
 export const api = axios.create({
-    baseURL: 'https://caktus-members.onrender.com',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     headers: {
         'Content-type': 'application/json'
     }
