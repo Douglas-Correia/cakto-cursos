@@ -54,7 +54,7 @@ const CourseWatchStepper = ({
   }
 
   return (
-    <Stack gap={5} w="full" h="full">
+    <Stack gap={5} w="full" h="full" overflowY="auto" style={{ scrollbarWidth: 'none' }}>
       <Flex justifyContent="space-between" alignItems="center" flexWrap="wrap">
         {widthWatchStepper === '27%' && <Text fontSize="2xl">Conteúdo</Text>}
         {widthScreen > 768 && (

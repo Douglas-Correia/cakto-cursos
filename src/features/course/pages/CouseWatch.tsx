@@ -381,13 +381,9 @@ export default function CourseWatch() {
                                         py={2}
                                         gap={6}
                                     >
-                                        {Array.from({ length: 3 }, (_, index) => (
-                                            <Materials
-                                                key={index}
-                                            // current={}
-                                            // mutateDownloadLessonFile={mutateDownloadLessonFile}
-                                            />
-                                        ))}
+                                        <Materials
+                                            aulaId={courseWatchIds?.classeId}
+                                        />
                                     </HStack>
                                 )}
                             </HStack>

@@ -1,34 +1,50 @@
 import { Box, Button, HStack, Image, Skeleton, Text, VStack } from "@chakra-ui/react";
+import { useContext, useEffect, useState } from "react";
 import { FaDownload } from "react-icons/fa";
+import { api } from "../services/axios";
+import { MaterialsProps } from "../types/materials";
+import { CourseWatchContext } from "../contexts/CourseWatchContext";
 
-interface MaterialsProps {
-  current?: any;
-  isFetching?: boolean;
+interface MaterialsFuncProps {
+  aulaId: string | undefined;
   mutateDownloadLessonFile?: any;
 }
 
-export function Materials({ current, mutateDownloadLessonFile }: MaterialsProps) {
-  // const current = {
-  //   lesson: {
-  //     id: "lesson123",
-  //     title: "Aula de sobrevivência",
-  //     files: [
-  //       "file-Como_encontrar_agua.pdf",
-  //       "file-Construindo_um_abrigo.pdf",
-  //       "file-Identificando_plantas_comestiveis.pdf"
-  //     ]
-  //   }
-  // };
+export function Materials({ aulaId, mutateDownloadLessonFile }: MaterialsFuncProps) {
+  const [allMaterials, setAllMaterials] = useState<MaterialsProps[]>([]);
+  const [isFetching, setIsFetching] = useState(false)
+  const context = useContext(CourseWatchContext);
 
-  const isFetching = false;
+  if (!context) {
+    throw new Error('Context is not defined.');
+  }
+
+  const { courseWatchIds } = context;
+
+  useEffect(() => {
+    const fetchAllMaterials = async () => {
+      setIsFetching(true);
+      try {
+        const response = await api.get(`user/getAllArquivosAulaforUser/${aulaId}`);
+        if (response.data) {
+          setAllMaterials(response.data);
+        }
+      } catch (error: any) {
+        console.log(error);
+      } finally {
+        setIsFetching(false);
+      }
+    }
+    fetchAllMaterials();
+  }, [courseWatchIds?.classeId]);
 
   return (
     <>
-      {current?.lesson?.files?.length ? (
+      {allMaterials.length ? (
         <Skeleton isLoaded={!isFetching}>
           <Box maxWidth="100%" overflowX="auto">
             <HStack spacing={4} align="start">
-              {current?.lesson?.files.map((file: any, index: any) => (
+              {allMaterials.map((file, index) => (
                 <HStack
                   key={index}
                   flexDirection="row"
@@ -43,9 +59,9 @@ export function Materials({ current, mutateDownloadLessonFile }: MaterialsProps)
                     <Image src="../../../../public/icon-doc.png" />
                     <VStack align="start">
                       <Text whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
-                        {file.replace(/^.*?-/, '')}
+                        {file?.titulo}
                       </Text>
-                      <Text color="#919EAB">647.4kb</Text> {/* Tamanho fictício */}
+                      <Text color="#919EAB">647.4kb</Text>
                     </VStack>
                   </HStack>
                   <HStack ml="auto">
@@ -55,8 +71,8 @@ export function Materials({ current, mutateDownloadLessonFile }: MaterialsProps)
                       leftIcon={<FaDownload />}
                       onClick={() =>
                         mutateDownloadLessonFile({
-                          lessonId: current.lesson?.id || '',
-                          fileKey: file,
+                          lessonId: file?.id || '',
+                          fileKey: file?.arquivo,
                         })
                       }
                     >
