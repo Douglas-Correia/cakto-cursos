@@ -355,7 +355,8 @@ const CoursePage = () => {
                                     const formattedCoursesIds = {
                                       courseId: courseId,
                                       moduloId: course.moduloId,
-                                      classeId: course.id
+                                      classeId: course.id,
+                                      description: course.descricao
                                     }
                                     handleGetCourseWatchIds(formattedCoursesIds);
                                   }

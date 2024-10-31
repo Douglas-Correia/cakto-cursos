@@ -4,6 +4,7 @@ interface WatchIdsProps {
     courseId: string | undefined;
     moduloId: string | undefined;
     classeId: string | undefined;
+    description?: string | undefined;
 }
 
 export interface CourseSelectedProps {

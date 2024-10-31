@@ -3,4 +3,5 @@ export interface MaterialsProps {
     titulo: string,
     arquivo: string,
     aulaId: string
+    fileSize: string | null;
 }

@@ -58,6 +58,7 @@ export default function CourseWatch() {
             try {
                 const response = await api.get(`/getAulaparaAssistir/${courseWatchIds?.classeId}`);
                 if (response.data) {
+                    console.log(response.data.url)
                     setUrlVideo(response.data.url);
                 }
             } catch (error: any) {
@@ -361,7 +362,7 @@ export default function CourseWatch() {
                                 {showDescription && (
                                     <HStack mt={4} pl={4}>
                                         <Text color="#919EAB">
-                                            O incentivo ao avanço tecnológico, assim como a expansão dos mercados mundiais afeta positivamente a correta previsão das condições financeiras e administrativas exigidas.
+                                           {courseWatchIds?.description}
                                         </Text>
                                     </HStack>
                                 )}
