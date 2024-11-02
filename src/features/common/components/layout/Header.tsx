@@ -61,15 +61,10 @@ const Header = ({ ...rest }: HeaderProps) => {
 
   return (
     <Box
-      width="100%"
-      position="absolute"
-      top={0}
-      left={0}
-      zIndex={999}
+      width="full"
       {...rest}
     >
       <Flex
-        px={{ base: 4, md: 8 }}
         justifyContent="space-between"
         alignItems="start"
         flexDirection={{ base: 'column', md: 'row' }}
@@ -79,7 +74,6 @@ const Header = ({ ...rest }: HeaderProps) => {
           flexDirection="column"
           gap={6}
           w="100%"
-          pl={{base: 0, lg: 20}}
         >
           {/* Logo */}
           <Flex
@@ -190,6 +184,7 @@ const Header = ({ ...rest }: HeaderProps) => {
           flexDirection="column"
           gap={6}
           mt={{ base: 1, md: 4 }}
+          mr={{base: 0, md: -20}}
           position={{ base: 'absolute', md: 'static' }}
           right={{ base: 4, md: 4 }}
         >
@@ -208,7 +203,7 @@ const Header = ({ ...rest }: HeaderProps) => {
                   />
                 </HStack>
               </MenuButton>
-              <MenuList>
+              <MenuList zIndex={999}>
                 <Box px={3} pb={3} pt={1}>
                   <Text fontSize="lg" fontWeight="thin" color="gray.100">
                     {dataUser?.nome}

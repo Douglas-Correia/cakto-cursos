@@ -25,7 +25,31 @@ import 'swiper/css/navigation';
 import { api } from '../services/axios';
 import { ClassesProps, LastClasse, ModulesProps } from '../types/courses';
 import Header from '@/features/common/components/layout/Header';
-import { CourseWatchContext } from '../contexts/CourseWatchContext';
+import { CourseWatchContext, WatchIdsProps } from '../contexts/CourseWatchContext';
+
+function BannerRotativo({ banners }: any) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIndex((prevIndex) => (prevIndex + 1) % banners.length);
+    }, 4000); // 4 segundos
+
+    return () => clearInterval(intervalId); // Limpa o intervalo ao desmontar
+  }, [banners.length]);
+  const currentBanner = banners[0][index];
+
+  return (
+    <Image
+      src={currentBanner.image}
+      alt={currentBanner.titulo}
+      w="full"
+      h="full"
+      objectFit="fill"
+      mt={-20}
+    />
+  )
+}
 
 const CoursePage = () => {
   const [course, setCourse] = useState<ClassesProps[]>([]);
@@ -47,7 +71,11 @@ const CoursePage = () => {
     throw new Error('useCourseWatch must be used within a CourseWatchProvider');
   }
 
-  const { handleGetCourseWatchIds } = context;
+  const { handleGetCourseWatchIds, bannerCourse } = context;
+
+  if (bannerCourse.length <= 0) {
+    return window.location.href = '/'
+  }
 
   if (!courseId && !name) {
     return null;
@@ -111,11 +139,11 @@ const CoursePage = () => {
     setIndexModulo(null);
   };
 
-  const imageTeste = "/overlay_2 1.png"
-
   if (isFetching) {
     return <Progress size="xs" colorScheme="primary" isIndeterminate />;
   }
+
+  console.log(bannerCourse);
 
   return (
     <Stack w="full" overflowX={'hidden'}>
@@ -129,18 +157,11 @@ const CoursePage = () => {
         mb={10}
         position="relative"
       >
-        <Image
-          src={imageTeste}
-          alt={name}
-          w="full"
-          h="full"
-          objectFit="fill"
-          mt={-20}
-        />
+        <BannerRotativo banners={bannerCourse} />
         <Header />
       </Box>
 
-      <Container maxW={1700}>
+      <Container maxW={1900} px={{ base: 4, md: 8 }}>
         <HStack
           w="full"
           justify="space-between"
@@ -186,8 +207,8 @@ const CoursePage = () => {
                   modules={[Navigation]}
                   w="full"
                 >
-                  {lastClasses?.map((lesson, index) => (
-                    <SwiperSlide key={index}>
+                  {lastClasses?.map((lesson) => (
+                    <SwiperSlide key={lesson?.id}>
                       <Card
                         rounded="xl"
                         w="300px"
@@ -251,7 +272,7 @@ const CoursePage = () => {
 
               {/* MODULOS */}
               {modules?.modulos.map((lesson, index) => (
-                <Stack my={6} key={index}>
+                <Stack my={6} key={`${lesson?.id}${index}`}>
                   <Flex w="full" justifyContent="space-between">
                     <Flex
                       gap={5}
@@ -352,11 +373,14 @@ const CoursePage = () => {
                                 rounded="xl"
                                 onClick={() => {
                                   if (courseId) {
-                                    const formattedCoursesIds = {
+                                    const formattedCoursesIds: WatchIdsProps = {
                                       courseId: courseId,
                                       moduloId: course.moduloId,
                                       classeId: course.id,
-                                      description: course.descricao
+                                      description: course.descricao,
+                                      urlVideo: course.urlVideo,
+                                      assistida: course.assistida,
+                                      notaClasse: course?.notaAula,
                                     }
                                     handleGetCourseWatchIds(formattedCoursesIds);
                                   }

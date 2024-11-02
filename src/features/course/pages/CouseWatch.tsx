@@ -3,7 +3,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import PandaVideoPlayer from "../components/PandaVideoPlayer";
-import { CheckIcon } from "@chakra-ui/icons";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
 import { useContext, useEffect, useState } from "react";
 import { Materials } from "../components/Materials";
 import CourseWatchStepper from "../components/CourseWatchStepper";
@@ -11,9 +11,10 @@ import Header from "@/features/common/components/layout/Header";
 import LessonRating from "../components/LessonRating";
 import { api } from "../services/axios";
 import { ClassesProps, ModuleSingleProps } from "../types/courses";
-import { CourseWatchContext } from "../contexts/CourseWatchContext";
+import { CourseWatchContext, WatchIdsProps } from "../contexts/CourseWatchContext";
 import { toast, ToastContainer } from "react-toastify";
 import { LoaderSpin } from "../components/loaderSpin";
+import { Comments } from "../components/comments";
 
 export default function CourseWatch() {
     const [isFetching, setIsFetching] = useState(false);
@@ -23,11 +24,11 @@ export default function CourseWatch() {
     const [classesData, setClassesData] = useState<ClassesProps[]>([]);
     const [moduleSelected, setModuleSelected] = useState<ModuleSingleProps | null>(null);
     const [quantityClasses, setQuantityClasses] = useState(0);
-    const [urlVideo, setUrlVideo] = useState('');
-    const [valueRating, setValueRating] = useState(0);
+    const [urlVideo, setUrlVideo] = useState<string | undefined>('');
+    const [valueRating, setValueRating] = useState<number | undefined>(0);
     const [widthWatchStepper, setWidthWatchStepper] = useState('27%');
     const navigate = useNavigate();
-    const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '');
+    const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
     const [withScreen, setWidthScreen] = useState(window.innerWidth);
     const userId = userStorage?.id;
     const context = useContext(CourseWatchContext);
@@ -54,18 +55,7 @@ export default function CourseWatch() {
     }, []);
 
     useEffect(() => {
-        const getUrlVideo = async () => {
-            try {
-                const response = await api.get(`/getAulaparaAssistir/${courseWatchIds?.classeId}`);
-                if (response.data) {
-                    console.log(response.data.url)
-                    setUrlVideo(response.data.url);
-                }
-            } catch (error: any) {
-                console.log(error);
-            }
-        }
-        getUrlVideo();
+        setUrlVideo(courseWatchIds?.classeId);
     }, [courseWatchIds?.classeId, urlVideo]);
 
     useEffect(() => {
@@ -90,11 +80,26 @@ export default function CourseWatch() {
         getAllPromise();
     }, []);
 
+    useEffect(() => {
+        setValueRating(courseWatchIds?.notaClasse);
+    }, [courseWatchIds?.notaClasse]);
+
     const getAllClassesByModuleByUser = async () => {
         try {
             const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
             if (response.data) {
                 setClassesData(response.data);
+                const notaClasse: ClassesProps = response.data.find((classe: ClassesProps) => classe?.id === courseWatchIds?.classeId);
+                const newCouseWatchIds = {
+                    courseId: courseWatchIds?.courseId,
+                    moduloId: courseWatchIds?.moduloId,
+                    classeId: notaClasse?.id,
+                    urlVideo: notaClasse?.urlVideo,
+                    assistida: notaClasse?.assistida,
+                    notaClasse: notaClasse?.notaAula,
+                    description: courseWatchIds?.description,
+                }
+                handleGetCourseWatchIds(newCouseWatchIds);
             }
         } catch (error: any) {
             console.log(error);
@@ -112,11 +117,16 @@ export default function CourseWatch() {
         if (currentIndex !== -1 && currentIndex < classesData.length - 1) {
             const nextClasse = classesData[currentIndex + 1];
 
-            const newCouseWatchIds = {
+            const newCouseWatchIds: WatchIdsProps = {
                 courseId: courseWatchIds?.courseId,
                 moduloId: courseWatchIds?.moduloId,
                 classeId: nextClasse.id,
+                urlVideo: courseWatchIds?.urlVideo,
+                assistida: nextClasse?.assistida,
+                notaClasse: nextClasse?.notaAula,
+                description: courseWatchIds?.description,
             }
+            setValueRating(nextClasse?.notaAula);
             handleGetCourseWatchIds(newCouseWatchIds);
             setUrlVideo(nextClasse.urlVideo);
         } else {
@@ -132,10 +142,14 @@ export default function CourseWatch() {
         if (currentIndex > 0) { // permiti voltar à aula anterior
             const previousClasse = classesData[currentIndex - 1];
 
-            const newCouseWatchIds = {
+            const newCouseWatchIds: WatchIdsProps = {
                 courseId: courseWatchIds?.courseId,
                 moduloId: courseWatchIds?.moduloId,
                 classeId: previousClasse.id,
+                urlVideo: courseWatchIds?.urlVideo,
+                assistida: previousClasse?.assistida,
+                notaClasse: previousClasse?.notaAula,
+                description: courseWatchIds?.description,
             }
             handleGetCourseWatchIds(newCouseWatchIds);
             setUrlVideo(previousClasse.urlVideo);
@@ -147,7 +161,20 @@ export default function CourseWatch() {
     const markClasseFinished = async () => {
         const verifyClasseIsFinished = classesData.find(classe => classe.id === courseWatchIds?.classeId);
         if (verifyClasseIsFinished?.assistida) {
-            return toast.error('Está aula já foi marcada como concluída.');
+            try {
+                setIsLoadingMarkFinished(true);
+                const response = await api.delete(`/user/createDesmarcarAulaConcluida/${courseWatchIds?.classeId}`);
+                if (response.data) {
+                    await getAllClassesByModuleByUser();
+                    toast.success('Aula desmarcada.');
+                    return;
+                }
+            } catch (error: any) {
+                console.log(error);
+                return;
+            } finally {
+                setIsLoadingMarkFinished(false);
+            }
         }
         setIsLoadingMarkFinished(true);
         try {
@@ -159,7 +186,6 @@ export default function CourseWatch() {
                 console.log(response.data);
                 toast.success('Aula marcada como concluída.');
                 await getAllClassesByModuleByUser();
-                setValueRating(0);
                 const currentIndex = classesData.findIndex((classe) => classe.id === courseWatchIds?.classeId);
                 if (currentIndex !== -1 && currentIndex < classesData.length - 1) {
                     //
@@ -187,8 +213,9 @@ export default function CourseWatch() {
         <HStack
             position={{ base: 'absolute', lg: 'static' }}
             overflow="hidden"
+            style={{scrollbarWidth: 'none'}}
         >
-            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6}>
+            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6} overflowY="auto" style={{scrollbarWidth: 'none'}}>
                 <ToastContainer theme="dark" />
                 <Stack
                     w="full"
@@ -227,18 +254,6 @@ export default function CourseWatch() {
                                     <Text fontSize={18}>Voltar</Text>
                                 </HStack>
 
-                                {/* <Tooltip label="Ver progresso" aria-label="Ver progresso" hasArrow>
-                                <IconButton
-                                    colorScheme="primary"
-                                    aria-label="Ver progresso"
-                                    size="sm"
-                                    // onClick={onOpen}
-                                    display={{ base: 'block', md: 'none' }}
-                                >
-                                    <Icon as={FaTrophy} />
-                                </IconButton>
-                            </Tooltip> */}
-
                                 <HStack>
                                     <Button
                                         rounded="full"
@@ -272,7 +287,7 @@ export default function CourseWatch() {
                                 </HStack>
                             </Flex>
                             <HStack w="100%" rounded="xl">
-                                <PandaVideoPlayer url={urlVideo} />
+                                <PandaVideoPlayer url={courseWatchIds?.urlVideo} />
                             </HStack>
 
                             <HStack alignItems="start" flexDirection="column" gap={3} mt={3}>
@@ -285,54 +300,23 @@ export default function CourseWatch() {
                                         <HStack>
                                             <LessonRating
                                                 fontSize="sm"
-                                                defaultRating={0}
+                                                defaultRating={valueRating || 0}
                                                 onChange={(rating) => { setValueRating(rating) }}
                                             />
                                             <Button
                                                 rounded="full"
-                                                size={{ base: 'md', lg: 'lg' }}
-                                                backgroundColor="#152e31"
-                                                color="#32a274"
-                                                _hover={{ backgroundColor: '#152e37' }}
-                                                leftIcon={isLoadingMarkFinished ? <LoaderSpin /> : <CheckIcon />}
+                                                size={{ base: 'md' }}
+                                                backgroundColor={courseWatchIds?.assistida ? '#333e49' : '#152e31'}
+                                                color={courseWatchIds?.assistida ? '#ccc' : '#32a274'}
+                                                _hover={{ backgroundColor: courseWatchIds?.assistida ? '#333e49' : '#152e37' }}
+                                                leftIcon={isLoadingMarkFinished ? <LoaderSpin /> : (courseWatchIds?.assistida ? <CloseIcon fontSize={12} /> : <CheckIcon />)}
                                                 variant="solid"
                                                 onClick={markClasseFinished}
                                             >
-                                                Marcar como concluído
+                                                {courseWatchIds?.assistida ? 'Desmarcar aula' : 'Marcar como concluído'}
                                             </Button>
                                         </HStack>
                                     </HStack>
-                                    {/* {current?.lesson?.files?.length && (
-                                <Skeleton isLoaded={!isFetching}>
-                                    <Box>
-                                        <Heading as="h2" size="md" mb={4}>
-                                            Arquivos
-                                        </Heading>
-                                        <List spacing={3}>
-                                            {current?.lesson?.files.map((file, index) => (
-                                                <ListItem key={index} display="flex" alignItems="center">
-                                                    <ListIcon as={FaRegFileLines} color="blue.500" />
-                                                    <Box>{file.replace(/^.*?-/, '')}</Box>
-                                                    <Button
-                                                        ml="auto"
-                                                        size="sm"
-                                                        colorScheme="blue"
-                                                        leftIcon={<DownloadIcon />}
-                                                        onClick={() =>
-                                                            mutateDownloadLessonFile({
-                                                                lessonId: current.lesson?.id || '',
-                                                                fileKey: file,
-                                                            })
-                                                        }
-                                                    >
-                                                        Baixar
-                                                    </Button>
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    </Box>
-                                </Skeleton>
-                            )} */}
                                 </Stack>
                                 <ButtonGroup>
                                     <Button
@@ -360,10 +344,16 @@ export default function CourseWatch() {
                                 </ButtonGroup>
 
                                 {showDescription && (
-                                    <HStack mt={4} pl={4}>
+                                    <HStack mt={4} pl={4} flexDirection="column" gap={6}>
                                         <Text color="#919EAB">
-                                           {courseWatchIds?.description}
+                                            {courseWatchIds?.description}
                                         </Text>
+
+                                        <HStack flexDirection="column">
+                                            {Array.from({ length: 10 }, (_, index) => (
+                                                <Comments key={index} />
+                                            ))}
+                                        </HStack>
                                     </HStack>
                                 )}
                                 {showMaterial && (
@@ -397,7 +387,7 @@ export default function CourseWatch() {
                             }}
                             bg="#212B36"
                             p={widthWatchStepper === '27%' ? 6 : 2}
-                            h={1200}
+                            h={1050}
                             rounded="xl"
                             className='see-content'
                         >

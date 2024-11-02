@@ -1,10 +1,14 @@
 import React, { createContext, useState, ReactNode } from 'react';
+import { BannerCourse } from '../types/courses';
 
-interface WatchIdsProps {
+export interface WatchIdsProps {
     courseId: string | undefined;
     moduloId: string | undefined;
     classeId: string | undefined;
-    description?: string | undefined;
+    description: string | undefined;
+    urlVideo: string | undefined;
+    assistida: boolean | undefined;
+    notaClasse: number | undefined;
 }
 
 export interface CourseSelectedProps {
@@ -17,8 +21,10 @@ export interface CourseSelectedProps {
 interface CourseWatchContextProps {
     courseWatchIds: WatchIdsProps | null;
     courseSelected: CourseSelectedProps | null;
+    bannerCourse: BannerCourse[];
     handleGetCourseWatchIds: (watchIds: WatchIdsProps) => void;
     handleGetCourseSelected: (course: CourseSelectedProps) => void;
+    handleGetBannerCourseSelected: (banner: BannerCourse) => void;
 }
 
 // Criando o contexto
@@ -32,6 +38,7 @@ interface CourseWatchProviderProps {
 export const CourseWatchProvider: React.FC<CourseWatchProviderProps> = ({ children }) => {
     const [courseWatchIds, setCourseWtachIds] = useState<WatchIdsProps | null>(null);
     const [courseSelected, setCourseSelected] = useState<CourseSelectedProps | null>(null);
+    const [bannerCourse, setBannerCourse] = useState<BannerCourse[]>([]);
 
     const handleGetCourseWatchIds = (watchIds: WatchIdsProps) => {
         setCourseWtachIds(watchIds);
@@ -41,8 +48,19 @@ export const CourseWatchProvider: React.FC<CourseWatchProviderProps> = ({ childr
         setCourseSelected(course);
     }
 
+    const handleGetBannerCourseSelected = (banner: BannerCourse) => {
+        setBannerCourse([banner]);
+    }
+
     return (
-        <CourseWatchContext.Provider value={{ handleGetCourseWatchIds, courseWatchIds, handleGetCourseSelected, courseSelected }}>
+        <CourseWatchContext.Provider value={{
+            handleGetCourseWatchIds,
+            courseWatchIds,
+            handleGetCourseSelected,
+            courseSelected,
+            handleGetBannerCourseSelected,
+            bannerCourse,
+        }}>
             {children}
         </CourseWatchContext.Provider>
     );

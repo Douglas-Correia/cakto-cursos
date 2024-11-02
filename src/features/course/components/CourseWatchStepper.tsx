@@ -3,7 +3,7 @@ import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa';
 import { ClassesProps } from '../types/courses';
 import { useContext, useEffect, useState } from 'react';
-import { CourseWatchContext } from '../contexts/CourseWatchContext';
+import { CourseWatchContext, WatchIdsProps } from '../contexts/CourseWatchContext';
 
 interface CourseWatchStepperProps {
   classesData: ClassesProps[];
@@ -44,10 +44,15 @@ const CourseWatchStepper = ({
   }, [videoId, classesData]);
 
   const handleNextClasse = (classeId: string, classeUrlVideo: string) => {
-    const newCouseWatchIds = {
+    const classeCurrent = classesData.find((classe: ClassesProps) => classe?.id === classeId);
+    const newCouseWatchIds: WatchIdsProps = {
       courseId: courseWatchIds?.courseId,
       moduloId: courseWatchIds?.moduloId,
       classeId: classeId,
+      urlVideo: courseWatchIds?.urlVideo,
+      assistida: classeCurrent?.assistida,
+      notaClasse: classeCurrent?.notaAula,
+      description: courseWatchIds?.description,
     }
     handleGetCourseWatchIds(newCouseWatchIds);
     setUrlVideo(classeUrlVideo);

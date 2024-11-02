@@ -3,15 +3,16 @@ export interface CoursesProps {
   nome: string;
   logoCurso: string;
   memberAt: string;
-  bannerCurso:
-  {
-    id: number;
-    titulo: string;
-    descricao: string;
-    posicao: number;
-    image: string;
-    createdAt: string;
-  }
+  bannerCurso: BannerCourse;
+}
+
+export interface BannerCourse {
+  id: number;
+  titulo: string;
+  descricao: string;
+  posicao: number;
+  image: string;
+  createdAt: string;
 }
 export interface ModulesProps {
   id: string;
@@ -35,6 +36,8 @@ export interface ClassesProps {
   moduloId: string;
   thumbnail: string;
   assistida: boolean;
+  notaAula: number;
+  notaUser: number;
 }
 
 export interface LastClasse {

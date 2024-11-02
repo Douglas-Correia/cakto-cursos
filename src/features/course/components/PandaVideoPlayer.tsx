@@ -5,7 +5,7 @@ import { FaPlay } from 'react-icons/fa';
 import ReactPlayer from 'react-player';
 
 type Props = {
-  url: string;
+  url: string | undefined;
 };
 
 const PandaVideoPlayer: React.FC<Props> = ({ url }) => {

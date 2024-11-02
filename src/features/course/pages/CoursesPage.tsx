@@ -19,7 +19,7 @@ const CoursesPage = () => {
     throw new Error('useCourseWatch must be used within a CourseWatchProvider');
   }
 
-  const { handleGetCourseSelected } = context;
+  const { handleGetCourseSelected, handleGetBannerCourseSelected } = context;
 
   useEffect(() => {
     setIsFetching(true);
@@ -132,6 +132,7 @@ const CoursesPage = () => {
                     nome: course.nome
                   }
                   handleGetCourseSelected(couseFormatted);
+                  handleGetBannerCourseSelected(course?.bannerCurso);
                 }}
               />
             ))}
