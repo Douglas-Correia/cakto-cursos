@@ -9,8 +9,8 @@ export interface WatchIdsProps {
     urlVideo: string | undefined;
     assistida: boolean | undefined;
     notaClasse: number | undefined;
+    logoCurso: string | undefined;
 }
-
 export interface CourseSelectedProps {
     id: string;
     memberAt: string;
@@ -21,10 +21,11 @@ export interface CourseSelectedProps {
 interface CourseWatchContextProps {
     courseWatchIds: WatchIdsProps | null;
     courseSelected: CourseSelectedProps | null;
-    bannerCourse: BannerCourse[];
+    bannerCourse: BannerCourse | any;
     handleGetCourseWatchIds: (watchIds: WatchIdsProps) => void;
     handleGetCourseSelected: (course: CourseSelectedProps) => void;
     handleGetBannerCourseSelected: (banner: BannerCourse) => void;
+
 }
 
 // Criando o contexto
@@ -38,7 +39,7 @@ interface CourseWatchProviderProps {
 export const CourseWatchProvider: React.FC<CourseWatchProviderProps> = ({ children }) => {
     const [courseWatchIds, setCourseWtachIds] = useState<WatchIdsProps | null>(null);
     const [courseSelected, setCourseSelected] = useState<CourseSelectedProps | null>(null);
-    const [bannerCourse, setBannerCourse] = useState<BannerCourse[]>([]);
+    const [bannerCourse, setBannerCourse] = useState<BannerCourse | any>([]);
 
     const handleGetCourseWatchIds = (watchIds: WatchIdsProps) => {
         setCourseWtachIds(watchIds);
@@ -49,8 +50,8 @@ export const CourseWatchProvider: React.FC<CourseWatchProviderProps> = ({ childr
     }
 
     const handleGetBannerCourseSelected = (banner: BannerCourse) => {
-        setBannerCourse([banner]);
-    }
+        setBannerCourse(banner);
+    };
 
     return (
         <CourseWatchContext.Provider value={{

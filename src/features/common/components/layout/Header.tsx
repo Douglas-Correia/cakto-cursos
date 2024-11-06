@@ -1,3 +1,4 @@
+import { CourseWatchContext } from '@/features/course/contexts/CourseWatchContext';
 import { api } from '@/features/course/services/axios';
 import { GetUserProps } from '@/features/course/types/userStorage';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -8,7 +9,6 @@ import {
   ButtonGroup,
   Divider,
   Flex,
-  FlexProps,
   HStack,
   Image,
   Input,
@@ -22,17 +22,23 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-type HeaderProps = FlexProps;
+interface HeaderProps {
+  title: string | undefined;
+  description: string | undefined;
+  totalBanners: number;
+  indexCurrent: number;
+}
 
-const Header = ({ ...rest }: HeaderProps) => {
+const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps) => {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const navigate = useNavigate();
   const location = useLocation(); // Captura o objeto de localização
   const [courseWatch, setCourseWatch] = useState(false);
+  const context = useContext(CourseWatchContext);
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;
 
@@ -59,10 +65,30 @@ const Header = ({ ...rest }: HeaderProps) => {
     getDataByUser();
   }, []);
 
+  const quantityBanners = () => {
+    let quantity = 0;
+    for (let i = 0; i < totalBanners; i++) {
+      quantity += quantity + i;
+    }
+
+    return Array.from({ length: quantity }, (_, index) => (
+      <Box key={index} bg={indexCurrent === index ? '#fafafa' : '#aaa'} w={2} h={1} rounded={10}></Box>
+    ))
+  }
+
+  if (!context) {
+    throw new Error('Context is not defined.')
+  }
+
+  const { bannerCourse } = context;
+
   return (
     <Box
       width="full"
-      {...rest}
+      position="absolute"
+      top={0}
+      px={{ base: 4, lg: 8 }}
+      pr={{ base: 0, lg: 24 }}
     >
       <Flex
         justifyContent="space-between"
@@ -116,38 +142,40 @@ const Header = ({ ...rest }: HeaderProps) => {
                 gap={1}
                 ml={2}
               >
-                <Box bg="white" w={2} h={1} rounded={10}></Box>
-                <Box bg="gray" w={1} h={1} rounded={10}></Box>
-                <Box bg="gray" w={1} h={1} rounded={10}></Box>
+                {quantityBanners()}
               </Flex>
 
-              <Flex flexDirection="column" gap={6}>
-                <Text fontSize={34}>
-                  Como sobreviver na floresta
-                </Text>
-                <Text>
-                  Para sobreviver na floresta, é essencial encontrar água potável, construir um abrigo seguro e aprender a identificar plantas comestíveis.
-                </Text>
-                <ButtonGroup>
+              <Flex flexDirection="column" gap={6} justifyContent="space-between">
+                {title !== undefined || description !== undefined ? (
+                  <>
+                    <Text fontSize={34}>
+                      {title || ''}
+                    </Text>
+                    <Text>
+                      {description || ''}
+                    </Text>
+                  </>
+                ) : null}
+
+                <ButtonGroup mt={{ base: 3, md: 5, lg: 10 }}>
                   <Button
-                    bg="transparent"
+                    bg={bannerCourse[0]?.botaoBannerCurso[0]?.cor}
                     _hover={{
-                      bg: "transparent"
+                      bg: `${bannerCourse[0]?.botaoBannerCurso[0]?.cor}`
                     }}
-                    borderWidth={1}
-                    borderColor="white"
                     color="white"
                   >
-                    Botão personalizado
+                    <a href={bannerCourse[0]?.botaoBannerCurso[0]?.link || '#'}>{bannerCourse[0]?.botaoBannerCurso[0]?.titulo || ''}</a>
                   </Button>
+
                   <Button
-                    bg="green"
+                    bg={bannerCourse[0]?.botaoBannerCurso[0]?.cor}
                     color="white"
                     _hover={{
-                      bg: "green"
+                      bg: `${bannerCourse[0]?.botaoBannerCurso[0]?.cor}`
                     }}
                   >
-                    Botão personalizado
+                    <a href={bannerCourse[0]?.botaoBannerCurso[1]?.link || '#'}>{bannerCourse[0]?.botaoBannerCurso[1]?.titulo || ''}</a>
                   </Button>
                 </ButtonGroup>
               </Flex>
@@ -165,7 +193,7 @@ const Header = ({ ...rest }: HeaderProps) => {
           w="100%"
           position={{ base: 'absolute', md: 'static' }} // Absolute em mobile, estático em telas maiores
           top={4}
-          left={6}
+          left={{ base: 0, lg: 6 }}
         >
           <Text fontSize="lg" fontWeight="thin" color="gray.100" borderBottom="2px" borderColor="green">
             Início
@@ -184,7 +212,7 @@ const Header = ({ ...rest }: HeaderProps) => {
           flexDirection="column"
           gap={6}
           mt={{ base: 1, md: 4 }}
-          mr={{base: 0, md: -20}}
+          mr={{ base: 0, md: -20 }}
           position={{ base: 'absolute', md: 'static' }}
           right={{ base: 4, md: 4 }}
         >

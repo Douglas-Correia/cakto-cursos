@@ -27,7 +27,17 @@ const CoursesPage = () => {
       try {
         const response = await api.get(`/user/getAllCursosByUser/${userId}`);
         if (response) {
-          console.log(response.data);
+          // const data: WatchIdsProps = {
+          //   assistida: undefined,
+          //   classeId: undefined,
+          //   courseId: undefined,
+          //   description: undefined,
+          //   logoCurso: response.data.logoCurso,
+          //   moduloId: undefined,
+          //   notaClasse: undefined,
+          //   urlVideo: undefined,
+          // }
+          // handleGetCourseWatchIds(data);
           setCourses(response.data);
         }
       } catch (error: any) {
@@ -66,6 +76,7 @@ const CoursesPage = () => {
         w="full"
         height={{ base: 100, md: 200, lg: 300, }}
         px={{ base: 5, md: 20, lg: 40, }}
+        position="relative"
       >
         <Image
           src="/banner.png"
@@ -115,6 +126,7 @@ const CoursesPage = () => {
           >
             {coursesByUser?.map((course, index) => (
               <BoxCourses
+                key={index}
                 img={course?.logoCurso}
                 index={index}
                 indexModulo={indexModulo}

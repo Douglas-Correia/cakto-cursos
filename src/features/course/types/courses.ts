@@ -5,7 +5,12 @@ export interface CoursesProps {
   memberAt: string;
   bannerCurso: BannerCourse;
 }
-
+export interface BannerButton {
+  id: number;
+  titulo: string;
+  link: string;
+  cor: string;
+}
 export interface BannerCourse {
   id: number;
   titulo: string;
@@ -13,6 +18,10 @@ export interface BannerCourse {
   posicao: number;
   image: string;
   createdAt: string;
+  botaoBannerCurso: BannerButton[];
+}
+export interface BannerCursoData {
+  bannerCurso: BannerCourse[][];
 }
 export interface ModulesProps {
   id: string;

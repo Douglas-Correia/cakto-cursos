@@ -98,6 +98,7 @@ export default function CourseWatch() {
                     assistida: notaClasse?.assistida,
                     notaClasse: notaClasse?.notaAula,
                     description: courseWatchIds?.description,
+                    logoCurso: courseWatchIds?.logoCurso,
                 }
                 handleGetCourseWatchIds(newCouseWatchIds);
             }
@@ -125,6 +126,7 @@ export default function CourseWatch() {
                 assistida: nextClasse?.assistida,
                 notaClasse: nextClasse?.notaAula,
                 description: courseWatchIds?.description,
+                logoCurso: courseWatchIds?.logoCurso,
             }
             setValueRating(nextClasse?.notaAula);
             handleGetCourseWatchIds(newCouseWatchIds);
@@ -150,6 +152,7 @@ export default function CourseWatch() {
                 assistida: previousClasse?.assistida,
                 notaClasse: previousClasse?.notaAula,
                 description: courseWatchIds?.description,
+                logoCurso: courseWatchIds?.logoCurso,
             }
             handleGetCourseWatchIds(newCouseWatchIds);
             setUrlVideo(previousClasse.urlVideo);

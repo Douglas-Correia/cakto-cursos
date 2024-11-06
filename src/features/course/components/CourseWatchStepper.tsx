@@ -53,6 +53,7 @@ const CourseWatchStepper = ({
       assistida: classeCurrent?.assistida,
       notaClasse: classeCurrent?.notaAula,
       description: courseWatchIds?.description,
+      logoCurso: courseWatchIds?.logoCurso,
     }
     handleGetCourseWatchIds(newCouseWatchIds);
     setUrlVideo(classeUrlVideo);

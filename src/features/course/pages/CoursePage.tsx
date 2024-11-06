@@ -23,39 +23,17 @@ import 'swiper/css';
 import 'swiper/css/effect-coverflow';
 import 'swiper/css/navigation';
 import { api } from '../services/axios';
-import { ClassesProps, LastClasse, ModulesProps } from '../types/courses';
+import { BannerCourse, ClassesProps, LastClasse, ModulesProps } from '../types/courses';
 import Header from '@/features/common/components/layout/Header';
 import { CourseWatchContext, WatchIdsProps } from '../contexts/CourseWatchContext';
-
-function BannerRotativo({ banners }: any) {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setIndex((prevIndex) => (prevIndex + 1) % banners.length);
-    }, 4000); // 4 segundos
-
-    return () => clearInterval(intervalId); // Limpa o intervalo ao desmontar
-  }, [banners.length]);
-  const currentBanner = banners[0][index];
-
-  return (
-    <Image
-      src={currentBanner.image}
-      alt={currentBanner.titulo}
-      w="full"
-      h="full"
-      objectFit="fill"
-      mt={-20}
-    />
-  )
-}
 
 const CoursePage = () => {
   const [course, setCourse] = useState<ClassesProps[]>([]);
   const [modules, setModules] = useState<ModulesProps | null>(null);
   const [lastClasses, setLastClasses] = useState<LastClasse[]>([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [currentBanner, setCurrentBanner] = useState<BannerCourse | null>(null)
 
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
   const swiperRefContinue = useRef<any | null>(null);
@@ -71,8 +49,9 @@ const CoursePage = () => {
     throw new Error('useCourseWatch must be used within a CourseWatchProvider');
   }
 
-  const { handleGetCourseWatchIds, bannerCourse } = context;
+  const { handleGetCourseWatchIds, bannerCourse, courseWatchIds } = context;
 
+  const totalBanners = bannerCourse.length;
   if (bannerCourse.length <= 0) {
     return window.location.href = '/'
   }
@@ -80,6 +59,18 @@ const CoursePage = () => {
   if (!courseId && !name) {
     return null;
   }
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setIndex((prevIndex) => {
+        const newIndex = (prevIndex + 1) % totalBanners; // Avança o índice e retorna ao 0 quando chega ao final
+        setCurrentBanner(bannerCourse[newIndex]); // Atualiza o banner atual
+        return newIndex;
+      });
+    }, 15000);
+
+    return () => clearInterval(intervalId); // Limpa o intervalo ao desmontar
+  }, [bannerCourse, totalBanners]);
 
   useEffect(() => {
     setIsFetching(true);
@@ -143,8 +134,6 @@ const CoursePage = () => {
     return <Progress size="xs" colorScheme="primary" isIndeterminate />;
   }
 
-  console.log(bannerCourse);
-
   return (
     <Stack w="full" overflowX={'hidden'}>
       <Helmet>
@@ -153,12 +142,24 @@ const CoursePage = () => {
       </Helmet>
       <Box
         w="full"
-        h={{ base: '70svh', md: '50svh' }}
+        h={{ base: '75svh', md: '55svh' }}
         mb={10}
         position="relative"
       >
-        <BannerRotativo banners={bannerCourse} />
-        <Header />
+        <Image
+          src={currentBanner?.image}
+          alt={currentBanner?.titulo}
+          w="full"
+          h="full"
+          objectFit="fill"
+          mt={-20}
+        />
+        <Header
+          title={currentBanner?.titulo}
+          description={currentBanner?.descricao}
+          totalBanners={totalBanners}
+          indexCurrent={index}
+        />
       </Box>
 
       <Container maxW={1900} px={{ base: 4, md: 8 }}>
@@ -381,6 +382,7 @@ const CoursePage = () => {
                                       urlVideo: course.urlVideo,
                                       assistida: course.assistida,
                                       notaClasse: course?.notaAula,
+                                      logoCurso: courseWatchIds?.logoCurso,
                                     }
                                     handleGetCourseWatchIds(formattedCoursesIds);
                                   }
