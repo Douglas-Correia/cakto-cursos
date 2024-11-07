@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Container, Flex, HStack, Input, Progress, Stack, Text, Textarea } from "@chakra-ui/react";
+import { Button, ButtonGroup, Container, Flex, HStack, Input, Progress, Stack, Text } from "@chakra-ui/react";
 import { FaArrowLeft } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";

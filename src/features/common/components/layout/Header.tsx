@@ -218,7 +218,7 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
           position={{ base: 'absolute', md: 'static' }}
           right={{ base: 4, md: 4 }}
         >
-          <HStack spacing={{ base: 4, md: 6 }}>
+          <HStack mr={6} spacing={{ base: 4, md: 6 }}>
             {/* <ToggleThemeButton /> */}
             <Menu>
               <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
@@ -279,7 +279,7 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
           </HStack>
 
           {!courseWatch && (
-            <HStack w={230} display={{ base: 'none', md: 'block' }}>
+            <HStack w={200} mr={20} display={{ base: 'none', md: 'block' }}>
               <InputGroup>
                 <InputLeftElement pointerEvents="none" children={<SearchIcon color="gray.300" />} />
                 <Input

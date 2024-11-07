@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 const MainLayout: React.FC = () => {
   return (
     <Box minH="100vh" bg={useColorModeValue("gray.100", "gray.900")}>
-      <Header zIndex={1} position="absolute" w="full" />
+      <Header />
       <Box overflow="auto" pt={20}>
         <Outlet />
       </Box>
