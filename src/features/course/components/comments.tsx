@@ -65,9 +65,9 @@ export function Comments({
         >
             {/* Comentário Principal */}
             <Flex w="100%" alignItems="center">
-                <Avatar size="md" bg="black" color="white" name="DD" src="" mr={3} />
+                <Avatar size="md" bg="black" color="white" name="DD" src={comments?.usuarioPhotoProfile} mr={3} />
                 <VStack spacing={1} align="start" w="full">
-                    <Text fontWeight="bold" color="white">Nome do usuário</Text>
+                    <Text fontWeight="bold" color="white">{comments?.usuarioName}</Text>
                     <Text fontSize="sm" color="gray.300" mt={1}>
                         {comments?.comentario}
                     </Text>
@@ -97,9 +97,9 @@ export function Comments({
                     color="white"
                 >
                     <Flex w="100%" alignItems="center">
-                        <Avatar size="sm" bg="gray.700" color="white" name="AB" src="" mr={3} />
+                        <Avatar size="sm" bg="gray.700" color="white" name="AB" src={subcomment?.usuarioPhotoProfile} mr={3} />
                         <VStack spacing={1} align="start" w="full">
-                            <Text fontWeight="bold" fontSize="sm" color="white">Nome do subcomentário</Text>
+                            <Text fontWeight="bold" fontSize="sm" color="white">{subcomment?.usuarioName}</Text>
                             <Text fontSize="xs" color="gray.300" mt={1}>
                                 {subcomment?.respostaComentario}
                             </Text>

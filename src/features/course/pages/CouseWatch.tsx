@@ -406,7 +406,7 @@ export default function CourseWatch() {
                                                 <button type="submit" style={{ opacity: 0 }}></button>
                                             </form>
                                         </Flex>
-                                        <HStack w="full" flexDirection="column">
+                                        <HStack w="full" flexDirection="column" mb={10}>
                                             {commentsData?.map((comments, index) => (
                                                 <Comments
                                                     key={index}
