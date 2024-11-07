@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserStorage } from "../types/userStorage";
 import { CommentsType } from "../types/comments";
+import { LuLoader2 } from "react-icons/lu";
 
 const formSchema = z.object({
     textarea: z.string(),
@@ -262,8 +263,16 @@ export default function CourseWatch() {
     }
 
     if (isFetching) {
-        return <Progress size="xs" colorScheme="primary" isIndeterminate />;
-    }
+        return (
+          <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
+            <Progress size="xs" colorScheme="primary" isIndeterminate w="full" top={0} position="absolute" />
+            <LuLoader2
+              className="skeleton"
+              size={40}
+            />
+          </HStack>
+        );
+      }
 
     return (
         <HStack

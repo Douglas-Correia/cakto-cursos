@@ -26,6 +26,7 @@ import { api } from '../services/axios';
 import { BannerCourse, ClassesProps, LastClasse, ModulesProps } from '../types/courses';
 import Header from '@/features/common/components/layout/Header';
 import { CourseWatchContext, WatchIdsProps } from '../contexts/CourseWatchContext';
+import { LuLoader2 } from 'react-icons/lu';
 
 const CoursePage = () => {
   const [course, setCourse] = useState<ClassesProps[]>([]);
@@ -141,7 +142,15 @@ const CoursePage = () => {
   };
 
   if (isFetching) {
-    return <Progress size="xs" colorScheme="primary" isIndeterminate />;
+    return (
+      <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
+        <Progress size="xs" colorScheme="primary" isIndeterminate w="full" top={0} position="absolute" />
+        <LuLoader2
+          className="skeleton"
+          size={40}
+        />
+      </HStack>
+    );
   }
 
   return (

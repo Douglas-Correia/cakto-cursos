@@ -6,6 +6,7 @@ import { SearchIcon } from "@chakra-ui/icons";
 import { BoxCourses } from "../components/box_courses";
 import { CoursesProps } from "../types/courses";
 import { CourseWatchContext } from "../contexts/CourseWatchContext";
+import { LuLoader2 } from "react-icons/lu";
 
 const CoursesPage = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -60,7 +61,15 @@ const CoursesPage = () => {
   };
 
   if (isFetching) {
-    return <Progress size="xs" colorScheme="primary" isIndeterminate />;
+    return (
+      <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
+        <Progress size="xs" colorScheme="primary" isIndeterminate w="full" top={0} position="absolute" />
+        <LuLoader2
+          className="skeleton"
+          size={40}
+        />
+      </HStack>
+    );
   }
 
   return (
