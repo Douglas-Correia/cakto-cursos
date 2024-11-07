@@ -64,8 +64,8 @@ export function Comments({
             color="white"
         >
             {/* Comentário Principal */}
-            <Flex w="100%" alignItems="center">
-                <Avatar size="md" bg="black" color="white" name="DD" src={comments?.usuarioPhotoProfile} mr={3} />
+            <Flex w="100%">
+                <Avatar size="md" bg="black" color="white" name={comments?.usuarioName} src={comments?.usuarioPhotoProfile} mr={3} />
                 <VStack spacing={1} align="start" w="full">
                     <Text fontWeight="bold" color="white">{comments?.usuarioName}</Text>
                     <Text fontSize="sm" color="gray.300" mt={1}>
@@ -96,8 +96,8 @@ export function Comments({
                     justifyContent="space-between"
                     color="white"
                 >
-                    <Flex w="100%" alignItems="center">
-                        <Avatar size="sm" bg="gray.700" color="white" name="AB" src={subcomment?.usuarioPhotoProfile} mr={3} />
+                    <Flex w="100%">
+                        <Avatar size="sm" color="white" name={subcomment?.usuarioName} src={subcomment?.usuarioPhotoProfile} mr={3} />
                         <VStack spacing={1} align="start" w="full">
                             <Text fontWeight="bold" fontSize="sm" color="white">{subcomment?.usuarioName}</Text>
                             <Text fontSize="xs" color="gray.300" mt={1}>

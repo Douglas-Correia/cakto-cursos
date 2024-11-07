@@ -95,6 +95,11 @@ export default function CourseWatch() {
         setValueRating(courseWatchIds?.notaClasse);
     }, [courseWatchIds?.notaClasse]);
 
+    useEffect(() => {
+        const interval = setInterval(fetchAllCommentsByClass, 10000 * 2);
+        return () => clearInterval(interval);
+    }, []);
+
     const fetchAllCommentsByClass = async () => {
         try {
             const response = await api.get(`/user/getAllComentarios/${courseWatchIds?.classeId}`);
