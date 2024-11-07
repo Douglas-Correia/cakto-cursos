@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Container, Flex, HStack, Progress, Stack, Text } from "@chakra-ui/react";
+import { Button, ButtonGroup, Container, Flex, HStack, Input, Progress, Stack, Text, Textarea } from "@chakra-ui/react";
 import { FaArrowLeft } from "react-icons/fa";
 import { FiArrowLeft, FiArrowRight } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -15,6 +15,15 @@ import { CourseWatchContext, WatchIdsProps } from "../contexts/CourseWatchContex
 import { toast, ToastContainer } from "react-toastify";
 import { LoaderSpin } from "../components/loaderSpin";
 import { Comments } from "../components/comments";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserStorage } from "../types/userStorage";
+import { CommentsType } from "../types/comments";
+
+const formSchema = z.object({
+    textarea: z.string(),
+});
 
 export default function CourseWatch() {
     const [isFetching, setIsFetching] = useState(false);
@@ -22,14 +31,15 @@ export default function CourseWatch() {
     const [showDescription, setShowDescription] = useState(true);
     const [showMaterial, setShowMaterial] = useState(false);
     const [classesData, setClassesData] = useState<ClassesProps[]>([]);
+    const [commentsData, setCommentsData] = useState<CommentsType[]>([]);
     const [moduleSelected, setModuleSelected] = useState<ModuleSingleProps | null>(null);
     const [quantityClasses, setQuantityClasses] = useState(0);
     const [urlVideo, setUrlVideo] = useState<string | undefined>('');
     const [valueRating, setValueRating] = useState<number | undefined>(0);
     const [widthWatchStepper, setWidthWatchStepper] = useState('27%');
     const navigate = useNavigate();
-    const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
     const [withScreen, setWidthScreen] = useState(window.innerWidth);
+    const userStorage: UserStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
     const userId = userStorage?.id;
     const context = useContext(CourseWatchContext);
     if (!context) {
@@ -75,7 +85,8 @@ export default function CourseWatch() {
         const getAllPromise = async () => {
             await getAllClassesByModuleByUser();
             await getAllModuleByUser();
-            setIsFetching(false);
+            await fetchAllCommentsByClass(),
+                setIsFetching(false);
         }
         getAllPromise();
     }, []);
@@ -83,6 +94,17 @@ export default function CourseWatch() {
     useEffect(() => {
         setValueRating(courseWatchIds?.notaClasse);
     }, [courseWatchIds?.notaClasse]);
+
+    const fetchAllCommentsByClass = async () => {
+        try {
+            const response = await api.get(`/user/getAllComentarios/${courseWatchIds?.classeId}`);
+            if (response.data) {
+                setCommentsData(response.data);
+            }
+        } catch (error: any) {
+            console.log(error);
+        }
+    }
 
     const getAllClassesByModuleByUser = async () => {
         try {
@@ -204,6 +226,32 @@ export default function CourseWatch() {
         }
     }
 
+    const {
+        register,
+        handleSubmit,
+        reset,
+    } = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            textarea: '',
+        }
+    })
+
+    const onSubmitComments = async (values: z.infer<typeof formSchema>) => {
+        reset();
+        try {
+            const response = await api.post(`/user/createComentarioAula/${courseWatchIds?.classeId}`, {
+                usuarioId: userId,
+                comentario: values?.textarea,
+            });
+            if (response.data) {
+                await fetchAllCommentsByClass();
+            }
+        } catch (error: any) {
+            console.log(error);
+        }
+    }
+
     const handleChangeWidthStepper = (width: string) => {
         setWidthWatchStepper(width);
     }
@@ -216,9 +264,9 @@ export default function CourseWatch() {
         <HStack
             position={{ base: 'absolute', lg: 'static' }}
             overflow="hidden"
-            style={{scrollbarWidth: 'none'}}
+            style={{ scrollbarWidth: 'none' }}
         >
-            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6} overflowY="auto" style={{scrollbarWidth: 'none'}}>
+            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6} overflowY="auto" style={{ scrollbarWidth: 'none' }}>
                 <ToastContainer theme="dark" />
                 <Stack
                     w="full"
@@ -351,10 +399,21 @@ export default function CourseWatch() {
                                         <Text color="#919EAB">
                                             {courseWatchIds?.description}
                                         </Text>
-
-                                        <HStack flexDirection="column">
-                                            {Array.from({ length: 10 }, (_, index) => (
-                                                <Comments key={index} />
+                                        <Flex flexDirection="column" width="full" gap={3}>
+                                            <Text>Escrever comentário</Text>
+                                            <form onSubmit={handleSubmit(onSubmitComments)}>
+                                                <Input {...register('textarea')} py={8} />
+                                                <button type="submit" style={{ opacity: 0 }}></button>
+                                            </form>
+                                        </Flex>
+                                        <HStack w="full" flexDirection="column">
+                                            {commentsData?.map((comments, index) => (
+                                                <Comments
+                                                    key={index}
+                                                    comentarioId={comments?.id}
+                                                    fetchAllCommentsByClass={fetchAllCommentsByClass}
+                                                    comments={comments}
+                                                />
                                             ))}
                                         </HStack>
                                     </HStack>

@@ -11,3 +11,18 @@
 .see-content {
     transition: all ease-in-out 0.2s;
 }
+
+@keyframes anim-image-banner {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.image-banner.animate {
+    animation: anim-image-banner 1s ease-in-out forwards;
+    position: relative;
+}

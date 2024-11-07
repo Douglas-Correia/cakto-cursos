@@ -63,14 +63,24 @@ const CoursePage = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setIndex((prevIndex) => {
-        const newIndex = (prevIndex + 1) % totalBanners; // Avança o índice e retorna ao 0 quando chega ao final
-        setCurrentBanner(bannerCourse[newIndex]); // Atualiza o banner atual
+        const newIndex = (prevIndex + 1) % totalBanners;
+        setCurrentBanner(bannerCourse[newIndex]);
         return newIndex;
       });
     }, 15000);
 
-    return () => clearInterval(intervalId); // Limpa o intervalo ao desmontar
+    return () => clearInterval(intervalId);
   }, [bannerCourse, totalBanners]);
+
+  // Trigger animation reset by updating class
+  useEffect(() => {
+    const image = document.querySelector('.image-banner') as HTMLImageElement;
+    if (image) {
+      image.classList.remove('animate');
+      void image.offsetWidth; // Trigger reflow to restart animation
+      image.classList.add('animate');
+    }
+  }, [currentBanner]);
 
   useEffect(() => {
     setIsFetching(true);
@@ -153,7 +163,9 @@ const CoursePage = () => {
           h="full"
           objectFit="fill"
           mt={-20}
+          className="image-banner"
         />
+
         <Header
           title={currentBanner?.titulo}
           description={currentBanner?.descricao}

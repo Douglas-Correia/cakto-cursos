@@ -27,17 +27,17 @@ import { FaArrowLeft } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
-  title: string | undefined;
-  description: string | undefined;
-  totalBanners: number;
-  indexCurrent: number;
+  title?: string | undefined;
+  description?: string | undefined;
+  totalBanners?: number;
+  indexCurrent?: number;
 }
 
 const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps) => {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
+  const [courseWatch, setCourseWatch] = useState(false);
   const navigate = useNavigate();
   const location = useLocation(); // Captura o objeto de localização
-  const [courseWatch, setCourseWatch] = useState(false);
   const context = useContext(CourseWatchContext);
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;
@@ -67,8 +67,10 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
 
   const quantityBanners = () => {
     let quantity = 0;
-    for (let i = 0; i < totalBanners; i++) {
-      quantity += quantity + i;
+    if (totalBanners !== undefined) {
+      for (let i = 0; i < totalBanners; i++) {
+        quantity += quantity + i;
+      }
     }
 
     return Array.from({ length: quantity }, (_, index) => (
@@ -85,9 +87,9 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
   return (
     <Box
       width="full"
-      position="absolute"
+      position={courseWatch ? 'relative' : 'absolute'}
       top={0}
-      px={{ base: 4, lg: 8 }}
+      px={{ base: 4, lg: courseWatch ? 0 : 8 }}
       pr={{ base: 0, lg: 24 }}
     >
       <Flex
@@ -212,7 +214,7 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
           flexDirection="column"
           gap={6}
           mt={{ base: 1, md: 4 }}
-          mr={{ base: 0, md: -20 }}
+          mr={{ base: 0, md: -40 }}
           position={{ base: 'absolute', md: 'static' }}
           right={{ base: 4, md: 4 }}
         >
