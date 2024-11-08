@@ -84,8 +84,9 @@ export function Comments({
             </Flex>
 
             {/* Subcomentários */}
-            {comments?.respostaComentarioAulas.map((subcomment) => (
+            {comments?.respostaComentarioAulas.map((subcomment, index) => (
                 <Box
+                    key={index}
                     bg="#2b343e"
                     p={3}
                     mt={2}

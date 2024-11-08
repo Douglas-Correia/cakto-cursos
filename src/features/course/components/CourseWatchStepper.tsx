@@ -49,7 +49,7 @@ const CourseWatchStepper = ({
       courseId: courseWatchIds?.courseId,
       moduloId: courseWatchIds?.moduloId,
       classeId: classeId,
-      urlVideo: courseWatchIds?.urlVideo,
+      urlVideo: classeUrlVideo,
       assistida: classeCurrent?.assistida,
       notaClasse: classeCurrent?.notaAula,
       description: courseWatchIds?.description,

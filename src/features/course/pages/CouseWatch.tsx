@@ -264,15 +264,15 @@ export default function CourseWatch() {
 
     if (isFetching) {
         return (
-          <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
-            <Progress size="xs" colorScheme="primary" isIndeterminate w="full" top={0} position="absolute" />
-            <LuLoader2
-              className="skeleton"
-              size={40}
-            />
-          </HStack>
+            <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
+                <Progress size="xs" colorScheme="primary" isIndeterminate w="full" top={0} position="absolute" />
+                <LuLoader2
+                    className="skeleton"
+                    size={40}
+                />
+            </HStack>
         );
-      }
+    }
 
     return (
         <HStack
@@ -280,7 +280,7 @@ export default function CourseWatch() {
             overflow="hidden"
             style={{ scrollbarWidth: 'none' }}
         >
-            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6} overflowY="auto" style={{ scrollbarWidth: 'none' }}>
+            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6} overflowY="auto"  overflowX="hidden" style={{ scrollbarWidth: 'none' }}>
                 <ToastContainer theme="dark" />
                 <Stack
                     w="full"
@@ -296,7 +296,7 @@ export default function CourseWatch() {
                         alignItems="start"
                         mb={3}
                         mt={{
-                            base: 30,
+                            base: -20,
                             md: 20,
                         }}
                         gap={6}
@@ -314,7 +314,7 @@ export default function CourseWatch() {
                     >
                         <Flex flexDirection="column" w="full" mt={{ base: 28, md: 0 }}>
                             <Flex w="full" justifyContent="space-between" mb={3}>
-                                <HStack zIndex={999} as={Link} to={`/courses`} fontWeight="semibold">
+                                <HStack as={Link} to={`/courses`} fontWeight="semibold">
                                     <FaArrowLeft fontSize={22} />
                                     <Text fontSize={18}>Voltar</Text>
                                 </HStack>

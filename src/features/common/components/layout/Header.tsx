@@ -87,10 +87,11 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
   return (
     <Box
       width="full"
-      position={courseWatch ? 'relative' : 'absolute'}
+      position={courseWatch ? 'static' : 'absolute'}
       top={0}
       px={{ base: 4, lg: courseWatch ? 0 : 8 }}
       pr={{ base: 0, lg: 24 }}
+      style={{zIndex: 999}}
     >
       <Flex
         justifyContent="space-between"
@@ -216,9 +217,9 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
           mt={{ base: 1, md: 4 }}
           mr={{ base: 0, md: -40 }}
           position={{ base: 'absolute', md: 'static' }}
-          right={{ base: 4, md: 4 }}
+          right={{ base: 0, md: 4 }}
         >
-          <HStack mr={6} spacing={{ base: 4, md: 6 }}>
+          <HStack mr={{base: 0, lg: 6}} spacing={{ base: 4, md: 6 }}>
             {/* <ToggleThemeButton /> */}
             <Menu>
               <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
