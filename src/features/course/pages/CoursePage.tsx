@@ -34,7 +34,7 @@ const CoursePage = () => {
   const [lastClasses, setLastClasses] = useState<LastClasse[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [index, setIndex] = useState(0);
-  const [currentBanner, setCurrentBanner] = useState<BannerCourse | null>(null)
+  const [currentBanner, setCurrentBanner] = useState<BannerCourse | null>(null);
 
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
   const swiperRefContinue = useRef<any | null>(null);
@@ -117,7 +117,7 @@ const CoursePage = () => {
 
     const fetchGetLastAulas = async () => {
       try {
-        const responseLastClasses = await api.get(`/user/getLastAulasWithModulosByUser/${userId}/${courseId}`);
+        const responseLastClasses = await api.get(`/user/getLastAulasWithModulosByUser/${courseId}`);
         if (responseLastClasses.data) {
           setLastClasses(responseLastClasses.data);
         }
@@ -243,13 +243,13 @@ const CoursePage = () => {
                             if (courseId) {
                               const formattedCoursesIds: WatchIdsProps = {
                                 courseId: courseId,
-                                moduloId: courseWatchIds?.moduloId,
+                                moduloId: lesson?.moduloId,
                                 classeId: lesson?.id,
-                                description: courseWatchIds?.description,
-                                urlVideo: courseWatchIds?.urlVideo,
-                                assistida: courseWatchIds?.assistida,
-                                notaClasse: courseWatchIds?.notaClasse,
-                                logoCurso: courseWatchIds?.logoCurso,
+                                description: lesson?.description,
+                                urlVideo: lesson?.urlVideo,
+                                assistida: lesson?.aulaAssistidaEm,
+                                notaClasse: lesson?.notaAula,
+                                logoCurso: lesson?.logoCurso,
                               }
                               handleGetCourseWatchIds(formattedCoursesIds);
                               navigate('/courses/watch');
@@ -279,7 +279,7 @@ const CoursePage = () => {
                               p="4"
                             >
                               <Text fontWeight="bold" fontSize="md" mb="2">
-                                {lesson?.ModuloNome}
+                                {lesson?.moduloNome}
                               </Text>
                               <Text fontWeight="bold" fontSize="md" mb="2">
                                 {lesson?.nomeAula}

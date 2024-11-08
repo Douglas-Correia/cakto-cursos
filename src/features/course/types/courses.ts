@@ -53,8 +53,14 @@ export interface LastClasse {
   id: string;
   nomeAula: string;
   thumbnail: string;
-  ModuloNome: string;
-  aulaAssistidaEm: string;
+  logoCurso: string;
+  moduloNome: string;
+  moduloId: string;
+  description: string;
+  notaAula: number;
+  notaUser: number;
+  aulaAssistidaEm: boolean;
+  urlVideo: string;
 }
 
 export interface ModuleSingleProps {

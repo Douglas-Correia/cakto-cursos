@@ -10,8 +10,10 @@ import { LuLoader2 } from "react-icons/lu";
 
 const CoursesPage = () => {
   const [isFetching, setIsFetching] = useState(false);
-  const [coursesByUser, setCourses] = useState<CoursesProps[]>([]);
+  const [coursesByUser, setCoursesByUser] = useState<CoursesProps[]>([]);
+  const [filteredCourses, setFilteredCourses] = useState<CoursesProps[]>([]);
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
+  const [search, setSearch] = useState('')
   const context = useContext(CourseWatchContext);
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;
@@ -28,18 +30,7 @@ const CoursesPage = () => {
       try {
         const response = await api.get(`/user/getAllCursosByUser/${userId}`);
         if (response) {
-          // const data: WatchIdsProps = {
-          //   assistida: undefined,
-          //   classeId: undefined,
-          //   courseId: undefined,
-          //   description: undefined,
-          //   logoCurso: response.data.logoCurso,
-          //   moduloId: undefined,
-          //   notaClasse: undefined,
-          //   urlVideo: undefined,
-          // }
-          // handleGetCourseWatchIds(data);
-          setCourses(response.data);
+          setCoursesByUser(response.data);
         }
       } catch (error: any) {
         console.log(error);
@@ -51,6 +42,19 @@ const CoursesPage = () => {
     }
     handleChamarAllPromise();
   }, []);
+
+  useEffect(() => {
+    if (!search) {
+      // Se não houver busca, mostre todos os cursos
+      setFilteredCourses(coursesByUser);
+    } else {
+      // Filtra os cursos com base no valor de search
+      const coursesFiltered = coursesByUser.filter((course) =>
+        course?.nome.toLowerCase().includes(search.toLowerCase())
+      );
+      setFilteredCourses(coursesFiltered);
+    }
+  }, [search, coursesByUser]);
 
   const mouseEnter = (index: number) => {
     setIndexModulo(index);
@@ -118,6 +122,8 @@ const CoursesPage = () => {
                 borderColor="#919EAB33"
                 focusBorderColor="#919EAB33"
                 _focus={{ boxShadow: 'none' }}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
               <InputRightElement
                 py={7}
@@ -133,7 +139,7 @@ const CoursesPage = () => {
             gap={10}
             pb={16}
           >
-            {coursesByUser?.map((course, index) => (
+            {search === '' ? coursesByUser?.map((course, index) => (
               <BoxCourses
                 key={index}
                 img={course?.logoCurso}
@@ -156,7 +162,32 @@ const CoursesPage = () => {
                   handleGetBannerCourseSelected(course?.bannerCurso);
                 }}
               />
-            ))}
+            )) : (
+              filteredCourses?.map((course, index) => (
+                <BoxCourses
+                  key={index}
+                  img={course?.logoCurso}
+                  index={index}
+                  indexModulo={indexModulo}
+                  mouseEnter={() => {
+                    mouseEnter(index);
+                  }}
+                  mouseLeave={mouseLeave}
+                  name={course?.nome}
+                  textBtn="Acessar conteúdo"
+                  courseId={course.id}
+                  onClick={() => {
+                    const couseFormatted = {
+                      id: course.id,
+                      memberAt: course.memberAt,
+                      nome: course.nome
+                    }
+                    handleGetCourseSelected(couseFormatted);
+                    handleGetBannerCourseSelected(course?.bannerCurso);
+                  }}
+                />
+              ))
+            )}
           </Flex>
         </Flex>
         {/* FIM CURSOS */}
