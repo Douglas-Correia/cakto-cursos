@@ -8,7 +8,7 @@ import { useContext, useEffect, useState } from "react";
 import { Materials } from "../components/Materials";
 import CourseWatchStepper from "../components/CourseWatchStepper";
 import Header from "@/features/common/components/layout/Header";
-import LessonRating from "../components/LessonRating";
+import StarRatings from 'react-star-ratings';
 import { api } from "../services/axios";
 import { ClassesProps, ModuleSingleProps } from "../types/courses";
 import { CourseWatchContext, WatchIdsProps } from "../contexts/CourseWatchContext";
@@ -377,10 +377,15 @@ export default function CourseWatch() {
                                             <Text fontSize={28}>Nome da aula</Text>
                                         </Flex>
                                         <HStack>
-                                            <LessonRating
-                                                fontSize="sm"
-                                                defaultRating={valueRating || 0}
-                                                onChange={(rating) => { setValueRating(rating) }}
+                                            <StarRatings
+                                                rating={valueRating}
+                                                starRatedColor={colorPrimary}
+                                                starEmptyColor="white"
+                                                starHoverColor={colorPrimary}
+                                                changeRating={(newRating) => setValueRating(newRating)}
+                                                numberOfStars={5}
+                                                name="rating"
+                                                starDimension="16px"
                                             />
                                             <Button
                                                 rounded="full"
@@ -404,7 +409,7 @@ export default function CourseWatch() {
                                         rounded="none"
                                         _hover={{ backgroundColor: 'transparent' }}
                                         borderBottomWidth={2}
-                                        borderBottomColor={`${showDescription && '#32a274'}`}
+                                        borderBottomColor={`${showDescription && colorPrimary}`}
                                         onClick={() => handleDescriptionOrMaterial(true, false)}
                                     >
                                         Descrição
@@ -415,7 +420,7 @@ export default function CourseWatch() {
                                         rounded="none"
                                         _hover={{ backgroundColor: 'transparent' }}
                                         borderBottomWidth={2}
-                                        borderBottomColor={`${showMaterial && '#32a274'}`}
+                                        borderBottomColor={`${showMaterial && colorPrimary}`}
                                         onClick={() => handleDescriptionOrMaterial(false, true)}
                                     >
                                         Materiais
