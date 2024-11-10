@@ -37,16 +37,12 @@ interface HeaderProps {
 const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps) => {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const [courseWatch, setCourseWatch] = useState(false);
-  const [nameParams, setnameParams] = useState({
-    name: '',
-    courseId: '',
-  })
   const navigate = useNavigate();
   const location = useLocation(); // Captura o objeto de localização
   const context = useContext(CourseWatchContext);
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;
-  const { name, courseId } = useParams();
+  const { name } = useParams();
 
   useEffect(() => {
     // Verifica se a URL contém "/watch"
@@ -54,12 +50,6 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
       setCourseWatch(true);
     } else {
       setCourseWatch(false);
-    }
-    if (name && courseId) {
-      setnameParams({
-        name,
-        courseId,
-      })
     }
   }, [location.pathname]);
 
