@@ -1,4 +1,5 @@
 import { CourseWatchContext } from '@/features/course/contexts/CourseWatchContext';
+import { useCourseProgress } from '@/features/course/hooks/UseCourseProgress';
 import { api } from '@/features/course/services/axios';
 import { GetUserProps } from '@/features/course/types/userStorage';
 import { SearchIcon } from '@chakra-ui/icons';
@@ -24,7 +25,7 @@ import {
 } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 interface HeaderProps {
   title?: string | undefined;
@@ -36,11 +37,16 @@ interface HeaderProps {
 const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps) => {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const [courseWatch, setCourseWatch] = useState(false);
+  const [nameParams, setnameParams] = useState({
+    name: '',
+    courseId: '',
+  })
   const navigate = useNavigate();
   const location = useLocation(); // Captura o objeto de localização
   const context = useContext(CourseWatchContext);
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;
+  const { name, courseId } = useParams();
 
   useEffect(() => {
     // Verifica se a URL contém "/watch"
@@ -48,6 +54,12 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
       setCourseWatch(true);
     } else {
       setCourseWatch(false);
+    }
+    if (name && courseId) {
+      setnameParams({
+        name,
+        courseId,
+      })
     }
   }, [location.pathname]);
 
@@ -82,7 +94,8 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
     throw new Error('Context is not defined.')
   }
 
-  const { bannerCourse } = context;
+  const { bannerCourse, courseSelected, courseWatchIds } = context;
+  const { colorPrimary } = useCourseProgress();
 
   return (
     <Box
@@ -91,7 +104,7 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
       top={0}
       px={{ base: 4, lg: courseWatch ? 0 : 8 }}
       pr={{ base: 0, lg: 24 }}
-      style={{zIndex: 999}}
+      style={{ zIndex: 999 }}
     >
       <Flex
         justifyContent="space-between"
@@ -198,13 +211,13 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
           top={4}
           left={{ base: 0, lg: 6 }}
         >
-          <Text fontSize="lg" fontWeight="thin" color="gray.100" borderBottom="2px" borderColor="green">
+          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100" borderBottom={name !== undefined ? "2px" : "0"} borderColor={name !== undefined ? colorPrimary : ''} onClick={() => navigate(`/courses/${courseSelected?.nome}/${courseWatchIds?.courseId}`)}>
             Início
           </Text>
-          <Text fontSize="lg" fontWeight="thin" color="gray.100">
+          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100">
             Comunidade
           </Text>
-          <Text fontSize="lg" fontWeight="thin" color="gray.100">
+          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100">
             Links
           </Text>
         </Flex>
@@ -219,7 +232,7 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
           position={{ base: 'absolute', md: 'static' }}
           right={{ base: 0, md: 4 }}
         >
-          <HStack mr={{base: 0, lg: 6}} spacing={{ base: 4, md: 6 }}>
+          <HStack mr={{ base: 0, lg: 6 }} spacing={{ base: 4, md: 6 }}>
             {/* <ToggleThemeButton /> */}
             <Menu>
               <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>

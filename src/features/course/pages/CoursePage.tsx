@@ -27,6 +27,7 @@ import { BannerCourse, ClassesProps, LastClasse, ModulesProps } from '../types/c
 import Header from '@/features/common/components/layout/Header';
 import { CourseWatchContext, WatchIdsProps } from '../contexts/CourseWatchContext';
 import { LuLoader2 } from 'react-icons/lu';
+import { GetUserProps } from '../types/userStorage';
 
 const CoursePage = () => {
   const [course, setCourse] = useState<ClassesProps[]>([]);
@@ -39,12 +40,12 @@ const CoursePage = () => {
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
   const swiperRefContinue = useRef<any | null>(null);
   const swiperRefModulos = useRef<any | null>(null);
-  const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
+  const userStorage: GetUserProps = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const navigate = useNavigate();
   const userId = userStorage?.id;
   const { name, courseId } = useParams();
 
-  const { color, progress } = useCourseProgress();
+  const { colorPrimary, progress } = useCourseProgress();
   const context = useContext(CourseWatchContext);
 
   if (!context) {
@@ -145,9 +146,20 @@ const CoursePage = () => {
   if (isFetching) {
     return (
       <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
-        <Progress size="xs" colorScheme="primary" isIndeterminate w="full" top={0} position="absolute" />
+        <Progress
+          size="xs"
+          sx={{
+            '& > div': {
+              backgroundColor: colorPrimary,
+            },
+          }}
+          isIndeterminate
+          w="full"
+          top={0} position="absolute"
+        />
         <LuLoader2
           className="skeleton"
+          color={colorPrimary}
           size={40}
         />
       </HStack>
@@ -286,7 +298,11 @@ const CoursePage = () => {
                               </Text>
                               <Progress
                                 value={25}
-                                colorScheme={color}
+                                sx={{
+                                  '& > div': {
+                                    backgroundColor: colorPrimary,
+                                  },
+                                }}
                                 height="6px"
                                 borderRadius="6px"
                                 width="100%"
@@ -337,10 +353,14 @@ const CoursePage = () => {
                       </Box>
                     </Flex>
                     <Box>
-                      <Text>75% do módulo concluido</Text>
+                      <Text>{lesson?.porcentagemAssistida}% do módulo concluido</Text>
                       <Progress
-                        value={75}
-                        colorScheme={color}
+                        value={lesson?.porcentagemAssistida}
+                        sx={{
+                          '& > div': {
+                            backgroundColor: colorPrimary,
+                          },
+                        }}
                         height="6px"
                         borderRadius="6px"
                         width="100%"
@@ -436,7 +456,7 @@ const CoursePage = () => {
                                 <Badge
                                   variant="solid"
                                   style={{ backgroundColor: '#212B36' }}
-                                  color={color}
+                                  color={colorPrimary}
                                   position="absolute"
                                   top="10px"
                                   right="10px"
@@ -468,7 +488,11 @@ const CoursePage = () => {
                                   </Text>
                                   <Progress
                                     value={index * 20}
-                                    colorScheme={color}
+                                    sx={{
+                                      '& > div': {
+                                        backgroundColor: colorPrimary,
+                                      },
+                                    }}
                                     height="6px"
                                     borderRadius="6px"
                                     width="100%"
@@ -498,7 +522,7 @@ const CoursePage = () => {
                                         w="100%"
                                         h="40px"
                                         borderRadius="6"
-                                        bg="green.500"
+                                        bg={colorPrimary}
                                         color="white"
                                         fontSize={17}
                                         fontWeight="bold"

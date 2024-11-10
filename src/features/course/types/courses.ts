@@ -33,6 +33,7 @@ export interface ModulesProps {
       id: string;
       nome: string;
       capa: string;
+      porcentagemAssistida: number;
     }
   ]
 }
@@ -68,4 +69,5 @@ export interface ModuleSingleProps {
   id: string;
   nome: string;
   capa: string;
+  porcentagemAssistida: number;
 }

@@ -21,6 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { UserStorage } from "../types/userStorage";
 import { CommentsType } from "../types/comments";
 import { LuLoader2 } from "react-icons/lu";
+import { useCourseProgress } from "../hooks/UseCourseProgress";
 
 const formSchema = z.object({
     textarea: z.string(),
@@ -47,7 +48,7 @@ export default function CourseWatch() {
         throw new Error('useCourseWatch must be used within a CourseWatchProvider');
     }
 
-    const { courseWatchIds, handleGetCourseWatchIds } = context;
+    const { courseWatchIds, handleGetCourseWatchIds, courseSelected } = context;
 
     useEffect(() => {
         if (courseWatchIds === null || courseWatchIds === undefined) {
@@ -262,12 +263,25 @@ export default function CourseWatch() {
         setWidthWatchStepper(width);
     }
 
+    const { colorPrimary } = useCourseProgress();
+
     if (isFetching) {
         return (
             <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
-                <Progress size="xs" colorScheme="primary" isIndeterminate w="full" top={0} position="absolute" />
+                <Progress
+                    size="xs"
+                    sx={{
+                        '& > div': {
+                            backgroundColor: colorPrimary,
+                        },
+                    }}
+                    isIndeterminate
+                    w="full"
+                    top={0} position="absolute"
+                />
                 <LuLoader2
                     className="skeleton"
+                    color={colorPrimary}
                     size={40}
                 />
             </HStack>
@@ -280,7 +294,7 @@ export default function CourseWatch() {
             overflow="hidden"
             style={{ scrollbarWidth: 'none' }}
         >
-            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6} overflowY="auto"  overflowX="hidden" style={{ scrollbarWidth: 'none' }}>
+            <Container maxW={{ base: '100%', lg: 'container.xxl' }} h="full" py={6} overflowY="auto" overflowX="hidden" style={{ scrollbarWidth: 'none' }}>
                 <ToastContainer theme="dark" />
                 <Stack
                     w="full"
@@ -314,7 +328,7 @@ export default function CourseWatch() {
                     >
                         <Flex flexDirection="column" w="full" mt={{ base: 28, md: 0 }}>
                             <Flex w="full" justifyContent="space-between" mb={3}>
-                                <HStack as={Link} to={`/courses`} fontWeight="semibold">
+                                <HStack as={Link} to={`/courses/${courseSelected?.nome}/${courseWatchIds?.courseId}`} fontWeight="semibold">
                                     <FaArrowLeft fontSize={22} />
                                     <Text fontSize={18}>Voltar</Text>
                                 </HStack>

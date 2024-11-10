@@ -1,5 +1,6 @@
 import { AspectRatio, Box, Card, Image, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { GetUserProps, UserStorage } from "../types/userStorage";
 interface BoxCoursesProps {
     mouseEnter: () => void;
     mouseLeave: () => void;
@@ -23,6 +24,7 @@ export function BoxCourses({
     courseId,
     onClick,
 }: BoxCoursesProps) {
+    const userStorage: GetUserProps = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
     const navigate = useNavigate();
     const handleAcessCourse = (courseId: string) => {
         navigate(`/courses/${name}/${courseId}`);
@@ -76,7 +78,7 @@ export function BoxCourses({
                                     w="100%"
                                     h="40px"
                                     borderRadius="6"
-                                    bg="green.500"
+                                    bg={userStorage?.coresSystemUsuario?.corPrimaria}
                                     color="white"
                                     fontSize={17}
                                     fontWeight="bold"

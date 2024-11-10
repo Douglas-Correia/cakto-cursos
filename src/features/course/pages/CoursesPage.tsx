@@ -7,6 +7,7 @@ import { BoxCourses } from "../components/box_courses";
 import { CoursesProps } from "../types/courses";
 import { CourseWatchContext } from "../contexts/CourseWatchContext";
 import { LuLoader2 } from "react-icons/lu";
+import { useCourseProgress } from "../hooks/UseCourseProgress";
 
 const CoursesPage = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -64,12 +65,24 @@ const CoursesPage = () => {
     setIndexModulo(null);
   };
 
+  const { colorPrimary } = useCourseProgress();
+
   if (isFetching) {
     return (
       <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
-        <Progress size="xs" colorScheme="primary" isIndeterminate w="full" top={0} position="absolute" />
+        <Progress
+          size="xs" sx={{
+            '& > div': {
+              backgroundColor: colorPrimary,
+            },
+          }}
+          isIndeterminate
+          w="full"
+          top={0} position="absolute"
+        />
         <LuLoader2
           className="skeleton"
+          color={colorPrimary}
           size={40}
         />
       </HStack>
@@ -180,7 +193,7 @@ const CoursesPage = () => {
                     const couseFormatted = {
                       id: course.id,
                       memberAt: course.memberAt,
-                      nome: course.nome
+                      nome: course.nome,
                     }
                     handleGetCourseSelected(couseFormatted);
                     handleGetBannerCourseSelected(course?.bannerCurso);
