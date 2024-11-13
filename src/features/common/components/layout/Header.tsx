@@ -263,7 +263,7 @@ const Header = ({
                     Página Inicial
                   </MenuItem>
                 </Stack>
-                <Stack pt={2}>
+                {/* <Stack pt={2}>
                   <MenuItem onClick={() => navigate('')} fontSize="sm">
                     Minha conta
                   </MenuItem>
@@ -277,7 +277,7 @@ const Header = ({
                   <MenuItem onClick={() => navigate('')} fontSize="sm">
                     Central de ajuda
                   </MenuItem>
-                </Stack>
+                </Stack> */}
                 <Divider borderStyle="dashed" />
                 <Stack pt={2}>
                   <MenuItem onClick={() => {
