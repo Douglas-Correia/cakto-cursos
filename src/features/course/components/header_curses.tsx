@@ -105,7 +105,7 @@ export function HeaderCurses() {
                   Página Inicial
                 </MenuItem>
               </Stack>
-              <Stack pt={2}>
+              {/* <Stack pt={2}>
                 <MenuItem onClick={() => navigate('')} fontSize="sm">
                   Minha conta
                 </MenuItem>
@@ -119,7 +119,7 @@ export function HeaderCurses() {
                 <MenuItem onClick={() => navigate('')} fontSize="sm">
                   Central de ajuda
                 </MenuItem>
-              </Stack>
+              </Stack> */}
               <Divider borderStyle="dashed" />
               <Stack pt={2}>
                 <MenuItem onClick={() => {
