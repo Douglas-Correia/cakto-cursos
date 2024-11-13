@@ -31,6 +31,7 @@ import { GetUserProps } from '../types/userStorage';
 
 const CoursePage = () => {
   const [course, setCourse] = useState<ClassesProps[]>([]);
+  const [search, setSearch] = useState('');
   const [modules, setModules] = useState<ModulesProps | null>(null);
   const [lastClasses, setLastClasses] = useState<LastClasse[]>([]);
   const [isFetching, setIsFetching] = useState(false);
@@ -44,6 +45,11 @@ const CoursePage = () => {
   const navigate = useNavigate();
   const userId = userStorage?.id;
   const { name, courseId } = useParams();
+
+  const debounceDelay = 500;
+  // Cache para restaurar as listas originais
+  const [initialModules, setInitialModules] = useState<ModulesProps | null>(null);
+  const [initialCourse, setInitialCourse] = useState<ClassesProps[]>([]);
 
   const { colorPrimary, progress } = useCourseProgress();
   const context = useContext(CourseWatchContext);
@@ -90,24 +96,25 @@ const CoursePage = () => {
     const fetchCourseData = async () => {
       try {
         const responseModules = await api.get(`/user/getAllModulosByUser/${userId}/${courseId}`);
-
         if (responseModules.data) {
-          setModules(responseModules.data[0]);
+          // Define initialModules apenas uma vez após carregar
+          const initialData = responseModules.data[0];
+          setInitialModules(initialData); // Guarda os módulos iniciais
+          setModules(initialData);
         }
 
-        // Exemplo de obtenção de aulas de um módulo específico
         if (responseModules.data[0].modulos.length) {
-          const allClasses: ClassesProps[] = [];  // Array para acumular todas as aulas
-          for (let i = 0; i <= responseModules.data[0].modulos.length; i++) {
+          const allClasses: ClassesProps[] = [];
+          for (let i = 0; i < responseModules.data[0].modulos.length; i++) {
             const moduleId = responseModules.data[0].modulos[i]?.id;
             if (moduleId !== undefined) {
               const responseClasses = await api.get(`/user/aulas/${moduleId}/${userId}`);
-              // Verifica se tem dados de aulas e adiciona ao array acumulador
               if (responseClasses.data !== undefined) {
                 allClasses.push(...responseClasses.data);
               }
             }
           }
+          setInitialCourse(allClasses); // Guarda as aulas iniciais
           setCourse(allClasses);
         }
 
@@ -123,17 +130,68 @@ const CoursePage = () => {
           setLastClasses(responseLastClasses.data);
         }
       } catch (error: any) {
-        console.log(error.response.data.message || error.response.data.error);
+        console.log(error.response?.data?.message || error.response?.data?.error);
+      } finally {
+        setIsFetching(false);
       }
-    }
+    };
 
     const handleChamarFuncs = async () => {
       await fetchCourseData();
       await fetchGetLastAulas();
-      setIsFetching(false);
-    }
+    };
+
     handleChamarFuncs();
   }, [userId, courseId]);
+
+  // Hook para buscar e restaurar dados com base na pesquisa
+  useEffect(() => {
+    const debounceTimer = setTimeout(() => {
+      if (search === '') {
+        // Restaura os valores iniciais quando a busca está vazia
+        setModules(initialModules);
+        setCourse(initialCourse);
+      } else {
+        // Filtra as aulas com base na pesquisa
+        const filteredClasses = initialCourse.filter(courseItem =>
+          courseItem.nome.toLowerCase().includes(search.toLowerCase())
+        );
+
+        // Cria um Set para armazenar os moduloId únicos das aulas encontradas
+        const moduleIdsSet = new Set(
+          filteredClasses.map(courseItem => courseItem.moduloId)
+        );
+
+        // Filtra os módulos com base nos moduloIds das aulas encontradas
+        let filteredModules = initialModules?.modulos.filter(module =>
+          moduleIdsSet.has(module.id)
+        );
+
+        // Caso não haja correspondência nas aulas, filtra os módulos pelo nome do módulo
+        if (filteredModules !== undefined && filteredModules.length === 0) {
+          filteredModules = initialModules?.modulos.filter(module =>
+            module.nome.toLowerCase().includes(search.toLowerCase())
+          );
+        }
+
+        // Cria a nova estrutura de módulos filtrados
+        const newModulesArr: ModulesProps = {
+          id: initialModules?.id || '',
+          nome: initialModules?.nome || '',
+          memberAt: initialModules?.memberAt || '',
+          modulos: filteredModules || [],
+        };
+
+        // Atualiza o estado com os dados filtrados
+        setModules(newModulesArr);
+        setCourse(filteredClasses);
+      }
+    }, debounceDelay);
+
+    console.log(modules)
+    console.log(course)
+    return () => clearTimeout(debounceTimer);
+  }, [search, initialModules, initialCourse, debounceDelay]);
 
   const mouseEnter = (index: number) => {
     setIndexModulo(index);
@@ -178,21 +236,30 @@ const CoursePage = () => {
         mb={10}
         position="relative"
       >
-        <Image
-          src={currentBanner?.image}
-          alt={currentBanner?.titulo}
-          w="full"
-          h="full"
-          objectFit="fill"
-          mt={-20}
-          className="image-banner"
-        />
+        {currentBanner !== null ? (
+          <Image
+            src={currentBanner?.image}
+            alt={currentBanner?.titulo}
+            w="full"
+            h="full"
+            objectFit="fill"
+            mt={-20}
+            className="image-banner"
+          />
+
+        ) : <LuLoader2
+          className="skeleton"
+          color={colorPrimary}
+          size={40}
+        />}
 
         <Header
           title={currentBanner?.titulo}
           description={currentBanner?.descricao}
           totalBanners={totalBanners}
           indexCurrent={index}
+          search={search}
+          setSearch={setSearch}
         />
       </Box>
 
@@ -382,13 +449,13 @@ const CoursePage = () => {
                         <Box as="button" p={1} borderRadius="full">
                           <ChevronLeftIcon
                             boxSize={7}
-                            onClick={() => swiperRefModulos.current?.slidePrev()}
+                            onClick={() => swiperRefModulos?.current?.slidePrev()}
                           />
                         </Box>
                         <Box as="button" p={1} borderRadius="full">
                           <ChevronRightIcon
                             boxSize={7}
-                            onClick={() => swiperRefModulos.current?.slideNext()}
+                            onClick={() => swiperRefModulos?.current?.slideNext()}
                           />
                         </Box>
                       </Flex>
@@ -462,10 +529,10 @@ const CoursePage = () => {
                                   right="10px"
                                   borderRadius={5}
                                 >
-                                  Aula {course.posicao}
+                                  Aula {course?.posicao}
                                 </Badge>
                                 <Image
-                                  src={course.thumbnail}
+                                  src={course?.thumbnail}
                                   alt={course?.nome}
                                   objectFit="cover"
                                   w="full"

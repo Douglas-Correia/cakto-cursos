@@ -1,7 +1,6 @@
 import App from "@/App";
 import moment from "moment";
 import "moment/dist/locale/pt-br";
-import React from "react";
 import ReactDOM from "react-dom/client";
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-toastify/dist/ReactToastify.min.css';
@@ -21,7 +20,7 @@ console.error = (...args) => {
 };
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  <>
     <App />
-  </React.StrictMode>
+  </>
 );

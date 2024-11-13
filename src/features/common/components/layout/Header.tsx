@@ -32,9 +32,18 @@ interface HeaderProps {
   description?: string | undefined;
   totalBanners?: number;
   indexCurrent?: number;
+  search?: string;
+  setSearch?: ((text: string) => void) | undefined;
 }
 
-const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps) => {
+const Header = ({
+  title,
+  description,
+  totalBanners,
+  indexCurrent,
+  search,
+  setSearch,
+}: HeaderProps) => {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const [courseWatch, setCourseWatch] = useState(false);
   const navigate = useNavigate();
@@ -84,7 +93,7 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
     throw new Error('Context is not defined.')
   }
 
-  const { bannerCourse, courseSelected, courseWatchIds } = context;
+  const { bannerCourse } = context;
   const { colorPrimary } = useCourseProgress();
 
   return (
@@ -201,7 +210,7 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
           top={4}
           left={{ base: 0, lg: 6 }}
         >
-          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100" borderBottom={name !== undefined ? "2px" : "0"} borderColor={name !== undefined ? colorPrimary : ''} onClick={() => navigate(`/courses/${courseSelected?.nome}/${courseWatchIds?.courseId}`)}>
+          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100" borderBottom={name !== undefined ? "2px" : "0"} borderColor={name !== undefined ? colorPrimary : ''} onClick={() => navigate(`/courses/`)}>
             Início
           </Text>
           <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100">
@@ -292,6 +301,8 @@ const Header = ({ title, description, totalBanners, indexCurrent }: HeaderProps)
                   border="none"
                   focusBorderColor="transparent"
                   _focus={{ boxShadow: 'none' }}
+                  value={search}
+                  onChange={(e) => setSearch?.(e.target.value) || ''}
                 />
               </InputGroup>
             </HStack>

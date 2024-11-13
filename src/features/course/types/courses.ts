@@ -27,15 +27,13 @@ export interface ModulesProps {
   id: string;
   nome: string;
   memberAt: string;
-  modulos: [
-    {
-      aulas: number;
-      id: string;
-      nome: string;
-      capa: string;
-      porcentagemAssistida: number;
-    }
-  ]
+  modulos: {
+    aulas: number;
+    id: string;
+    nome: string;
+    capa: string;
+    porcentagemAssistida: number;
+  }[]
 }
 export interface ClassesProps {
   id: string;

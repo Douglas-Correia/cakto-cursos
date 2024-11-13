@@ -1,6 +1,6 @@
 import { AspectRatio, Box, Card, Image, Text } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { GetUserProps, UserStorage } from "../types/userStorage";
+import { GetUserProps } from "../types/userStorage";
 interface BoxCoursesProps {
     mouseEnter: () => void;
     mouseLeave: () => void;
