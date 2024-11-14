@@ -34,6 +34,8 @@ interface HeaderProps {
   indexCurrent?: number;
   search?: string;
   setSearch?: ((text: string) => void) | undefined;
+  comunidade?: string;
+  links?: string;
 }
 
 const Header = ({
@@ -43,6 +45,8 @@ const Header = ({
   indexCurrent,
   search,
   setSearch,
+  comunidade,
+  links,
 }: HeaderProps) => {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
   const [courseWatch, setCourseWatch] = useState(false);
@@ -210,13 +214,21 @@ const Header = ({
           top={4}
           left={{ base: 0, lg: 6 }}
         >
-          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100" borderBottom={name !== undefined ? "2px" : "0"} borderColor={name !== undefined ? colorPrimary : ''} onClick={() => navigate(`/courses/`)}>
+          <Text
+            fontSize="lg"
+            cursor="pointer"
+            fontWeight="thin"
+            color="gray.100"
+            borderBottom={name !== undefined ? "2px" : "0"}
+            borderColor={name !== undefined ? colorPrimary : ''}
+            onClick={() => navigate(`/courses/`)}
+          >
             Início
           </Text>
-          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100">
+          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100" onClick={() => {window.open(comunidade)}}>
             Comunidade
           </Text>
-          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100">
+          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100" onClick={() => {window.open(links)}}>
             Links
           </Text>
         </Flex>

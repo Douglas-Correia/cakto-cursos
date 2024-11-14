@@ -34,7 +34,7 @@ export function BoxCourses({
         <Box w="364px" onClick={onClick}>
             <AspectRatio ratio={12 / 10}>
                 <Card
-                    rounded="2xl"
+                    rounded="xl"
                     overflow="hidden"
                     onMouseEnter={mouseEnter}
                     onMouseLeave={mouseLeave}
@@ -44,6 +44,7 @@ export function BoxCourses({
                         src={img}
                         alt={`Imagem ${name}`}
                         objectFit="cover"
+                        rounded="2xl"
                         w="full"
                         h="full"
                     />

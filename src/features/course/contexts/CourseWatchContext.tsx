@@ -7,6 +7,8 @@ export interface WatchIdsProps {
     classeId: string | undefined;
     description: string | undefined;
     urlVideo: string | undefined;
+    currentTime: string | undefined;
+    duration: string | undefined;
     thumbnail: string | undefined;
     assistida: boolean | undefined;
     notaClasse: number | undefined;

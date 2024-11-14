@@ -37,6 +37,8 @@ const CoursePage = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [index, setIndex] = useState(0);
   const [currentBanner, setCurrentBanner] = useState<BannerCourse | null>(null);
+  const [comunidade, setComunidade] = useState('');
+  const [links, setLinks] = useState('');
 
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
   const swiperRefContinue = useRef<any | null>(null);
@@ -51,7 +53,7 @@ const CoursePage = () => {
   const [initialModules, setInitialModules] = useState<ModulesProps | null>(null);
   const [initialCourse, setInitialCourse] = useState<ClassesProps[]>([]);
 
-  const { colorPrimary, progress } = useCourseProgress();
+  const { colorPrimary } = useCourseProgress();
   const context = useContext(CourseWatchContext);
 
   if (!context) {
@@ -95,11 +97,13 @@ const CoursePage = () => {
     setIsFetching(true);
     const fetchCourseData = async () => {
       try {
-        const responseModules = await api.get(`/user/getAllModulosByUser/${userId}/${courseId}`);
+        const responseModules = await api.get(`/user/getAllModulosByUser/${courseId}`);
         if (responseModules.data) {
           // Define initialModules apenas uma vez após carregar
-          const initialData = responseModules.data[0];
+          const initialData: ModulesProps = responseModules.data[0];
           setInitialModules(initialData); // Guarda os módulos iniciais
+          setComunidade(initialData?.comunidade);
+          setLinks(initialData?.links);
           setModules(initialData);
         }
 
@@ -179,10 +183,14 @@ const CoursePage = () => {
           id: initialModules?.id || '',
           nome: initialModules?.nome || '',
           memberAt: initialModules?.memberAt || '',
+          comunidade: initialModules?.comunidade || '',
+          links: initialModules?.links || '',
           modulos: filteredModules || [],
         };
 
         // Atualiza o estado com os dados filtrados
+        setLinks(newModulesArr?.links);
+        setComunidade(newModulesArr?.comunidade);
         setModules(newModulesArr);
         setCourse(filteredClasses);
       }
@@ -260,6 +268,8 @@ const CoursePage = () => {
           indexCurrent={index}
           search={search}
           setSearch={setSearch}
+          comunidade={comunidade}
+          links={links}
         />
       </Box>
 
@@ -325,6 +335,8 @@ const CoursePage = () => {
                                 moduloId: lesson?.moduloId,
                                 classeId: lesson?.id,
                                 description: lesson?.description,
+                                currentTime: lesson?.currentTime,
+                                duration: lesson?.duration,
                                 urlVideo: lesson?.urlVideo,
                                 thumbnail: lesson?.thumbnail,
                                 assistida: lesson?.aulaAssistidaEm,
@@ -348,7 +360,6 @@ const CoursePage = () => {
                               />
                             </Box>
 
-
                             <Box
                               flex="1"
                               bg="#212B36"
@@ -365,7 +376,7 @@ const CoursePage = () => {
                                 {lesson?.nomeAula}
                               </Text>
                               <Progress
-                                value={25}
+                                value={Number(lesson?.currentTime) || 0}
                                 sx={{
                                   '& > div': {
                                     backgroundColor: colorPrimary,
@@ -384,7 +395,7 @@ const CoursePage = () => {
                                   fontFamily="mono"
                                   color="white"
                                 >
-                                  {progress}
+                                  {lesson?.currentTime || 0}
                                 </Box>
                               </Progress>
                             </Box>
@@ -442,7 +453,7 @@ const CoursePage = () => {
                           fontFamily="mono"
                           color="white"
                         >
-                          {progress}
+                          {lesson?.porcentagemAssistida}
                         </Box>
                       </Progress>
                       {/* Botões de navegação */}
@@ -505,12 +516,14 @@ const CoursePage = () => {
                                   if (courseId) {
                                     const formattedCoursesIds: WatchIdsProps = {
                                       courseId: courseId,
-                                      moduloId: course.moduloId,
-                                      classeId: course.id,
-                                      description: course.descricao,
-                                      urlVideo: course.urlVideo,
+                                      moduloId: course?.moduloId,
+                                      classeId: course?.id,
+                                      description: course?.descricao,
+                                      currentTime: course?.currentTime,
+                                      duration: course?.duration,
+                                      urlVideo: course?.urlVideo,
                                       thumbnail: course?.thumbnail,
-                                      assistida: course.assistida,
+                                      assistida: course?.assistida,
                                       notaClasse: course?.notaAula,
                                       logoCurso: courseWatchIds?.logoCurso,
                                     }
@@ -556,7 +569,7 @@ const CoursePage = () => {
                                     {course?.nome}
                                   </Text>
                                   <Progress
-                                    value={index * 20}
+                                    value={Number(course?.currentTime) || 0}
                                     sx={{
                                       '& > div': {
                                         backgroundColor: colorPrimary,
@@ -575,7 +588,7 @@ const CoursePage = () => {
                                       fontFamily="mono"
                                       color="white"
                                     >
-                                      {index * 20}
+                                      {Number(course?.currentTime) || 0}
                                     </Box>
                                   </Progress>
                                   <Box

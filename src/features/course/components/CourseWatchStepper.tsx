@@ -50,6 +50,8 @@ const CourseWatchStepper = ({
       moduloId: courseWatchIds?.moduloId,
       classeId: classeId,
       urlVideo: classeUrlVideo,
+      currentTime: classeCurrent?.currentTime,
+      duration: classeCurrent?.duration,
       thumbnail: classeCurrent?.thumbnail,
       assistida: classeCurrent?.assistida,
       notaClasse: classeCurrent?.notaAula,

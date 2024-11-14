@@ -74,7 +74,7 @@ export default function CourseWatch() {
         setIsFetching(true);
         const getAllModuleByUser = async () => {
             try {
-                const response = await api.get(`/user/getAllModulosByUser/${userId}/${courseWatchIds?.courseId}`);
+                const response = await api.get(`/user/getAllModulosByUser/${courseWatchIds?.courseId}`);
                 if (response.data) {
                     const filterModule: ModuleSingleProps = response.data[0].modulos.find((module: any) => module.id === courseWatchIds?.moduloId);
                     setModuleSelected(filterModule);
@@ -125,6 +125,8 @@ export default function CourseWatch() {
                     classeId: notaClasse?.id,
                     urlVideo: notaClasse?.urlVideo,
                     thumbnail: courseWatchIds?.thumbnail,
+                    currentTime: notaClasse?.currentTime,
+                    duration: notaClasse?.duration,
                     assistida: notaClasse?.assistida,
                     notaClasse: notaClasse?.notaAula,
                     description: courseWatchIds?.description,
@@ -154,6 +156,8 @@ export default function CourseWatch() {
                 classeId: nextClasse.id,
                 urlVideo: nextClasse?.urlVideo,
                 thumbnail: nextClasse?.thumbnail,
+                currentTime: nextClasse?.currentTime,
+                duration: nextClasse?.duration,
                 assistida: nextClasse?.assistida,
                 notaClasse: nextClasse?.notaAula,
                 description: courseWatchIds?.description,
@@ -181,6 +185,8 @@ export default function CourseWatch() {
                 classeId: previousClasse.id,
                 urlVideo: previousClasse?.urlVideo,
                 thumbnail: previousClasse?.thumbnail,
+                currentTime: previousClasse?.currentTime,
+                duration: previousClasse?.duration,
                 assistida: previousClasse?.assistida,
                 notaClasse: previousClasse?.notaAula,
                 description: courseWatchIds?.description,
@@ -374,7 +380,11 @@ export default function CourseWatch() {
                                 </HStack>
                             </Flex>
                             <HStack w="100%" rounded="xl">
-                                <PandaVideoPlayer url={courseWatchIds?.urlVideo} thumbnail={courseWatchIds?.thumbnail} />
+                                <PandaVideoPlayer
+                                    url={courseWatchIds?.urlVideo}
+                                    thumbnail={courseWatchIds?.thumbnail}
+                                    valueRating={valueRating}
+                                />
                             </HStack>
 
                             <HStack alignItems="start" flexDirection="column" gap={3} mt={3}>

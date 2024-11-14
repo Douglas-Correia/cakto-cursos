@@ -25,9 +25,10 @@ import { CourseWatchContext } from '../contexts/CourseWatchContext';
 type Props = {
   url: string | undefined;
   thumbnail: string | undefined;
+  valueRating: number | undefined;
 };
 
-const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail }) => {
+const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -75,12 +76,12 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail }) => {
   }, [url]);
 
   // Esse useEffect será executado quando o vídeo for carregado ou quando o tempo de início for definido
-  // useEffect(() => {
-  //   if (playerRef.current) {
-  //     // Define o tempo inicial com base na API ou armazenamento
-  //     playerRef.current.currentTime = 60 * 2;
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (playerRef.current) {
+      playerRef.current.currentTime = Number(courseWatchIds?.currentTime) || 0;
+      setCurrentTime(Number(courseWatchIds?.currentTime) || 0);
+    }
+  }, []);
 
   useEffect(() => {
     const times = {
@@ -94,15 +95,22 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail }) => {
     const timesClasse = JSON.parse(sessionStorage.getItem('#currentTimesClasse') ?? '{}');
     const marcarAulaAssistida = async () => {
       try {
+        if (courseWatchIds?.assistida || Number(currentTime.toFixed(0)) === 0) {
+          return;
+        }
+        console.log('currentiTime', currentTime);
+        const isCompleted = currentTime === duration || false;
         await api.post(`/user/createMarcarAulaAssistidaByUser/${courseWatchIds?.classeId}`, {
           currentTime: timesClasse?.currentTime || '',
           duration: timesClasse?.duration || '',
+          nota: valueRating,
+          isCompleted: isCompleted,
         });
       } catch (error: any) {
         console.log(error);
       }
     }
-    const interval = setInterval(marcarAulaAssistida, 30000);
+    const interval = setInterval(marcarAulaAssistida, 2 * 7500);
 
     return () => clearInterval(interval);
   }, []);

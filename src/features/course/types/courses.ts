@@ -27,6 +27,8 @@ export interface ModulesProps {
   id: string;
   nome: string;
   memberAt: string;
+  comunidade: string;
+  links: string;
   modulos: {
     aulas: number;
     id: string;
@@ -40,6 +42,8 @@ export interface ClassesProps {
   nome: string;
   descricao: string;
   urlVideo: string;
+  duration: string;
+  currentTime: string;
   posicao: number;
   moduloId: string;
   thumbnail: string;
@@ -52,6 +56,8 @@ export interface LastClasse {
   id: string;
   nomeAula: string;
   thumbnail: string;
+  currentTime: string;
+  duration: string;
   logoCurso: string;
   moduloNome: string;
   moduloId: string;
