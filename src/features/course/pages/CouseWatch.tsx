@@ -311,7 +311,7 @@ export default function CourseWatch() {
                         mb={3}
                         mt={{
                             base: -20,
-                            md: 20,
+                            md: 6,
                         }}
                         gap={6}
                         flexDirection={{

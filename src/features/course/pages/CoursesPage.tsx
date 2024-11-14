@@ -31,6 +31,7 @@ const CoursesPage = () => {
       try {
         const response = await api.get(`/user/getAllCursosByUser/${userId}`);
         if (response) {
+          // 
           setCoursesByUser(response.data);
         }
       } catch (error: any) {
@@ -171,6 +172,7 @@ const CoursesPage = () => {
                     memberAt: course.memberAt,
                     nome: course.nome
                   }
+                  // Adicionar comunidade e link
                   handleGetCourseSelected(couseFormatted);
                   handleGetBannerCourseSelected(course?.bannerCurso);
                 }}
