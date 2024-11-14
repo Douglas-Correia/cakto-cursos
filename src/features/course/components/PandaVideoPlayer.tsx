@@ -66,12 +66,12 @@ const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
   }, [url]);
 
   // Esse useEffect será executado quando o vídeo for carregado ou quando o tempo de início for definido
-  useEffect(() => {
-    if (playerRef.current) {
-      // Define o tempo inicial com base na API ou armazenamento
-      playerRef.current.currentTime = 60 * 2;
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (playerRef.current) {
+  //     // Define o tempo inicial com base na API ou armazenamento
+  //     playerRef.current.currentTime = 60 * 2;
+  //   }
+  // }, []);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
