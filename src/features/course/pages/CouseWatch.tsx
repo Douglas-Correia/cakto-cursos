@@ -124,6 +124,7 @@ export default function CourseWatch() {
                     moduloId: courseWatchIds?.moduloId,
                     classeId: notaClasse?.id,
                     urlVideo: notaClasse?.urlVideo,
+                    thumbnail: courseWatchIds?.thumbnail,
                     assistida: notaClasse?.assistida,
                     notaClasse: notaClasse?.notaAula,
                     description: courseWatchIds?.description,
@@ -151,7 +152,8 @@ export default function CourseWatch() {
                 courseId: courseWatchIds?.courseId,
                 moduloId: courseWatchIds?.moduloId,
                 classeId: nextClasse.id,
-                urlVideo: courseWatchIds?.urlVideo,
+                urlVideo: nextClasse?.urlVideo,
+                thumbnail: nextClasse?.thumbnail,
                 assistida: nextClasse?.assistida,
                 notaClasse: nextClasse?.notaAula,
                 description: courseWatchIds?.description,
@@ -175,9 +177,10 @@ export default function CourseWatch() {
 
             const newCouseWatchIds: WatchIdsProps = {
                 courseId: courseWatchIds?.courseId,
-                moduloId: courseWatchIds?.moduloId,
+                moduloId: previousClasse?.moduloId,
                 classeId: previousClasse.id,
-                urlVideo: courseWatchIds?.urlVideo,
+                urlVideo: previousClasse?.urlVideo,
+                thumbnail: previousClasse?.thumbnail,
                 assistida: previousClasse?.assistida,
                 notaClasse: previousClasse?.notaAula,
                 description: courseWatchIds?.description,
@@ -192,6 +195,7 @@ export default function CourseWatch() {
 
     const markClasseFinished = async () => {
         const verifyClasseIsFinished = classesData.find(classe => classe.id === courseWatchIds?.classeId);
+        const timesClasse = JSON.parse(sessionStorage.getItem('#currentTimesClasse') ?? '{}');
         if (verifyClasseIsFinished?.assistida) {
             try {
                 setIsLoadingMarkFinished(true);
@@ -208,14 +212,18 @@ export default function CourseWatch() {
                 setIsLoadingMarkFinished(false);
             }
         }
+        if (Number(timesClasse?.currentTime) < Number(timesClasse?.duration) || Number(timesClasse?.currentTime) === 0 && Number(timesClasse?.duration) === 0) {
+            return toast.warn('Assista toda a aula para marcar como concluída');
+        }
         setIsLoadingMarkFinished(true);
         try {
-            const response = await api.post(`/user/createMarcaAulaConcluidaByUser/${courseWatchIds?.classeId}`, {
-                usuarioId: userId,
+            const response = await api.post(`/user/createMarcarAulaAssistidaByUser/${courseWatchIds?.classeId}`, {
+                currentTime: timesClasse?.currentTime || '',
+                duration: timesClasse?.duration || '',
                 nota: valueRating,
+                isCompleted: true,
             });
             if (response.data) {
-                console.log(response.data);
                 toast.success('Aula marcada como concluída.');
                 await getAllClassesByModuleByUser();
                 const currentIndex = classesData.findIndex((classe) => classe.id === courseWatchIds?.classeId);
@@ -366,7 +374,7 @@ export default function CourseWatch() {
                                 </HStack>
                             </Flex>
                             <HStack w="100%" rounded="xl">
-                                <PandaVideoPlayer url={courseWatchIds?.urlVideo} />
+                                <PandaVideoPlayer url={courseWatchIds?.urlVideo} thumbnail={courseWatchIds?.thumbnail} />
                             </HStack>
 
                             <HStack alignItems="start" flexDirection="column" gap={3} mt={3}>

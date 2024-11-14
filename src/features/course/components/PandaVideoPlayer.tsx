@@ -15,16 +15,19 @@ import {
   Text,
   useDisclosure
 } from '@chakra-ui/react';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { FaPlay, FaPause, FaExpand, FaCompress, FaVolumeUp, FaVolumeMute } from 'react-icons/fa';
 import Hls from 'hls.js';
 import { GetUserProps } from '../types/userStorage';
+import { api } from '../services/axios';
+import { CourseWatchContext } from '../contexts/CourseWatchContext';
 
 type Props = {
   url: string | undefined;
+  thumbnail: string | undefined;
 };
 
-const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
+const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -36,6 +39,12 @@ const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const [showConfig, setShowConfig] = useState(true);
   const getUserStorage: GetUserProps = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
+  const context = useContext(CourseWatchContext);
+  if (!context) {
+    throw new Error('useCourseWatch must be used within a CourseWatchProvider');
+  }
+
+  const { courseWatchIds } = context;
 
   const { isOpen: isSpeedModalOpen, onToggle: toggleSpeedModal } = useDisclosure();
 
@@ -72,6 +81,31 @@ const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
   //     playerRef.current.currentTime = 60 * 2;
   //   }
   // }, []);
+
+  useEffect(() => {
+    const times = {
+      currentTime: currentTime.toFixed(0),
+      duration: duration.toFixed(0),
+    }
+    sessionStorage.setItem('#currentTimesClasse', JSON.stringify(times));
+  }, [currentTime]);
+
+  useEffect(() => {
+    const timesClasse = JSON.parse(sessionStorage.getItem('#currentTimesClasse') ?? '{}');
+    const marcarAulaAssistida = async () => {
+      try {
+        await api.post(`/user/createMarcarAulaAssistidaByUser/${courseWatchIds?.classeId}`, {
+          currentTime: timesClasse?.currentTime || '',
+          duration: timesClasse?.duration || '',
+        });
+      } catch (error: any) {
+        console.log(error);
+      }
+    }
+    const interval = setInterval(marcarAulaAssistida, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -191,6 +225,7 @@ const PandaVideoPlayer: React.FC<Props> = ({ url }) => {
         <video
           style={{ borderRadius: 12 }}
           ref={playerRef}
+          poster={thumbnail}
           onTimeUpdate={handleTimeUpdate}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
