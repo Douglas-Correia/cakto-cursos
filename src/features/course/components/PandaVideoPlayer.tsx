@@ -94,12 +94,15 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
   useEffect(() => {
     const timesClasse = JSON.parse(sessionStorage.getItem('#currentTimesClasse') ?? '{}');
     const marcarAulaAssistida = async () => {
+      if (courseWatchIds?.assistida || Number(timesClasse.currentTime) === 0) {
+        return;
+      }
       try {
-        if (courseWatchIds?.assistida || Number(currentTime.toFixed(0)) === 0) {
-          return;
-        }
         console.log('currentiTime', currentTime);
-        const isCompleted = currentTime === duration || false;
+        const isCompleted = Number(timesClasse.currentTime) === Number(timesClasse.duration) || false;
+        console.log('currentTime', currentTime);
+        console.log('duration', duration);
+        console.log('isCompleted', isCompleted);
         await api.post(`/user/createMarcarAulaAssistidaByUser/${courseWatchIds?.classeId}`, {
           currentTime: timesClasse?.currentTime || '',
           duration: timesClasse?.duration || '',
