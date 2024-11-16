@@ -49,27 +49,27 @@ const CourseWatchStepper = ({
 
   const handleNextClasse = async (classeId: string, classeUrlVideo: string) => {
     const currentIndex = classesData.findIndex((classe) => classe.id === classeId);
-    
+
     if (currentIndex < classesData.length) {
-        const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
-        const currentClasse = classesData[currentIndex];
-        const newClasse: ClassesProps = response.data.find((classe: ClassesProps) => classe?.id === currentClasse.id);
-        
-        const newCouseWatchIds: WatchIdsProps = {
-            courseId: courseWatchIds?.courseId,
-            moduloId: courseWatchIds?.moduloId,
-            classeId: classeId,
-            urlVideo: classeUrlVideo,
-            currentTime: newClasse?.currentTime,
-            duration: newClasse?.duration,
-            thumbnail: currentClasse?.thumbnail,
-            assistida: newClasse?.assistida,
-            notaClasse: currentClasse?.notaAula,
-            description: courseWatchIds?.description,
-            logoCurso: courseWatchIds?.logoCurso,
-        }
-        handleGetCourseWatchIds(newCouseWatchIds);
-        setUrlVideo(classeUrlVideo);
+      const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
+      const currentClasse = classesData[currentIndex];
+      const newClasse: ClassesProps = response.data.find((classe: ClassesProps) => classe?.id === currentClasse.id);
+
+      const newCouseWatchIds: WatchIdsProps = {
+        courseId: courseWatchIds?.courseId,
+        moduloId: courseWatchIds?.moduloId,
+        classeId: classeId,
+        urlVideo: classeUrlVideo,
+        currentTime: newClasse?.currentTime,
+        duration: newClasse?.duration,
+        thumbnail: currentClasse?.thumbnail,
+        assistida: newClasse?.assistida,
+        notaClasse: currentClasse?.notaAula,
+        description: courseWatchIds?.description,
+        logoCurso: courseWatchIds?.logoCurso,
+      }
+      handleGetCourseWatchIds(newCouseWatchIds);
+      setUrlVideo(classeUrlVideo);
     }
   }
 
@@ -109,15 +109,17 @@ const CourseWatchStepper = ({
           </Button>
         )}
       </Flex>
-      <Flex alignItems="center" justifyContent="space-between" flexDirection={widthWatchStepper === '27%' ? 'row' : 'column'} borderWidth={1} padding={3} rounded="lg">
-        <Box display="flex" flexDirection="column" gap={2}>
-          <Text color="white">{nameModule}</Text>
-          <Text>{courseSelected?.nome}</Text>
-        </Box>
-        <Box color="white">
-          {indexCurrentClasse < 10 ? `0${indexCurrentClasse}` : indexCurrentClasse}/{quantityClasses < 9 ? `0${quantityClasses}` : quantityClasses}
-        </Box>
-      </Flex>
+      {widthWatchStepper === '27%' ? (
+        <Flex alignItems="center" justifyContent="space-between" flexDirection={widthWatchStepper === '27%' ? 'row' : 'column'} borderWidth={1} padding={3} rounded="lg">
+          <Box display="flex" flexDirection="column" gap={2}>
+            <Text color="white">{nameModule}</Text>
+            <Text>{courseSelected?.nome}</Text>
+          </Box>
+          <Box color="white">
+            {indexCurrentClasse < 10 ? `0${indexCurrentClasse}` : indexCurrentClasse}/{quantityClasses < 9 ? `0${quantityClasses}` : quantityClasses}
+          </Box>
+        </Flex>
+      ) : null}
 
       <HStack display="flex" flexDirection="column" gap={4}>
         {classesData?.map((classe, index) => (
@@ -134,7 +136,7 @@ const CourseWatchStepper = ({
             onClick={() => handleNextClasse(classe.id, classe.urlVideo)}
           >
             <Flex alignItems="center" gap={3}>
-              <Text color="white">{index + 1}</Text>
+              <Text color="gray">{index + 1}</Text>
               <Image
                 src={classe?.thumbnail}
                 alt={classe?.nome}

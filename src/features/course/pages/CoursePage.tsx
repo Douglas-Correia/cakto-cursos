@@ -291,12 +291,14 @@ const CoursePage = () => {
                     <Flex justifyContent="flex-end" gap={2} mt={2}>
                       <Box as="button" p={1} borderRadius="full">
                         <ChevronLeftIcon
+                          color={colorPrimary}
                           boxSize={7}
                           onClick={() => swiperRefContinue.current?.slidePrev()}
                         />
                       </Box>
                       <Box as="button" p={1} borderRadius="full">
                         <ChevronRightIcon
+                          color={colorPrimary}
                           boxSize={7}
                           onClick={() => swiperRefContinue.current?.slideNext()}
                         />
@@ -429,7 +431,15 @@ const CoursePage = () => {
                       </Box>
                     </Flex>
                     <Box>
-                      <Text>{lesson?.porcentagemAssistida}% do módulo concluido</Text>
+                      <Text
+                        display="flex"
+                        flexDirection="row"
+                        color={colorPrimary}
+                        alignItems="center"
+                        gap={1}
+                      >{lesson?.porcentagemAssistida}%
+                        <Text color="white">do módulo concluido</Text>
+                      </Text>
                       <Progress
                         value={lesson?.porcentagemAssistida}
                         sx={{
@@ -457,12 +467,14 @@ const CoursePage = () => {
                       <Flex justifyContent="flex-end" gap={2} mt={2}>
                         <Box as="button" p={1} borderRadius="full">
                           <ChevronLeftIcon
+                            color={colorPrimary}
                             boxSize={7}
                             onClick={() => swiperRefModulos?.current?.slidePrev()}
                           />
                         </Box>
                         <Box as="button" p={1} borderRadius="full">
                           <ChevronRightIcon
+                            color={colorPrimary}
                             boxSize={7}
                             onClick={() => swiperRefModulos?.current?.slideNext()}
                           />

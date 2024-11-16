@@ -6,6 +6,7 @@ import { GetUserProps } from "../types/userStorage";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../services/axios";
+import { useCourseProgress } from "../hooks/UseCourseProgress";
 
 export function HeaderCurses() {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
@@ -14,6 +15,8 @@ export function HeaderCurses() {
   const navigate = useNavigate();
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;
+
+  const { colorPrimary } = useCourseProgress();
 
   useEffect(() => {
     const getDataByUser = async () => {
@@ -78,7 +81,7 @@ export function HeaderCurses() {
           <Menu>
             <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
               <HStack>
-                <Avatar size="md" color="white" name={dataUser?.email} src={dataUser?.photoProfile || ''} />
+                <Avatar size="md" color="white" bg={colorPrimary} name={dataUser?.email} src={dataUser?.photoProfile || ''} />
                 <VStack
                   display={{ base: 'none', md: 'flex' }}
                   alignItems="flex-start"

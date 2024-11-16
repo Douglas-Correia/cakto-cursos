@@ -248,7 +248,7 @@ const Header = ({
             <Menu>
               <MenuButton py={2} transition="all 0.3s" _focus={{ boxShadow: 'none' }}>
                 <HStack>
-                  <Avatar size="md" color="white" name={dataUser?.email} src={dataUser?.photoProfile || ''} />
+                  <Avatar size="md" color="white" bg={colorPrimary} name={dataUser?.email} src={dataUser?.photoProfile || ''} />
                   <VStack
                     display={{ base: 'none', md: 'flex' }}
                     alignItems="flex-start"
