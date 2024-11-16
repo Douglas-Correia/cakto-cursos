@@ -311,10 +311,30 @@ const CoursePage = () => {
                     as={SwiperType}
                     slidesPerView={1}
                     breakpoints={{
-                      320: { slidesPerView: 1 },
-                      640: { slidesPerView: 2 },
-                      768: { slidesPerView: 3 },
-                      1024: { slidesPerView: 6, spaceBetween: 16 },
+                      320: {
+                        slidesPerView: 1,
+                        spaceBetween: 12
+                      },
+                      640: {
+                        slidesPerView: 2,
+                        spaceBetween: 16
+                      },
+                      768: {
+                        slidesPerView: 3,
+                        spaceBetween: 20
+                      },
+                      1024: {
+                        slidesPerView: 4,
+                        spaceBetween: 24
+                      },
+                      1440: {
+                        slidesPerView: 5,
+                        spaceBetween: 28
+                      },
+                      1920: {
+                        slidesPerView: 6,
+                        spaceBetween: 32
+                      }
                     }}
                     modules={[Navigation]}
                     w="full"
@@ -433,11 +453,12 @@ const CoursePage = () => {
                     <Box>
                       <Text
                         display="flex"
-                        flexDirection="row"
+                        flexDirection={{ base: 'column', md: 'row' }}
                         color={colorPrimary}
-                        alignItems="center"
+                        alignItems={{ base: 'flex-start', md: 'center' }}
                         gap={1}
-                      >{lesson?.porcentagemAssistida}%
+                      >
+                        <Text>{lesson?.porcentagemAssistida}%</Text>
                         <Text color="white">do módulo concluido</Text>
                       </Text>
                       <Progress
