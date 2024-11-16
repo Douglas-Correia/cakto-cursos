@@ -293,14 +293,22 @@ const CoursePage = () => {
                         <ChevronLeftIcon
                           color={colorPrimary}
                           boxSize={7}
-                          onClick={() => swiperRefContinue.current?.slidePrev()}
+                          onClick={() => {
+                            if (swiperRefContinue.current) {
+                              swiperRefContinue.current.slidePrev(); // Função de navegação
+                            }
+                          }}
                         />
                       </Box>
                       <Box as="button" p={1} borderRadius="full">
                         <ChevronRightIcon
                           color={colorPrimary}
                           boxSize={7}
-                          onClick={() => swiperRefContinue.current?.slideNext()}
+                          onClick={() => {
+                            if (swiperRefContinue.current) {
+                              swiperRefContinue.current.slideNext(); // Função de navegação
+                            }
+                          }}
                         />
                       </Box>
                     </Flex>
@@ -310,34 +318,28 @@ const CoursePage = () => {
                     ref={swiperRefContinue}
                     as={SwiperType}
                     slidesPerView={1}
+                    spaceBetween={20}
+                    navigation={false}
+                    onSwiper={(swiper: any) => {
+                      swiperRefContinue.current = swiper;
+                    }}
                     breakpoints={{
                       320: {
                         slidesPerView: 1,
-                        spaceBetween: 12
                       },
                       640: {
-                        slidesPerView: 2,
-                        spaceBetween: 16
+                        slidesPerView: 3,
                       },
                       768: {
-                        slidesPerView: 3,
-                        spaceBetween: 20
+                        slidesPerView: 4,
                       },
                       1024: {
-                        slidesPerView: 4,
-                        spaceBetween: 24
-                      },
-                      1440: {
-                        slidesPerView: 5,
-                        spaceBetween: 28
-                      },
-                      1920: {
                         slidesPerView: 6,
-                        spaceBetween: 32
-                      }
+                      },
                     }}
                     modules={[Navigation]}
                     w="full"
+                    position="relative"
                   >
                     {lastClasses?.map((lesson) => (
                       <SwiperSlide key={lesson?.id}>
@@ -490,14 +492,22 @@ const CoursePage = () => {
                           <ChevronLeftIcon
                             color={colorPrimary}
                             boxSize={7}
-                            onClick={() => swiperRefModulos?.current?.slidePrev()}
+                            onClick={() => {
+                              if (swiperRefModulos.current) {
+                                swiperRefModulos.current.slidePrev(); // Função de navegação
+                              }
+                            }}
                           />
                         </Box>
                         <Box as="button" p={1} borderRadius="full">
                           <ChevronRightIcon
                             color={colorPrimary}
                             boxSize={7}
-                            onClick={() => swiperRefModulos?.current?.slideNext()}
+                            onClick={() => {
+                              if (swiperRefModulos.current) {
+                                swiperRefModulos.current.slideNext(); // Função de navegação
+                              }
+                            }}
                           />
                         </Box>
                       </Flex>
@@ -506,13 +516,13 @@ const CoursePage = () => {
 
                   <HStack
                     ref={swiperRefModulos}
-                    py={2}
                     as={SwiperType}
-                    grabCursor
                     slidesPerView={1}
                     spaceBetween={20}
                     navigation={false}
-                    onSwiper={(swiper: any) => (swiperRefModulos.current = swiper)}
+                    onSwiper={(swiper: any) => {
+                      swiperRefModulos.current = swiper;
+                    }}
                     breakpoints={{
                       320: {
                         slidesPerView: 2,
@@ -529,6 +539,7 @@ const CoursePage = () => {
                     }}
                     modules={[Navigation]}
                     w="full"
+                    position="relative"
                   >
                     {course?.map((course, index) => (
                       course.moduloId === lesson.id && (
