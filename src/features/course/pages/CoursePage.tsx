@@ -195,9 +195,6 @@ const CoursePage = () => {
         setCourse(filteredClasses);
       }
     }, debounceDelay);
-
-    console.log(modules)
-    console.log(course)
     return () => clearTimeout(debounceTimer);
   }, [search, initialModules, initialCourse, debounceDelay]);
 

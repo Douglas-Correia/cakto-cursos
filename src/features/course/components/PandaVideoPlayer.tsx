@@ -81,7 +81,7 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
       playerRef.current.currentTime = Number(courseWatchIds?.currentTime) || 0;
       setCurrentTime(Number(courseWatchIds?.currentTime) || 0);
     }
-  }, []);
+  }, [courseWatchIds?.classeId]);
 
   useEffect(() => {
     const times = {
@@ -92,17 +92,16 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
   }, [currentTime]);
 
   useEffect(() => {
-    const timesClasse = JSON.parse(sessionStorage.getItem('#currentTimesClasse') ?? '{}');
     const marcarAulaAssistida = async () => {
+      const timesClasse = JSON.parse(sessionStorage.getItem('#currentTimesClasse') ?? '{}');
+      console.log('timesClasse', timesClasse);
       if (courseWatchIds?.assistida || Number(timesClasse.currentTime) === 0) {
         return;
       }
+
       try {
-        console.log('currentiTime', currentTime);
         const isCompleted = Number(timesClasse.currentTime) === Number(timesClasse.duration) || false;
-        console.log('currentTime', currentTime);
-        console.log('duration', duration);
-        console.log('isCompleted', isCompleted);
+        
         await api.post(`/user/createMarcarAulaAssistidaByUser/${courseWatchIds?.classeId}`, {
           currentTime: timesClasse?.currentTime || '',
           duration: timesClasse?.duration || '',
@@ -113,10 +112,10 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
         console.log(error);
       }
     }
-    const interval = setInterval(marcarAulaAssistida, 2 * 7500);
+    const interval = setInterval(marcarAulaAssistida, 1 * 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [courseWatchIds?.assistida]);
 
   useEffect(() => {
     const handleFullscreenChange = () => {

@@ -132,6 +132,7 @@ export default function CourseWatch() {
                     description: courseWatchIds?.description,
                     logoCurso: courseWatchIds?.logoCurso,
                 }
+                console.log(newCouseWatchIds)
                 handleGetCourseWatchIds(newCouseWatchIds);
             }
         } catch (error: any) {
@@ -144,21 +145,21 @@ export default function CourseWatch() {
         setShowMaterial(material);
     }
 
-    const handleNextClasse = () => {
+    const handleNextClasse = async () => {
         const currentIndex = classesData.findIndex((classe) => classe.id === courseWatchIds?.classeId);
-
         if (currentIndex !== -1 && currentIndex < classesData.length - 1) {
+            const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
             const nextClasse = classesData[currentIndex + 1];
-
+            const newClasse: ClassesProps = response.data.find((classe: ClassesProps) => classe?.id === nextClasse.id,);
             const newCouseWatchIds: WatchIdsProps = {
                 courseId: courseWatchIds?.courseId,
                 moduloId: courseWatchIds?.moduloId,
                 classeId: nextClasse.id,
                 urlVideo: nextClasse?.urlVideo,
                 thumbnail: nextClasse?.thumbnail,
-                currentTime: nextClasse?.currentTime,
-                duration: nextClasse?.duration,
-                assistida: nextClasse?.assistida,
+                currentTime: newClasse?.currentTime,
+                duration: newClasse?.duration,
+                assistida: courseWatchIds?.assistida,
                 notaClasse: nextClasse?.notaAula,
                 description: courseWatchIds?.description,
                 logoCurso: courseWatchIds?.logoCurso,
@@ -171,27 +172,30 @@ export default function CourseWatch() {
         }
     }
 
-    const handlepreviousClasse = () => {
+    const handlepreviousClasse = async () => {
         const currentIndex = classesData.findIndex(
             (classe) => classe.id === courseWatchIds?.classeId
         );
 
-        if (currentIndex > 0) { // permiti voltar à aula anterior
+        if (currentIndex > 0) {
+            const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
             const previousClasse = classesData[currentIndex - 1];
-
+            const newClasse: ClassesProps = response.data.find((classe: ClassesProps) => classe?.id === previousClasse.id);
+            
             const newCouseWatchIds: WatchIdsProps = {
                 courseId: courseWatchIds?.courseId,
                 moduloId: previousClasse?.moduloId,
                 classeId: previousClasse.id,
                 urlVideo: previousClasse?.urlVideo,
                 thumbnail: previousClasse?.thumbnail,
-                currentTime: previousClasse?.currentTime,
-                duration: previousClasse?.duration,
-                assistida: previousClasse?.assistida,
+                currentTime: newClasse?.currentTime,
+                duration: newClasse?.duration,
+                assistida: courseWatchIds?.assistida,
                 notaClasse: previousClasse?.notaAula,
                 description: courseWatchIds?.description,
                 logoCurso: courseWatchIds?.logoCurso,
             }
+            setValueRating(previousClasse?.notaAula);
             handleGetCourseWatchIds(newCouseWatchIds);
             setUrlVideo(previousClasse.urlVideo);
         } else {

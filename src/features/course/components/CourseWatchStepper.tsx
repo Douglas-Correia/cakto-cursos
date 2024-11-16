@@ -4,6 +4,8 @@ import { FaCheck } from 'react-icons/fa';
 import { ClassesProps } from '../types/courses';
 import { useContext, useEffect, useState } from 'react';
 import { CourseWatchContext, WatchIdsProps } from '../contexts/CourseWatchContext';
+import { api } from '../services/axios';
+import { UserStorage } from '../types/userStorage';
 
 interface CourseWatchStepperProps {
   classesData: ClassesProps[];
@@ -27,6 +29,8 @@ const CourseWatchStepper = ({
   widthScreen,
 }: CourseWatchStepperProps) => {
   const [indexCurrentClasse, setIndexCurrentClasse] = useState(0);
+  const userStorage: UserStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
+  const userId = userStorage?.id;
 
   const context = useContext(CourseWatchContext);
   if (!context) {
@@ -43,23 +47,30 @@ const CourseWatchStepper = ({
     }
   }, [videoId, classesData]);
 
-  const handleNextClasse = (classeId: string, classeUrlVideo: string) => {
-    const classeCurrent = classesData.find((classe: ClassesProps) => classe?.id === classeId);
-    const newCouseWatchIds: WatchIdsProps = {
-      courseId: courseWatchIds?.courseId,
-      moduloId: courseWatchIds?.moduloId,
-      classeId: classeId,
-      urlVideo: classeUrlVideo,
-      currentTime: classeCurrent?.currentTime,
-      duration: classeCurrent?.duration,
-      thumbnail: classeCurrent?.thumbnail,
-      assistida: classeCurrent?.assistida,
-      notaClasse: classeCurrent?.notaAula,
-      description: courseWatchIds?.description,
-      logoCurso: courseWatchIds?.logoCurso,
+  const handleNextClasse = async (classeId: string, classeUrlVideo: string) => {
+    const currentIndex = classesData.findIndex((classe) => classe.id === classeId);
+    
+    if (currentIndex < classesData.length) {
+        const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
+        const currentClasse = classesData[currentIndex];
+        const newClasse: ClassesProps = response.data.find((classe: ClassesProps) => classe?.id === currentClasse.id);
+        
+        const newCouseWatchIds: WatchIdsProps = {
+            courseId: courseWatchIds?.courseId,
+            moduloId: courseWatchIds?.moduloId,
+            classeId: classeId,
+            urlVideo: classeUrlVideo,
+            currentTime: newClasse?.currentTime,
+            duration: newClasse?.duration,
+            thumbnail: currentClasse?.thumbnail,
+            assistida: newClasse?.assistida,
+            notaClasse: currentClasse?.notaAula,
+            description: courseWatchIds?.description,
+            logoCurso: courseWatchIds?.logoCurso,
+        }
+        handleGetCourseWatchIds(newCouseWatchIds);
+        setUrlVideo(classeUrlVideo);
     }
-    handleGetCourseWatchIds(newCouseWatchIds);
-    setUrlVideo(classeUrlVideo);
   }
 
   return (
