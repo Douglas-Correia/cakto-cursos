@@ -49,6 +49,8 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
 
   const { isOpen: isSpeedModalOpen, onToggle: toggleSpeedModal } = useDisclosure();
 
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (url && playerRef.current) {
       const hls = new Hls();
@@ -142,13 +144,19 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
     setIsPlaying(!isPlaying);
   };
 
-  const toggleFullscreen = () => {
-    if (!isFullscreen) {
-      playerRef.current?.requestFullscreen();
-    } else {
-      document.exitFullscreen();
+  const toggleFullscreen = async () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    try {
+      if (!isFullscreen) {
+        await container.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (err) {
+      console.error('Erro ao alternar fullscreen:', err);
     }
-    setIsFullscreen(!isFullscreen);
   };
 
   const changePlaybackRate = (rate: number) => {
@@ -230,10 +238,15 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
   }
 
   return (
-    <Box w="full" position="relative">
-      <AspectRatio ratio={16 / 9} w="full" rounded="xl">
+    <Box w="full" position="relative" ref={containerRef}>
+      <AspectRatio ratio={16 / 9} w="full" rounded="xl" style={{ height: isFullscreen ? '100vh' : 'auto' }}>
         <video
-          style={{ borderRadius: 12 }}
+          style={{ 
+            borderRadius: isFullscreen ? 0 : 12,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain'
+          }}
           ref={playerRef}
           poster={thumbnail}
           onTimeUpdate={handleTimeUpdate}
@@ -256,9 +269,13 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
           color="white"
           p={3}
           pb={1}
-          style={{ borderBottomRightRadius: 12, borderBottomLeftRadius: 12 }}
+          style={{ 
+            borderBottomRightRadius: isFullscreen ? 0 : 12, 
+            borderBottomLeftRadius: isFullscreen ? 0 : 12 
+          }}
           display="flex"
           alignItems="center"
+          zIndex={9999}
         >
           <HStack spacing={1} align="center">
             <Button variant="ghost" color="white" fontSize="md" _hover={{ backgroundColor: 'transparent' }} onClick={togglePlayPause}>
