@@ -131,10 +131,6 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
     };
   }, []);
 
-  const handleShowConfig = () => {
-    setShowConfig(!showConfig);
-  }
-
   const togglePlayPause = () => {
     if (isPlaying) {
       playerRef.current?.pause();
@@ -143,6 +139,43 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
     }
     setIsPlaying(!isPlaying);
   };
+
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case ' ':
+          event.preventDefault(); // Previne o comportamento padrão do espaço
+          togglePlayPause(); // Alterna entre play e pause
+          break;
+        case 'ArrowRight':
+          if (playerRef.current) {
+            playerRef.current.currentTime = Math.min(playerRef.current.currentTime + 10, duration); // Avança 10 segundos
+            setCurrentTime(playerRef.current.currentTime);
+          }
+          break;
+        case 'ArrowLeft':
+          if (playerRef.current) {
+            playerRef.current.currentTime = Math.max(playerRef.current.currentTime - 10, 0); // Retrocede 10 segundos
+            setCurrentTime(playerRef.current.currentTime);
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [duration, togglePlayPause]);
+
+  const handleShowConfig = () => {
+    setShowConfig(!showConfig);
+  }
+
 
   const toggleFullscreen = async () => {
     const container = containerRef.current;
@@ -354,7 +387,6 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
             color="white"
             _hover={{ backgroundColor: 'transparent' }}
             fontSize="md"
-            opacity={isSpeedModalOpen ? 0 : 1}
             onClick={toggleSpeedModal}
           >
             <SettingsIcon />
@@ -364,8 +396,8 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
             <Fade in={isSpeedModalOpen}>
               <VStack
                 position="absolute"
-                bottom="20%"
-                right={0}
+                bottom="80%"
+                right={1}
                 bg="blackAlpha.700"
                 borderRadius="md"
                 spacing={1}
