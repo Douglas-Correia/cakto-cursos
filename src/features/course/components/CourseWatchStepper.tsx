@@ -29,8 +29,6 @@ const CourseWatchStepper = ({
   widthScreen,
 }: CourseWatchStepperProps) => {
   const [indexCurrentClasse, setIndexCurrentClasse] = useState(0);
-  const [isLightMode, setIsLightMode] = useState(false);
-  const themeMode = localStorage.getItem('chakra-ui-color-mode') ?? '';
   const userStorage: UserStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
   const userId = userStorage?.id;
 
@@ -40,10 +38,6 @@ const CourseWatchStepper = ({
   }
 
   const { courseSelected, handleGetCourseWatchIds, courseWatchIds } = context;
-
-  useEffect(() => {
-    setIsLightMode(themeMode === 'light');
-  }, [themeMode]);
 
   // Atualizar indexCurrentClasse sempre que videoId ou classesData mudar
   useEffect(() => {
