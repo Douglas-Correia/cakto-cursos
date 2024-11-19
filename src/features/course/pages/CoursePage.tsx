@@ -216,6 +216,8 @@ const CoursePage = () => {
     setIndexModulo(null);
   };
 
+  const lastClassesRef = useRef<HTMLDivElement | null>(null);
+
   if (isFetching) {
     return (
       <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
@@ -291,22 +293,39 @@ const CoursePage = () => {
                       Continue assistindo
                     </Text>
                     <HStack>
-                      <Box as="button" p={1} borderRadius="full" onClick={() => swiperRefContinue.current.slidePrev() //Função de navegação
-                      }>
+                      <Box as="button" p={1} borderRadius="full" onClick={() => {
+                        if (lastClassesRef.current) {
+                          lastClassesRef.current.scrollBy({
+                            left: -300,
+                            behavior: 'smooth'
+                          });
+                        }
+                      }}>
                         <ChevronLeftIcon color={colorPrimary} boxSize={7} />
                       </Box>
-                      <Box as="button" p={1} borderRadius="full" onClick={() => swiperRefContinue.current.slideNext() // Função de navegação
-                      }>
+                      <Box as="button" p={1} borderRadius="full" onClick={() => {
+                        if (lastClassesRef.current) {
+                          lastClassesRef.current.scrollBy({
+                            left: 300,
+                            behavior: 'smooth'
+                          });
+                        }
+                      }}>
                         <ChevronRightIcon color={colorPrimary} boxSize={7} />
                       </Box>
                     </HStack>
                   </Flex>
 
-                  <Flex position="relative" overflowX="auto" wrap="nowrap" style={{ scrollbarWidth: 'none' }}>
+                  <Flex
+                    position="relative"
+                    overflowX="auto"
+                    wrap="nowrap" 
+                    style={{ scrollbarWidth: 'none' }}
+                    ref={lastClassesRef}
+                  >
                     <Flex
                       flexDirection="row"
                       gap={4}
-                      ref={swiperRefContinue}
                     >
                       {lastClasses?.map((lesson) => (
                         <Box key={lesson?.id} flex="0 0 auto" width="300px">
@@ -459,7 +478,10 @@ const CoursePage = () => {
                             boxSize={7}
                             onClick={() => {
                               if (swiperRefModulos.current) {
-                                swiperRefModulos.current.slidePrev(); // Função de navegação
+                                swiperRefContinue.current.scrollBy({
+                                  left: -300,
+                                  behavior: 'smooth'
+                                })
                               }
                             }}
                           />
@@ -470,7 +492,10 @@ const CoursePage = () => {
                             boxSize={7}
                             onClick={() => {
                               if (swiperRefModulos.current) {
-                                swiperRefModulos.current.slideNext(); // Função de navegação
+                                swiperRefContinue.current.scrollBy({
+                                  left: 300,
+                                  behavior: 'smooth'
+                                })
                               }
                             }}
                           />
