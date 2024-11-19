@@ -93,16 +93,16 @@ export function HeaderCurses() {
             </MenuButton>
             <MenuList>
               <Box px={3} pb={3} pt={1}>
-                <Text fontSize="lg" fontWeight="thin" color="gray.100">
+                <Text fontSize="lg" fontWeight="thin" color={theme === 'dark' ? 'gray.100' : 'gray.900'}>
                   {dataUser?.nome}
                 </Text>
               </Box>
               <Box px={3} pb={3} pt={1}>
-                <Text fontSize="sm" fontWeight="thin" color="gray.500">
+                <Text fontSize="sm" fontWeight="thin" color={theme === 'dark' ? 'gray.100' : 'gray.900'}>
                   {dataUser?.email}
                 </Text>
               </Box>
-              <Divider borderStyle="dashed" />
+              <Divider borderStyle="dashed" borderColor={theme === 'dark' ? 'gray.100' : 'gray.900'} />
               <Stack pt={2}>
                 <MenuItem onClick={() => navigate('/courses')} fontSize="sm">
                   Página Inicial
