@@ -137,7 +137,7 @@ const CourseWatchStepper = ({
             onClick={() => handleNextClasse(classe.id, classe.urlVideo)}
           >
             <Flex alignItems="center" gap={3}>
-              <Text color="gray">{index + 1}</Text>
+              {widthWatchStepper === '27%' && <Text color="gray">{index + 1}</Text>}
               <Image
                 src={classe?.thumbnail}
                 alt={classe?.nome}

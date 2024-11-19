@@ -120,7 +120,7 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating, markCl
         console.log(error);
       }
     }
-    const interval = setInterval(marcarAulaAssistida, 1 * 10000);
+    const interval = setInterval(marcarAulaAssistida, 1 * 5000);
 
     return () => clearInterval(interval);
   }, [courseWatchIds?.assistida]);

@@ -374,9 +374,10 @@ const CoursePage = () => {
                                 <Text fontWeight="bold" fontSize="md" mb="2">
                                   {lesson?.moduloNome}
                                 </Text>
-                                <Text fontWeight="bold" fontSize="md" mb="2">
+                                <Text fontWeight="bold" fontSize="md" mb="1">
                                   {lesson?.nomeAula}
                                 </Text>
+                                <Text fontSize="sm" color="gray">{lesson?.duracaoAula}</Text>
                                 <Progress
                                   value={Number(lesson?.currentTime) || 0}
                                   sx={{
@@ -387,7 +388,7 @@ const CoursePage = () => {
                                   height="6px"
                                   borderRadius="6px"
                                   width="100%"
-                                  mb={3}
+                                  mb={1}
                                 >
                                   <Box
                                     position="absolute"
@@ -518,7 +519,7 @@ const CoursePage = () => {
                     <Flex gap={4}>
                       {course?.map((course, index) => (
                         course.moduloId === lesson.id && (
-                          <Box 
+                          <Box
                             key={index}
                             minW={{ base: "250px", sm: "280px", md: "300px" }}
                             as={motion.div}
@@ -584,6 +585,7 @@ const CoursePage = () => {
                                   <Text fontWeight="bold" fontSize="xl" mb="2">
                                     {course?.nome}
                                   </Text>
+                                  <Text fontSize="sm" color="gray">{course?.duracaoAula}</Text>
                                   <Progress
                                     value={Number(course?.currentTime) || 0}
                                     sx={{

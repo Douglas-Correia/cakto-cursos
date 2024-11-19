@@ -68,6 +68,7 @@ export interface LastClasse {
   notaUser: number;
   aulaAssistidaEm: boolean;
   urlVideo: string;
+  duracaoAula: string;
 }
 
 export interface ModuleSingleProps {

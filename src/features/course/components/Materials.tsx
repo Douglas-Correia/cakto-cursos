@@ -88,7 +88,7 @@ export function Materials({ aulaId, mutateDownloadLessonFile }: MaterialsFuncPro
                   overflow="hidden"
                 >
                   <HStack flexDirection="row" alignItems="center" gap={2}>
-                    <Image src="../../../../public/icon-doc.png" />
+                    <Image src="/icon-doc.png" />
                     <VStack align="start">
                       <Text whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis" color="white">
                         {file?.titulo}

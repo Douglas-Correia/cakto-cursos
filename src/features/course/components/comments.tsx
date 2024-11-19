@@ -75,7 +75,14 @@ export function Comments({
         >
             {/* Comentário Principal */}
             {isCommentAll ? (
-                <Flex w="100%" alignItems="center" position="relative">
+                <Flex w="100%"
+                    alignItems="center"
+                    position="relative"
+                    cursor="pointer"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        toggleCommentMinimize();
+                    }}>
                     <Avatar size="md" bg="black" color="white" name={comments?.usuarioName} src={comments?.usuarioPhotoProfile} mr={3} />
                     <Text fontWeight="bold" color="white">{comments?.usuarioName}</Text>
                     {isCommentAll ? (
@@ -89,7 +96,9 @@ export function Comments({
                     }} />}
                 </Flex>
             ) : (
-                <Flex w="100%" position="relative">
+                <Flex
+                    w="100%"
+                    position="relative">
                     <Avatar size="md" bg="black" color="white" name={comments?.usuarioName} src={comments?.usuarioPhotoProfile} mr={3} />
                     {isCommentAll ? (
                         <PlusSquareIcon color="gray.300" position="absolute" right={2} top={4} cursor="pointer" zIndex={50} onClick={(e) => {
@@ -101,7 +110,16 @@ export function Comments({
                         toggleCommentMinimize();
                     }} />}
                     <VStack spacing={1} align="start" w="full">
-                        <Text fontWeight="bold" color="white">{comments?.usuarioName}</Text>
+                        <Text
+                            w="full"
+                            fontWeight="bold"
+                            color="white"
+                            cursor="pointer"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleCommentMinimize();
+                            }}
+                        >{comments?.usuarioName}</Text>
                         <Text fontSize="sm" color="gray.300" mt={1}>
                             {comments?.comentario}
                         </Text>
@@ -116,7 +134,11 @@ export function Comments({
 
             {!isCommentAll ? (
                 <>
-                    <Flex w="100%" justifyContent="flex-end" mt={2} alignItems="center">
+                    <Flex
+                        w="100%"
+                        justifyContent="flex-end"
+                        mt={2} alignItems="center"
+                    >
                         <Text mr={1} color="gray.300">{comments?.respostaComentarioAulas.length}</Text>
                         <ChatIcon color="gray.300" mt={1} />
                         {areSubcommentsMinimized ? (
@@ -167,6 +189,11 @@ export function Comments({
                             flexDirection="column"
                             justifyContent="space-between"
                             color="white"
+                            cursor="pointer"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                toggleSubcommentsMinimize();
+                            }}
                         >
                             <Flex w="100%" alignItems="center">
                                 <Avatar size="sm" color="white" name={comments?.respostaComentarioAulas[0]?.usuarioName} src={comments?.respostaComentarioAulas[0]?.usuarioPhotoProfile} mr={3} />
