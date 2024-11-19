@@ -15,8 +15,6 @@ import {
 import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Navigation } from 'swiper/modules';
-import { Swiper as SwiperType, SwiperSlide } from 'swiper/react';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import 'swiper/css';
@@ -44,8 +42,6 @@ const CoursePage = () => {
   const themeMode = localStorage.getItem('chakra-ui-color-mode') ?? '';
 
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
-  const swiperRefContinue = useRef<any | null>(null);
-  const swiperRefModulos = useRef<any | null>(null);
   const userStorage: GetUserProps = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const navigate = useNavigate();
   const userId = userStorage?.id;
@@ -218,6 +214,8 @@ const CoursePage = () => {
 
   const lastClassesRef = useRef<HTMLDivElement | null>(null);
 
+  const moduleRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
   if (isFetching) {
     return (
       <HStack position="relative" w="full" h="900" justifyContent="center" alignItems="center">
@@ -319,7 +317,7 @@ const CoursePage = () => {
                   <Flex
                     position="relative"
                     overflowX="auto"
-                    wrap="nowrap" 
+                    wrap="nowrap"
                     style={{ scrollbarWidth: 'none' }}
                     ref={lastClassesRef}
                   >
@@ -470,79 +468,68 @@ const CoursePage = () => {
                           {lesson?.porcentagemAssistida}
                         </Box>
                       </Progress>
-                      {/* Botões de navegação */}
                       <Flex justifyContent="flex-end" gap={2} mt={2}>
-                        <Box as="button" p={1} borderRadius="full">
-                          <ChevronLeftIcon
-                            color={colorPrimary}
-                            boxSize={7}
-                            onClick={() => {
-                              if (swiperRefModulos.current) {
-                                swiperRefContinue.current.scrollBy({
-                                  left: -300,
-                                  behavior: 'smooth'
-                                })
-                              }
-                            }}
-                          />
+                        <Box
+                          as="button"
+                          p={1}
+                          borderRadius="full"
+                          onClick={() => {
+                            if (moduleRefs.current[lesson.id]) {
+                              moduleRefs.current[lesson.id]?.scrollBy({
+                                left: -300,
+                                behavior: 'smooth'
+                              });
+                            }
+                          }}
+                        >
+                          <ChevronLeftIcon color={colorPrimary} boxSize={7} />
                         </Box>
-                        <Box as="button" p={1} borderRadius="full">
-                          <ChevronRightIcon
-                            color={colorPrimary}
-                            boxSize={7}
-                            onClick={() => {
-                              if (swiperRefModulos.current) {
-                                swiperRefContinue.current.scrollBy({
-                                  left: 300,
-                                  behavior: 'smooth'
-                                })
-                              }
-                            }}
-                          />
+                        <Box
+                          as="button"
+                          p={1}
+                          borderRadius="full"
+                          onClick={() => {
+                            if (moduleRefs.current[lesson.id]) {
+                              moduleRefs.current[lesson.id]?.scrollBy({
+                                left: 300,
+                                behavior: 'smooth'
+                              });
+                            }
+                          }}
+                        >
+                          <ChevronRightIcon color={colorPrimary} boxSize={7} />
                         </Box>
                       </Flex>
                     </Box>
                   </Flex>
 
-                  <HStack
-                    ref={swiperRefModulos}
-                    as={SwiperType}
-                    slidesPerView={1}
-                    spaceBetween={20}
-                    navigation={false}
-                    onSwiper={(swiper: any) => {
-                      swiperRefModulos.current = swiper;
-                    }}
-                    breakpoints={{
-                      320: {
-                        slidesPerView: 2,
-                      },
-                      640: {
-                        slidesPerView: 3,
-                      },
-                      768: {
-                        slidesPerView: 4,
-                      },
-                      1024: {
-                        slidesPerView: 6,
-                      },
-                    }}
-                    modules={[Navigation]}
-                    w="full"
+                  <Flex
+                    ref={(el) => moduleRefs.current[lesson.id] = el}
                     position="relative"
+                    overflowX="auto"
+                    css={{
+                      '&::-webkit-scrollbar': {
+                        display: 'none'
+                      },
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none'
+                    }}
                   >
-                    {course?.map((course, index) => (
-                      course.moduloId === lesson.id && (
-                        <SwiperSlide key={index}>
-                          <Box as={motion.div} whileHover={{ translateY: -5 }}>
-                            <AspectRatio ratio={9 / 12} as={motion.div}>
+                    <Flex gap={4}>
+                      {course?.map((course, index) => (
+                        course.moduloId === lesson.id && (
+                          <Box 
+                            key={index}
+                            minW={{ base: "250px", sm: "280px", md: "300px" }}
+                            as={motion.div}
+                            whileHover={{ translateY: -5 }}
+                          >
+                            <AspectRatio ratio={9 / 12}>
                               <Card
                                 state={{ course }}
                                 rounded="xl"
                                 as={Link}
-                                to={{
-                                  pathname: `/courses/watch`,
-                                }}
+                                to="/courses/watch"
                                 onClick={() => {
                                   if (courseId) {
                                     const formattedCoursesIds: WatchIdsProps = {
@@ -561,9 +548,7 @@ const CoursePage = () => {
                                     handleGetCourseWatchIds(formattedCoursesIds);
                                   }
                                 }}
-                                onMouseEnter={() => {
-                                  mouseEnter(index)
-                                }}
+                                onMouseEnter={() => mouseEnter(index)}
                                 onMouseLeave={mouseLeave}
                               >
                                 <Badge
@@ -648,10 +633,10 @@ const CoursePage = () => {
                               </Card>
                             </AspectRatio>
                           </Box>
-                        </SwiperSlide>
-                      )
-                    ))}
-                  </HStack>
+                        )
+                      ))}
+                    </Flex>
+                  </Flex>
                 </Stack>
               ))}
             </Stack>
