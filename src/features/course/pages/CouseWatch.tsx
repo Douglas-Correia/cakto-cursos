@@ -41,6 +41,7 @@ export default function CourseWatch() {
     const [widthWatchStepper, setWidthWatchStepper] = useState('27%');
     const navigate = useNavigate();
     const [withScreen, setWidthScreen] = useState(window.innerWidth);
+
     const userStorage: UserStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
     const userId = userStorage?.id;
     const context = useContext(CourseWatchContext);
