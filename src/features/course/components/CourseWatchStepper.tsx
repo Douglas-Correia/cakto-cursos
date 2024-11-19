@@ -147,7 +147,8 @@ const CourseWatchStepper = ({
                 rounded="lg"
               />
               {widthWatchStepper === '27%' && <Text fontSize="md" color="white">
-                {classe?.nome}
+                {classe?.nome} <br />
+                <Text fontSize="sm" color="gray">{classe?.duracaoAula}</Text>
               </Text>}
             </Flex>
             {widthWatchStepper === '27%' && (

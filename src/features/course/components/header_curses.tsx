@@ -1,6 +1,6 @@
 import { BellIcon } from "@chakra-ui/icons";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import { IconButton, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import { IconButton, useColorModeValue } from "@chakra-ui/react";
 import { Avatar, Box, Divider, Flex, HStack, Menu, MenuButton, MenuItem, MenuList, Stack, Text, VStack } from "@chakra-ui/react";
 import { GetUserProps } from "../types/userStorage";
 import { useNavigate } from "react-router-dom";
@@ -8,10 +8,14 @@ import { useEffect, useState } from "react";
 import { api } from "../services/axios";
 import { useCourseProgress } from "../hooks/UseCourseProgress";
 
-export function HeaderCurses() {
+interface HeaderCursesProps {
+  theme: string;
+  toggleColorMode: () => void;
+  setTheme: (theme: string) => void;
+}
+
+export function HeaderCurses({ theme, toggleColorMode, setTheme }: HeaderCursesProps) {
   const [dataUser, setDataUser] = useState<GetUserProps | null>(null);
-  const [theme, setTheme] = useState('dark');
-  const { toggleColorMode } = useColorMode();
   const navigate = useNavigate();
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;

@@ -23,8 +23,8 @@ export function Comments({
     fetchAllCommentsByClass,
     comments,
 }: CommentsProps) {
-    const [isCommentAll, setIsCommentAll] = useState(false);
-    const [areSubcommentsMinimized, setAreSubcommentsMinimized] = useState(false);
+    const [isCommentAll, setIsCommentAll] = useState(true);
+    const [areSubcommentsMinimized, setAreSubcommentsMinimized] = useState(true);
     const userStorage: UserStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
     const userId = userStorage?.id;
 

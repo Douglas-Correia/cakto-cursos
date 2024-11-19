@@ -365,6 +365,7 @@ export default function CourseWatch() {
                                         variant="outline"
                                         bg="#212b36"
                                         borderColor="#212b36"
+                                        _hover={{ bg: '#212b36' }}
                                         color="white"
                                         leftIcon={<FiArrowLeft />}
                                         // isDisabled={current.lesson?.position === 1 && current.module?.position === 1}
@@ -377,6 +378,7 @@ export default function CourseWatch() {
                                         size="md"
                                         variant="outline"
                                         bg="#212b36"
+                                        _hover={{ bg: '#212b36' }}
                                         color="white"
                                         borderColor="#212b36"
                                         rightIcon={<FiArrowRight />}

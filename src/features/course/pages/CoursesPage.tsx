@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { api } from "../services/axios";
 import { HeaderCurses } from "../components/header_curses";
-import { Flex, HStack, Image, Input, InputGroup, InputRightElement, Progress, Text } from "@chakra-ui/react";
+import { Flex, HStack, Image, Input, InputGroup, InputRightElement, Progress, Text, useColorMode } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 import { BoxCourses } from "../components/box_courses";
 import { CoursesProps } from "../types/courses";
@@ -15,6 +15,8 @@ const CoursesPage = () => {
   const [filteredCourses, setFilteredCourses] = useState<CoursesProps[]>([]);
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
   const [search, setSearch] = useState('')
+  const [theme, setTheme] = useState('dark');
+  const { toggleColorMode } = useColorMode();
   const context = useContext(CourseWatchContext);
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
   const userId = userStorage?.id;
@@ -95,7 +97,7 @@ const CoursesPage = () => {
       h="full"
       flexDirection="column"
     >
-      <HeaderCurses />
+      <HeaderCurses theme={theme} toggleColorMode={toggleColorMode} setTheme={setTheme} />
 
       {/* BANNER */}
       <HStack
@@ -134,6 +136,7 @@ const CoursesPage = () => {
                 placeholder="Pesquisar"
                 borderColor="#919EAB33"
                 focusBorderColor="#919EAB33"
+                color={theme === 'dark' ? 'white' : 'black'}
                 _focus={{ boxShadow: 'none' }}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -141,7 +144,7 @@ const CoursesPage = () => {
               <InputRightElement
                 py={7}
                 pointerEvents="none"
-                children={<SearchIcon color="gray.300" fontSize="xl" />}
+                children={<SearchIcon color={theme === 'dark' ? 'white' : 'black'} fontSize="xl" />}
               />
             </InputGroup>
           </Flex>

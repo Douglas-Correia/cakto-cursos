@@ -35,6 +35,7 @@ export interface ModulesProps {
     nome: string;
     capa: string;
     porcentagemAssistida: number;
+    somaDuracaoAulas: string;
   }[]
 }
 export interface ClassesProps {
@@ -50,6 +51,7 @@ export interface ClassesProps {
   assistida: boolean;
   notaAula: number;
   notaUser: number;
+  duracaoAula: string;
 }
 
 export interface LastClasse {
@@ -74,4 +76,5 @@ export interface ModuleSingleProps {
   nome: string;
   capa: string;
   porcentagemAssistida: number;
+  somaDuracaoAulas: string;
 }

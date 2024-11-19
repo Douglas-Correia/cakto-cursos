@@ -404,7 +404,7 @@ const CoursePage = () => {
                       <Box>
                         <Text>{lesson?.nome}</Text>
                         <Flex gap={1}>
-                          <Text color="gray">{lesson?.aulas} Aulas . 05h23m</Text>
+                          <Text color="gray">{lesson?.aulas} Aulas . {lesson?.somaDuracaoAulas}</Text>
                           {/* <Text color="green">R$ 0.00</Text> */}
                         </Flex>
                       </Box>
