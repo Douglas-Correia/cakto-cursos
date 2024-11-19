@@ -181,7 +181,7 @@ export default function CourseWatch() {
             const response = await api.get(`/user/aulas/${courseWatchIds?.moduloId}/${userId}`);
             const previousClasse = classesData[currentIndex - 1];
             const newClasse: ClassesProps = response.data.find((classe: ClassesProps) => classe?.id === previousClasse.id);
-            
+
             const newCouseWatchIds: WatchIdsProps = {
                 courseId: courseWatchIds?.courseId,
                 moduloId: previousClasse?.moduloId,
@@ -454,6 +454,30 @@ export default function CourseWatch() {
                                         <Text color="#919EAB">
                                             {courseWatchIds?.description}
                                         </Text>
+
+                                        <HStack
+                                            w={{
+                                                base: '100%',
+                                                lg: widthWatchStepper,
+                                            }}
+                                            display={{ base: 'flex', md: 'none' }}
+                                            bg="#212B36"
+                                            p={widthWatchStepper === '27%' ? 6 : 2}
+                                            rounded="xl"
+                                            className='see-content'
+                                        >
+                                            <CourseWatchStepper
+                                                classesData={classesData}
+                                                videoId={courseWatchIds?.classeId}
+                                                nameModule={moduleSelected?.nome}
+                                                quantityClasses={quantityClasses}
+                                                setUrlVideo={setUrlVideo}
+                                                handleChangeWidthStepper={handleChangeWidthStepper}
+                                                widthWatchStepper={widthWatchStepper}
+                                                widthScreen={withScreen}
+                                            />
+                                        </HStack>
+
                                         <Flex flexDirection="column" width="full" gap={3}>
                                             <Text>Escrever comentário</Text>
                                             <form onSubmit={handleSubmit(onSubmitComments)}>
@@ -474,25 +498,49 @@ export default function CourseWatch() {
                                     </HStack>
                                 )}
                                 {showMaterial && (
-                                    <HStack
-                                        style={{
-                                            width: '100%',
-                                            overflowX: 'auto',
-                                        }}
-                                        maxWidth={{
-                                            base: 380,
-                                            md: 768,
-                                            lg: 1500,
-                                        }}
-                                        mt={4}
-                                        px={4}
-                                        py={2}
-                                        gap={6}
-                                    >
-                                        <Materials
-                                            aulaId={courseWatchIds?.classeId}
-                                        />
-                                    </HStack>
+                                    <>
+                                        <HStack
+                                            style={{
+                                                width: '100%',
+                                                overflowX: 'auto',
+                                            }}
+                                            maxWidth={{
+                                                base: 340,
+                                                md: 768,
+                                                lg: 1500,
+                                            }}
+                                            mt={4}
+                                            py={2}
+                                            gap={6}
+                                        >
+                                            <Materials
+                                                aulaId={courseWatchIds?.classeId}
+                                            />
+                                        </HStack>
+
+                                        <HStack
+                                            w={{
+                                                base: '100%',
+                                                lg: widthWatchStepper,
+                                            }}
+                                            display={{ base: 'flex', md: 'none' }}
+                                            bg="#212B36"
+                                            p={widthWatchStepper === '27%' ? 6 : 2}
+                                            rounded="xl"
+                                            className='see-content'
+                                        >
+                                            <CourseWatchStepper
+                                                classesData={classesData}
+                                                videoId={courseWatchIds?.classeId}
+                                                nameModule={moduleSelected?.nome}
+                                                quantityClasses={quantityClasses}
+                                                setUrlVideo={setUrlVideo}
+                                                handleChangeWidthStepper={handleChangeWidthStepper}
+                                                widthWatchStepper={widthWatchStepper}
+                                                widthScreen={withScreen}
+                                            />
+                                        </HStack>
+                                    </>
                                 )}
                             </HStack>
                         </Flex>
@@ -502,6 +550,7 @@ export default function CourseWatch() {
                                 base: '100%',
                                 lg: widthWatchStepper,
                             }}
+                            display={{ base: 'none', md: 'flex' }}
                             bg="#212B36"
                             p={widthWatchStepper === '27%' ? 6 : 2}
                             h={1050}
