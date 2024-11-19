@@ -54,8 +54,14 @@ const Header = ({
   const location = useLocation(); // Captura o objeto de localização
   const context = useContext(CourseWatchContext);
   const userStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? 'null');
+  const themeMode = localStorage.getItem('chakra-ui-color-mode') ?? '';
+  const [isLightMode, setIsLightMode] = useState(false);
   const userId = userStorage?.id;
   const { name } = useParams();
+
+  useEffect(() => {
+    setIsLightMode(themeMode === 'light');
+  }, [themeMode]);
 
   useEffect(() => {
     // Verifica se a URL contém "/watch"
@@ -138,7 +144,7 @@ const Header = ({
               h={{ base: "8", md: "10" }}
               objectFit="fill"
             />
-            <Text>Logo do cliente</Text>
+            <Text color="white">Logo do cliente</Text>
           </Flex>
 
           {!courseWatch && (
@@ -149,8 +155,8 @@ const Header = ({
               w="100%"
               onClick={() => navigate('/courses')}
             >
-              <FaArrowLeft fontSize={22} />
-              <Text fontSize={18}>Voltar</Text>
+              <FaArrowLeft color={isLightMode ? 'black' : 'white'} fontSize={22} />
+              <Text color={isLightMode ? 'black' : 'white'} fontSize={18}>Voltar</Text>
             </Flex>
           )}
 
@@ -167,10 +173,10 @@ const Header = ({
               <Flex flexDirection="column" gap={6} justifyContent="space-between">
                 {title !== undefined || description !== undefined ? (
                   <>
-                    <Text fontSize={34}>
+                    <Text color={isLightMode ? 'black' : 'white'} fontSize={34}>
                       {title || ''}
                     </Text>
-                    <Text>
+                    <Text color={isLightMode ? 'black' : 'white'}>
                       {description || ''}
                     </Text>
                   </>
@@ -218,17 +224,17 @@ const Header = ({
             fontSize="lg"
             cursor="pointer"
             fontWeight="thin"
-            color="gray.100"
+            color={isLightMode ? 'black' : 'gray.100'}
             borderBottom={name !== undefined ? "2px" : "0"}
             borderColor={name !== undefined ? colorPrimary : ''}
             onClick={() => navigate(`/courses/`)}
           >
             Início
           </Text>
-          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100" onClick={() => {window.open(comunidade)}}>
+          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color={isLightMode ? 'black' : 'gray.100'} onClick={() => {window.open(comunidade)}}>
             Comunidade
           </Text>
-          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color="gray.100" onClick={() => {window.open(links)}}>
+          <Text fontSize="lg" cursor="pointer" fontWeight="thin" color={isLightMode ? 'black' : 'gray.100'} onClick={() => {window.open(links)}}>
             Links
           </Text>
         </Flex>
@@ -260,16 +266,16 @@ const Header = ({
               </MenuButton>
               <MenuList zIndex={999}>
                 <Box px={3} pb={3} pt={1}>
-                  <Text fontSize="lg" fontWeight="thin" color="gray.100">
+                  <Text fontSize="lg" fontWeight="thin" color={isLightMode ? 'black' : 'gray.100'}>
                     {dataUser?.nome}
                   </Text>
                 </Box>
                 <Box px={3} pb={3} pt={1}>
-                  <Text fontSize="sm" fontWeight="thin" color="gray.500">
+                  <Text fontSize="sm" fontWeight="thin" color={isLightMode ? 'black' : 'gray.500'}>
                     {dataUser?.email}
                   </Text>
                 </Box>
-                <Divider borderStyle="dashed" />
+                <Divider borderStyle="dashed" borderColor={isLightMode ? 'black' : 'gray.100'} />
                 <Stack pt={2}>
                   <MenuItem onClick={() => navigate('/courses')} fontSize="sm">
                     Página Inicial

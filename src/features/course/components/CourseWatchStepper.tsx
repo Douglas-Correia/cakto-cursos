@@ -29,6 +29,8 @@ const CourseWatchStepper = ({
   widthScreen,
 }: CourseWatchStepperProps) => {
   const [indexCurrentClasse, setIndexCurrentClasse] = useState(0);
+  const [isLightMode, setIsLightMode] = useState(false);
+  const themeMode = localStorage.getItem('chakra-ui-color-mode') ?? '';
   const userStorage: UserStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
   const userId = userStorage?.id;
 
@@ -38,6 +40,10 @@ const CourseWatchStepper = ({
   }
 
   const { courseSelected, handleGetCourseWatchIds, courseWatchIds } = context;
+
+  useEffect(() => {
+    setIsLightMode(themeMode === 'light');
+  }, [themeMode]);
 
   // Atualizar indexCurrentClasse sempre que videoId ou classesData mudar
   useEffect(() => {
@@ -76,12 +82,13 @@ const CourseWatchStepper = ({
   return (
     <Stack gap={5} w="full" h="full" overflowY="auto" style={{ scrollbarWidth: 'none' }}>
       <Flex justifyContent="space-between" alignItems="center" flexWrap="wrap">
-        {widthWatchStepper === '27%' && <Text fontSize="2xl">Conteúdo</Text>}
+        {widthWatchStepper === '27%' && <Text fontSize="2xl" color="white">Conteúdo</Text>}
         {widthScreen > 768 && (
           <Button
             variant="primary"
             borderWidth={1}
             borderColor="white"
+            color="white"
             display="flex"
             alignItems="center"
             justifyContent="space-between"
@@ -113,7 +120,7 @@ const CourseWatchStepper = ({
         <Flex alignItems="center" justifyContent="space-between" flexDirection={widthWatchStepper === '27%' ? 'row' : 'column'} borderWidth={1} padding={3} rounded="lg">
           <Box display="flex" flexDirection="column" gap={2}>
             <Text color="white">{nameModule}</Text>
-            <Text>{courseSelected?.nome}</Text>
+            <Text color="white">{courseSelected?.nome}</Text>
           </Box>
           <Box color="white">
             {indexCurrentClasse < 10 ? `0${indexCurrentClasse}` : indexCurrentClasse}/{quantityClasses < 9 ? `0${quantityClasses}` : quantityClasses}

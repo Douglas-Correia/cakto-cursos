@@ -31,7 +31,6 @@ const CoursesPage = () => {
       try {
         const response = await api.get(`/user/getAllCursosByUser/${userId}`);
         if (response) {
-          // 
           setCoursesByUser(response.data);
         }
       } catch (error: any) {
@@ -170,7 +169,10 @@ const CoursesPage = () => {
                   const couseFormatted = {
                     id: course.id,
                     memberAt: course.memberAt,
-                    nome: course.nome
+                    nome: course.nome,
+                    banner: Array.isArray(course?.bannerCurso) && course?.bannerCurso.length > 0 ? course.bannerCurso[0]?.image : '',
+                    title: Array.isArray(course?.bannerCurso) && course?.bannerCurso.length > 0 ? course.bannerCurso[0]?.titulo : '',
+                    description: Array.isArray(course?.bannerCurso) && course?.bannerCurso.length > 0 ? course.bannerCurso[0]?.descricao : '',
                   }
                   // Adicionar comunidade e link
                   handleGetCourseSelected(couseFormatted);
@@ -196,6 +198,9 @@ const CoursesPage = () => {
                       id: course.id,
                       memberAt: course.memberAt,
                       nome: course.nome,
+                      banner: Array.isArray(course?.bannerCurso) && course?.bannerCurso.length > 0 ? course.bannerCurso[0]?.image : '',
+                      title: Array.isArray(course?.bannerCurso) && course?.bannerCurso.length > 0 ? course.bannerCurso[0]?.titulo : '',
+                      description: Array.isArray(course?.bannerCurso) && course?.bannerCurso.length > 0 ? course.bannerCurso[0]?.descricao : '',
                     }
                     handleGetCourseSelected(couseFormatted);
                     handleGetBannerCourseSelected(course?.bannerCurso);

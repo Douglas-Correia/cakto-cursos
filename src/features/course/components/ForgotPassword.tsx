@@ -1,5 +1,5 @@
 import { Button, Flex, HStack, Image, Input, Text } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaChevronLeft } from "react-icons/fa";
 import { InputPassword } from "./InputPassword";
 import { z } from 'zod';
@@ -28,6 +28,8 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
     const [isLoading, setIsLoading] = useState(false);
     const [showAlterPassword, setShowAlterPassword] = useState(true);
     const [email, setEmail] = useState('');
+    const [isLightMode, setIsLightMode] = useState(false);
+    const themeMode = localStorage.getItem('chakra-ui-color-mode') ?? '';
 
     const securityOne = useRef<HTMLInputElement>(null);
     const securityTwo = useRef<HTMLInputElement>(null);
@@ -35,6 +37,10 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
     const securityFour = useRef<HTMLInputElement>(null);
     const securityFive = useRef<HTMLInputElement>(null);
     const securitySix = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        setIsLightMode(themeMode === 'light');
+    }, [themeMode]);
 
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>, nextRef: React.RefObject<HTMLInputElement> | null) => {
         if (e.target.value.length === 1 && nextRef!.current) {
@@ -144,7 +150,7 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
                         h={{ base: "8", md: "10" }}
                         objectFit="fill"
                     />
-                    <Text>Logo do cliente</Text>
+                    <Text color="white">Logo do cliente</Text>
                 </Flex>
             </HStack>
             <Flex
@@ -303,7 +309,7 @@ export function ForgotPassword({ handleShowForgotPassword }: ForgotPasswordProps
                             bg="transparent"
                             gap={3}
                             _hover={{ bg: "transparent" }}
-                            color="white"
+                            color={isLightMode ? 'black' : 'white'}
                             onClick={handleShowForgotPassword}
                         >
                             <FaChevronLeft />

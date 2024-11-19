@@ -18,6 +18,9 @@ export interface CourseSelectedProps {
     id: string;
     memberAt: string;
     nome: string;
+    banner: string;
+    title: string;
+    description: string;
 }
 
 // Definindo o tipo de dados do contexto

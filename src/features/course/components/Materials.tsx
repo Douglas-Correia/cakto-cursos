@@ -13,6 +13,7 @@ interface MaterialsFuncProps {
 export function Materials({ aulaId, mutateDownloadLessonFile }: MaterialsFuncProps) {
   const [allMaterials, setAllMaterials] = useState<MaterialsProps[]>([]);
   const [isFetching, setIsFetching] = useState(false);
+
   const context = useContext(CourseWatchContext);
 
   if (!context) {
@@ -89,7 +90,7 @@ export function Materials({ aulaId, mutateDownloadLessonFile }: MaterialsFuncPro
                   <HStack flexDirection="row" alignItems="center" gap={2}>
                     <Image src="../../../../public/icon-doc.png" />
                     <VStack align="start">
-                      <Text whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+                      <Text whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis" color="white">
                         {file?.titulo}
                       </Text>
                       <Text color="#919EAB">{file?.fileSize}</Text>

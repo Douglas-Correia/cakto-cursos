@@ -41,6 +41,8 @@ export default function CourseWatch() {
     const [widthWatchStepper, setWidthWatchStepper] = useState('27%');
     const navigate = useNavigate();
     const [withScreen, setWidthScreen] = useState(window.innerWidth);
+    const [isLightMode, setIsLightMode] = useState(false);
+    const themeMode = localStorage.getItem('chakra-ui-color-mode') ?? '';
 
     const userStorage: UserStorage = JSON.parse(localStorage.getItem('@dataCakto') ?? '{}');
     const userId = userStorage?.id;
@@ -56,6 +58,10 @@ export default function CourseWatch() {
             navigate('/courses');
         }
     }, []);
+
+    useEffect(() => {
+        setIsLightMode(themeMode === 'light');
+    }, [themeMode]);
 
     useEffect(() => {
         const handleResize = () => setWidthScreen(window.innerWidth);
@@ -429,7 +435,7 @@ export default function CourseWatch() {
                                 <ButtonGroup>
                                     <Button
                                         bg="transparent"
-                                        color={`${showDescription ? 'white' : '#919EAB'}`}
+                                        color={isLightMode ? 'black' : '#919EAB'}
                                         rounded="none"
                                         _hover={{ backgroundColor: 'transparent' }}
                                         borderBottomWidth={2}
@@ -440,7 +446,7 @@ export default function CourseWatch() {
                                     </Button>
                                     <Button
                                         bg="transparent"
-                                        color={`${showMaterial ? 'white' : '#919EAB'}`}
+                                        color={isLightMode ? 'black' : '#919EAB'}
                                         rounded="none"
                                         _hover={{ backgroundColor: 'transparent' }}
                                         borderBottomWidth={2}

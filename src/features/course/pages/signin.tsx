@@ -1,6 +1,6 @@
 import { Button, Flex, HStack, Image, Input, Progress, Stack, Text } from "@chakra-ui/react";
 import { useCourseEnrollment } from "../contexts/CourseEnrollmentContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ForgotPassword } from "../components/ForgotPassword";
 import { InputPassword } from "../components/InputPassword";
 import { z } from "zod";
@@ -19,6 +19,13 @@ const formSchema = z.object({
 export default function Signin() {
     const [isLoading, setIsLoading] = useState(false);
     const [showForgotPassword, setShowForgotPassword] = useState(false);
+    const [isLightMode, setIsLightMode] = useState(false);
+    const themeMode = localStorage.getItem('chakra-ui-color-mode') ?? '';
+
+    useEffect(() => {
+        setIsLightMode(themeMode === 'light');
+    }, [themeMode]);
+
     const navigate = useNavigate();
     const { isFetching } = useCourseEnrollment();
 
@@ -109,7 +116,7 @@ export default function Signin() {
                                         h={{ base: "8", md: "10" }}
                                         objectFit="fill"
                                     />
-                                    <Text>Logo do cliente</Text>
+                                    <Text color="white">Logo do cliente</Text>
                                 </Flex>
                             </HStack>
                             <Flex
@@ -129,7 +136,7 @@ export default function Signin() {
                                     }}
                                     onSubmit={handleSubmit(onSubmit)}
                                 >
-                                    <Text fontSize="2xl">Entrar</Text>
+                                    <Text color={isLightMode ? 'black' : 'white'} fontSize="2xl">Entrar</Text>
 
                                     <Input
                                         placeholder="Email"

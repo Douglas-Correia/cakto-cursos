@@ -79,11 +79,11 @@ export function Comments({
                     <Avatar size="md" bg="black" color="white" name={comments?.usuarioName} src={comments?.usuarioPhotoProfile} mr={3} />
                     <Text fontWeight="bold" color="white">{comments?.usuarioName}</Text>
                     {isCommentAll ? (
-                        <PlusSquareIcon color="gray.300" position="absolute" right={2} top={4} zIndex={50} onClick={(e) => {
+                        <PlusSquareIcon color="gray.300" position="absolute" right={2} top={4} cursor="pointer" zIndex={50} onClick={(e) => {
                             e.stopPropagation();
                             toggleCommentMinimize();
                         }} />
-                    ) : <MinusIcon color="gray.300" position="absolute" right={2} top={4} zIndex={50} onClick={(e) => {
+                    ) : <MinusIcon color="gray.300" position="absolute" right={2} top={4} cursor="pointer" zIndex={50} onClick={(e) => {
                         e.stopPropagation();
                         toggleCommentMinimize();
                     }} />}
@@ -92,11 +92,11 @@ export function Comments({
                 <Flex w="100%" position="relative">
                     <Avatar size="md" bg="black" color="white" name={comments?.usuarioName} src={comments?.usuarioPhotoProfile} mr={3} />
                     {isCommentAll ? (
-                        <PlusSquareIcon color="gray.300" position="absolute" right={2} top={4} zIndex={50} onClick={(e) => {
+                        <PlusSquareIcon color="gray.300" position="absolute" right={2} top={4} cursor="pointer" zIndex={50} onClick={(e) => {
                             e.stopPropagation();
                             toggleCommentMinimize();
                         }} />
-                    ) : <MinusIcon color="gray.300" position="absolute" right={2} top={1} zIndex={50} onClick={(e) => {
+                    ) : <MinusIcon color="gray.300" position="absolute" right={2} top={1} cursor="pointer" zIndex={50} onClick={(e) => {
                         e.stopPropagation();
                         toggleCommentMinimize();
                     }} />}
@@ -120,11 +120,11 @@ export function Comments({
                         <Text mr={1} color="gray.300">{comments?.respostaComentarioAulas.length}</Text>
                         <ChatIcon color="gray.300" mt={1} />
                         {areSubcommentsMinimized ? (
-                            <PlusSquareIcon color="gray.300" ml={4} onClick={(e) => {
+                            <PlusSquareIcon color="gray.300" ml={4} cursor="pointer" onClick={(e) => {
                                 e.stopPropagation();
                                 toggleSubcommentsMinimize();
                             }} />
-                        ) : <MinusIcon color="gray.300" ml={4} onClick={(e) => {
+                        ) : <MinusIcon color="gray.300" ml={4} cursor="pointer" onClick={(e) => {
                             e.stopPropagation();
                             toggleSubcommentsMinimize();
                         }} />}

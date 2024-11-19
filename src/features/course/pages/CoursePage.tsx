@@ -37,6 +37,7 @@ const CoursePage = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [index, setIndex] = useState(0);
   const [currentBanner, setCurrentBanner] = useState<BannerCourse | null>(null);
+  const [initiateImage, setInitiateImage] = useState('');
   const [comunidade, setComunidade] = useState('');
   const [links, setLinks] = useState('');
 
@@ -60,7 +61,7 @@ const CoursePage = () => {
     throw new Error('useCourseWatch must be used within a CourseWatchProvider');
   }
 
-  const { handleGetCourseWatchIds, bannerCourse, courseWatchIds } = context;
+  const { handleGetCourseWatchIds, bannerCourse, courseWatchIds, courseSelected } = context;
 
   const totalBanners = bannerCourse.length;
   if (bannerCourse.length <= 0) {
@@ -135,16 +136,17 @@ const CoursePage = () => {
         }
       } catch (error: any) {
         console.log(error.response?.data?.message || error.response?.data?.error);
-      } finally {
-        setIsFetching(false);
       }
     };
 
     const handleChamarFuncs = async () => {
       await fetchCourseData();
       await fetchGetLastAulas();
+      if (courseSelected?.banner) {
+        setInitiateImage(courseSelected?.banner);
+      }
+      setIsFetching(false);
     };
-
     handleChamarFuncs();
   }, [userId, courseId]);
 
@@ -241,26 +243,19 @@ const CoursePage = () => {
         mb={10}
         position="relative"
       >
-        {currentBanner !== null ? (
-          <Image
-            src={currentBanner?.image}
-            alt={currentBanner?.titulo}
-            w="full"
-            h="full"
-            objectFit="fill"
-            mt={-20}
-            className="image-banner"
-          />
-
-        ) : <LuLoader2
-          className="skeleton"
-          color={colorPrimary}
-          size={40}
-        />}
+        <Image
+          src={currentBanner !== null ? currentBanner?.image : initiateImage}
+          alt={currentBanner?.titulo}
+          w="full"
+          h="full"
+          objectFit="fill"
+          mt={-20}
+          className="image-banner"
+        />
 
         <Header
-          title={currentBanner?.titulo}
-          description={currentBanner?.descricao}
+          title={currentBanner !== null ? currentBanner?.titulo : courseSelected?.title}
+          description={currentBanner !== null ? currentBanner?.descricao : courseSelected?.description}
           totalBanners={totalBanners}
           indexCurrent={index}
           search={search}
