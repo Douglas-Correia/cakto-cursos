@@ -294,7 +294,7 @@ const CoursePage = () => {
                     </HStack>
                   </Flex>
 
-                  <Flex position="relative" overflowX="auto" wrap="nowrap">
+                  <Flex position="relative" overflowX="auto" wrap="nowrap" style={{ scrollbarWidth: 'none' }}>
                     <Flex
                       flexDirection="row"
                       gap={4}
