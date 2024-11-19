@@ -283,148 +283,115 @@ const CoursePage = () => {
             <Stack gap={5} overflow="hidden" position="relative">
               {lastClasses.length > 0 && (
                 <Stack w="100%">
-                  <Flex justifyContent="space-between" alignItems="center" width="full">
-                    <Text fontSize={24} fontWeight="bold" mb={4}>
+                  <Flex alignContent="center" justifyContent="space-between" my={2}>
+                    <Text fontSize={24} fontWeight="bold">
                       Continue assistindo
                     </Text>
-
-                    <Flex justifyContent="flex-end" gap={2} mt={2}>
-                      <Box as="button" p={1} borderRadius="full">
-                        <ChevronLeftIcon
-                          color={colorPrimary}
-                          boxSize={7}
-                          onClick={() => {
-                            if (swiperRefContinue.current) {
-                              swiperRefContinue.current.slidePrev(); // Função de navegação
-                            }
-                          }}
-                        />
+                    <HStack>
+                      <Box as="button" p={1} borderRadius="full" onClick={() => {
+                        if (swiperRefContinue.current) {
+                          swiperRefContinue.current.slidePrev(); // Função de navegação
+                        }
+                      }}>
+                        <ChevronLeftIcon color={colorPrimary} boxSize={7} />
                       </Box>
-                      <Box as="button" p={1} borderRadius="full">
-                        <ChevronRightIcon
-                          color={colorPrimary}
-                          boxSize={7}
-                          onClick={() => {
-                            if (swiperRefContinue.current) {
-                              swiperRefContinue.current.slideNext(); // Função de navegação
-                            }
-                          }}
-                        />
+                      <Box as="button" p={1} borderRadius="full" onClick={() => {
+                        if (swiperRefContinue.current) {
+                          swiperRefContinue.current.slideNext(); // Função de navegação
+                        }
+                      }}>
+                        <ChevronRightIcon color={colorPrimary} boxSize={7} />
                       </Box>
-                    </Flex>
+                    </HStack>
                   </Flex>
 
-                  <HStack
-                    ref={swiperRefContinue}
-                    as={SwiperType}
-                    slidesPerView={1}
-                    spaceBetween={20}
-                    navigation={false}
-                    onSwiper={(swiper: any) => {
-                      swiperRefContinue.current = swiper;
-                    }}
-                    breakpoints={{
-                      320: {
-                        slidesPerView: 1,
-                      },
-                      640: {
-                        slidesPerView: 3,
-                      },
-                      768: {
-                        slidesPerView: 4,
-                      },
-                      1024: {
-                        slidesPerView: 6,
-                      },
-                    }}
-                    modules={[Navigation]}
-                    w="full"
-                    position="relative"
-                  >
-                    {lastClasses?.map((lesson) => (
-                      <SwiperSlide key={lesson?.id}>
-                        <Card
-                          rounded="xl"
-                          w="300px"
-                          height="130px"
-                          overflow="hidden"
-                          cursor="pointer"
-                          onClick={() => {
-                            if (courseId) {
-                              const formattedCoursesIds: WatchIdsProps = {
-                                courseId: courseId,
-                                moduloId: lesson?.moduloId,
-                                classeId: lesson?.id,
-                                description: lesson?.description,
-                                currentTime: lesson?.currentTime,
-                                duration: lesson?.duration,
-                                urlVideo: lesson?.urlVideo,
-                                thumbnail: lesson?.thumbnail,
-                                assistida: lesson?.aulaAssistidaEm,
-                                notaClasse: lesson?.notaAula,
-                                logoCurso: lesson?.logoCurso,
+                  <Flex position="relative" overflowX="auto" wrap="nowrap">
+                    <Flex
+                      flexDirection="row"
+                      gap={4}
+                    >
+                      {lastClasses?.map((lesson) => (
+                        <Box key={lesson?.id} flex="0 0 auto" width="300px">
+                          <Card
+                            rounded="xl"
+                            height="130px"
+                            overflow="hidden"
+                            cursor="pointer"
+                            onClick={() => {
+                              if (courseId) {
+                                const formattedCoursesIds: WatchIdsProps = {
+                                  courseId: courseId,
+                                  moduloId: lesson?.moduloId,
+                                  classeId: lesson?.id,
+                                  description: lesson?.description,
+                                  currentTime: lesson?.currentTime,
+                                  duration: lesson?.duration,
+                                  urlVideo: lesson?.urlVideo,
+                                  thumbnail: lesson?.thumbnail,
+                                  assistida: lesson?.aulaAssistidaEm,
+                                  notaClasse: lesson?.notaAula,
+                                  logoCurso: lesson?.logoCurso,
+                                }
+                                handleGetCourseWatchIds(formattedCoursesIds);
+                                navigate('/courses/watch');
                               }
-                              handleGetCourseWatchIds(formattedCoursesIds);
-                              navigate('/courses/watch');
-                            }
-                          }}
-                        >
-                          <Flex flexDirection="row" width="100%" height="130px">
-
-                            <Box flex="0 0 40%" height="100%">
-                              <Image
-                                src={lesson?.thumbnail}
-                                alt="A lesson"
-                                objectFit="cover"
-                                w="100%"
-                                h="100%"
-                              />
-                            </Box>
-
-                            <Box
-                              flex="1"
-                              bg="#212B36"
-                              color="white"
-                              display="flex"
-                              flexDirection="column"
-                              justifyContent="end"
-                              p="4"
-                            >
-                              <Text fontWeight="bold" fontSize="md" mb="2">
-                                {lesson?.moduloNome}
-                              </Text>
-                              <Text fontWeight="bold" fontSize="md" mb="2">
-                                {lesson?.nomeAula}
-                              </Text>
-                              <Progress
-                                value={Number(lesson?.currentTime) || 0}
-                                sx={{
-                                  '& > div': {
-                                    backgroundColor: colorPrimary,
-                                  },
-                                }}
-                                height="6px"
-                                borderRadius="6px"
-                                width="100%"
-                                mb={3}
+                            }}
+                          >
+                            <Flex flexDirection="row" width="100%" height="130px">
+                              <Box flex="0 0 40%" height="100%">
+                                <Image
+                                  src={lesson?.thumbnail}
+                                  alt="A lesson"
+                                  objectFit="cover"
+                                  w="100%"
+                                  h="100%"
+                                />
+                              </Box>
+                              <Box
+                                flex="1"
+                                bg="#212B36"
+                                color="white"
+                                display="flex"
+                                flexDirection="column"
+                                justifyContent="end"
+                                p="4"
                               >
-                                <Box
-                                  position="absolute"
-                                  left="50%"
-                                  transform="translateX(-50%)"
-                                  fontSize={13}
-                                  fontFamily="mono"
-                                  color="white"
+                                <Text fontWeight="bold" fontSize="md" mb="2">
+                                  {lesson?.moduloNome}
+                                </Text>
+                                <Text fontWeight="bold" fontSize="md" mb="2">
+                                  {lesson?.nomeAula}
+                                </Text>
+                                <Progress
+                                  value={Number(lesson?.currentTime) || 0}
+                                  sx={{
+                                    '& > div': {
+                                      backgroundColor: colorPrimary,
+                                    },
+                                  }}
+                                  height="6px"
+                                  borderRadius="6px"
+                                  width="100%"
+                                  mb={3}
                                 >
-                                  {lesson?.currentTime || 0}
-                                </Box>
-                              </Progress>
-                            </Box>
-                          </Flex>
-                        </Card>
-                      </SwiperSlide>
-                    ))}
-                  </HStack>
+                                  <Box
+                                    position="absolute"
+                                    left="50%"
+                                    transform="translateX(-50%)"
+                                    fontSize={13}
+                                    fontFamily="mono"
+                                    color="white"
+                                  >
+                                    {lesson?.currentTime || 0}
+                                  </Box>
+                                </Progress>
+                              </Box>
+                            </Flex>
+                          </Card>
+                        </Box>
+                      ))}
+                    </Flex>
+                  </Flex>
                 </Stack>
               )}
 
