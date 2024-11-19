@@ -26,9 +26,10 @@ type Props = {
   url: string | undefined;
   thumbnail: string | undefined;
   valueRating: number | undefined;
+  markClasseFinished: () => void;
 };
 
-const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
+const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating, markClasseFinished }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -91,19 +92,24 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
       duration: duration.toFixed(0),
     }
     sessionStorage.setItem('#currentTimesClasse', JSON.stringify(times));
+    if (courseWatchIds?.assistida || Number(times.currentTime) === 0) {
+      return;
+    }
+    if (Number(times.currentTime) === Number(times?.duration)) {
+      markClasseFinished();
+    }
   }, [currentTime]);
 
   useEffect(() => {
     const marcarAulaAssistida = async () => {
       const timesClasse = JSON.parse(sessionStorage.getItem('#currentTimesClasse') ?? '{}');
-      console.log('timesClasse', timesClasse);
       if (courseWatchIds?.assistida || Number(timesClasse.currentTime) === 0) {
         return;
       }
 
       try {
         const isCompleted = Number(timesClasse.currentTime) === Number(timesClasse.duration) || false;
-        
+
         await api.post(`/user/createMarcarAulaAssistidaByUser/${courseWatchIds?.classeId}`, {
           currentTime: timesClasse?.currentTime || '',
           duration: timesClasse?.duration || '',
@@ -274,7 +280,7 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
     <Box w="full" position="relative" ref={containerRef}>
       <AspectRatio ratio={16 / 9} w="full" rounded="xl" style={{ height: isFullscreen ? '100vh' : 'auto' }}>
         <video
-          style={{ 
+          style={{
             borderRadius: isFullscreen ? 0 : 12,
             width: '100%',
             height: '100%',
@@ -302,9 +308,9 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating }) => {
           color="white"
           p={3}
           pb={1}
-          style={{ 
-            borderBottomRightRadius: isFullscreen ? 0 : 12, 
-            borderBottomLeftRadius: isFullscreen ? 0 : 12 
+          style={{
+            borderBottomRightRadius: isFullscreen ? 0 : 12,
+            borderBottomLeftRadius: isFullscreen ? 0 : 12
           }}
           display="flex"
           alignItems="center"

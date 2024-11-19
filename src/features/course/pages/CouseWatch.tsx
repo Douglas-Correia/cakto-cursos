@@ -388,6 +388,7 @@ export default function CourseWatch() {
                                     url={courseWatchIds?.urlVideo}
                                     thumbnail={courseWatchIds?.thumbnail}
                                     valueRating={valueRating}
+                                    markClasseFinished={markClasseFinished}
                                 />
                             </HStack>
 

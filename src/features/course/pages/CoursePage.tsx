@@ -288,18 +288,12 @@ const CoursePage = () => {
                       Continue assistindo
                     </Text>
                     <HStack>
-                      <Box as="button" p={1} borderRadius="full" onClick={() => {
-                        if (swiperRefContinue.current) {
-                          swiperRefContinue.current.slidePrev(); // Função de navegação
-                        }
-                      }}>
+                      <Box as="button" p={1} borderRadius="full" onClick={() => swiperRefContinue.current.slidePrev() //Função de navegação
+                      }>
                         <ChevronLeftIcon color={colorPrimary} boxSize={7} />
                       </Box>
-                      <Box as="button" p={1} borderRadius="full" onClick={() => {
-                        if (swiperRefContinue.current) {
-                          swiperRefContinue.current.slideNext(); // Função de navegação
-                        }
-                      }}>
+                      <Box as="button" p={1} borderRadius="full" onClick={() => swiperRefContinue.current.slideNext() // Função de navegação
+                      }>
                         <ChevronRightIcon color={colorPrimary} boxSize={7} />
                       </Box>
                     </HStack>
@@ -309,6 +303,7 @@ const CoursePage = () => {
                     <Flex
                       flexDirection="row"
                       gap={4}
+                      ref={swiperRefContinue}
                     >
                       {lastClasses?.map((lesson) => (
                         <Box key={lesson?.id} flex="0 0 auto" width="300px">
