@@ -40,6 +40,8 @@ const CoursePage = () => {
   const [initiateImage, setInitiateImage] = useState('');
   const [comunidade, setComunidade] = useState('');
   const [links, setLinks] = useState('');
+  const [isLightMode, setIsLightMode] = useState(false);
+  const themeMode = localStorage.getItem('chakra-ui-color-mode') ?? '';
 
   const [indexModulo, setIndexModulo] = useState<number | null>(null);
   const swiperRefContinue = useRef<any | null>(null);
@@ -71,6 +73,12 @@ const CoursePage = () => {
   if (!courseId && !name) {
     return null;
   }
+
+  useEffect(() => {
+    if (themeMode === 'light') {
+      setIsLightMode(true);
+    }
+  }, [themeMode]);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -404,7 +412,7 @@ const CoursePage = () => {
                       <Box>
                         <Text>{lesson?.nome}</Text>
                         <Flex gap={1}>
-                          <Text color="gray">{lesson?.aulas} {lesson?.aulas > 1 ? 'Aulas' : 'Aula'} . {lesson?.somaDuracaoAulas}</Text>
+                          <Text color={isLightMode ? 'gray' : 'white'}>{lesson?.aulas} {lesson?.aulas > 1 ? 'Aulas' : 'Aula'} . {lesson?.somaDuracaoAulas}</Text>
                           {/* <Text color="green">R$ 0.00</Text> */}
                         </Flex>
                       </Box>
@@ -418,7 +426,7 @@ const CoursePage = () => {
                         gap={1}
                       >
                         <Text>{lesson?.porcentagemAssistida}%</Text>
-                        <Text color="white">do módulo concluido</Text>
+                        <Text color={isLightMode ? 'gray' : 'white'}>do módulo concluido</Text>
                       </Text>
                       <Progress
                         value={lesson?.porcentagemAssistida}
