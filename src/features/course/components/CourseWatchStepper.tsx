@@ -63,7 +63,7 @@ const CourseWatchStepper = ({
         currentTime: newClasse?.currentTime,
         duration: newClasse?.duration,
         thumbnail: currentClasse?.thumbnail,
-        assistida: newClasse?.assistida,
+        assistida: newClasse?.isCompleted,
         notaClasse: currentClasse?.notaAula,
         description: courseWatchIds?.description,
         logoCurso: courseWatchIds?.logoCurso,
@@ -153,7 +153,7 @@ const CourseWatchStepper = ({
             </Flex>
             {widthWatchStepper === '27%' && (
               <Box>
-                {classe.assistida ? (
+                {classe.isCompleted ? (
                   <Box rounded="full" padding={1} bg="#38ca4f">
                     <FaCheck size={12} />
                   </Box>

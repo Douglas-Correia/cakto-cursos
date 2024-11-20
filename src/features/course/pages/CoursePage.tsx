@@ -400,7 +400,7 @@ const CoursePage = () => {
                                   </Text>
                                 {/* <Text fontSize="sm" color="gray">{lesson?.duracaoAula}</Text> */}
                                 <Progress
-                                  value={Number(lesson?.currentTime) || 0}
+                                  value={lesson?.isCompleted ? 100 : (Number(lesson?.currentTime) / Number(lesson?.duration) * 100) || 0}
                                   sx={{
                                     '& > div': {
                                       backgroundColor: colorPrimary,
@@ -563,7 +563,7 @@ const CoursePage = () => {
                                       duration: course?.duration,
                                       urlVideo: course?.urlVideo,
                                       thumbnail: course?.thumbnail,
-                                      assistida: course?.assistida,
+                                      assistida: course?.isCompleted,
                                       notaClasse: course?.notaAula,
                                       logoCurso: courseWatchIds?.logoCurso,
                                     }
@@ -610,7 +610,7 @@ const CoursePage = () => {
                                     {course?.isCompleted ? `${course?.duracaoAula}/${course?.duracaoAula}` : `${formatTime(course?.currentTime)}/${course?.duracaoAula}`}
                                   </Text>
                                   <Progress
-                                    value={course?.isCompleted ? 100 : Number(course?.currentTime) || 0}
+                                    value={course?.isCompleted ? 100 : (Number(course?.currentTime) / Number(course?.duration) * 100) || 0}
                                     sx={{
                                       '& > div': {
                                         backgroundColor: colorPrimary,

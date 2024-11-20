@@ -95,7 +95,7 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating, markCl
     if (courseWatchIds?.assistida || Number(times.currentTime) === 0) {
       return;
     }
-    if (Number(times.currentTime) === Number(times?.duration)) {
+    if (Number(times.currentTime) === Number(times.duration) && Number(times.currentTime) !== 0 && Number(times.duration) !== 0) {
       markClasseFinished();
     }
   }, [currentTime]);
@@ -107,8 +107,11 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating, markCl
         return;
       }
 
+      let isCompleted = false;
       try {
-        const isCompleted = Number(timesClasse.currentTime) === Number(timesClasse.duration) || false;
+        if (Number(currentTime) === Number(duration) && Number(currentTime) !== 0 && Number(duration) !== 0) {
+          isCompleted = true;
+        } 
 
         await api.post(`/user/createMarcarAulaAssistidaByUser/${courseWatchIds?.classeId}`, {
           currentTime: timesClasse?.currentTime || '',
@@ -123,7 +126,7 @@ const PandaVideoPlayer: React.FC<Props> = ({ url, thumbnail, valueRating, markCl
     const interval = setInterval(marcarAulaAssistida, 1 * 5000);
 
     return () => clearInterval(interval);
-  }, [courseWatchIds?.assistida]);
+  }, []);
 
   useEffect(() => {
     const handleFullscreenChange = () => {

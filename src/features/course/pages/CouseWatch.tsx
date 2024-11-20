@@ -134,7 +134,7 @@ export default function CourseWatch() {
                     thumbnail: courseWatchIds?.thumbnail,
                     currentTime: notaClasse?.currentTime,
                     duration: notaClasse?.duration,
-                    assistida: notaClasse?.assistida,
+                    assistida: notaClasse?.isCompleted,
                     notaClasse: notaClasse?.notaAula,
                     description: courseWatchIds?.description,
                     logoCurso: courseWatchIds?.logoCurso,
@@ -166,7 +166,7 @@ export default function CourseWatch() {
                 thumbnail: nextClasse?.thumbnail,
                 currentTime: newClasse?.currentTime,
                 duration: newClasse?.duration,
-                assistida: courseWatchIds?.assistida,
+                assistida: nextClasse?.isCompleted,
                 notaClasse: nextClasse?.notaAula,
                 description: courseWatchIds?.description,
                 logoCurso: courseWatchIds?.logoCurso,
@@ -197,7 +197,7 @@ export default function CourseWatch() {
                 thumbnail: previousClasse?.thumbnail,
                 currentTime: newClasse?.currentTime,
                 duration: newClasse?.duration,
-                assistida: courseWatchIds?.assistida,
+                assistida: previousClasse?.isCompleted,
                 notaClasse: previousClasse?.notaAula,
                 description: courseWatchIds?.description,
                 logoCurso: courseWatchIds?.logoCurso,
@@ -403,6 +403,7 @@ export default function CourseWatch() {
 
                             <HStack alignItems="start" flexDirection="column" gap={3} mt={3}>
                                 <Stack w="full">
+                                    {courseWatchIds?.assistida}
                                     <HStack py={5} justify="space-between" flexWrap="wrap" gap={5}>
                                         <Flex flexDirection="column" alignItems="start">
                                             <Text>{moduleSelected?.nome}</Text>
