@@ -468,9 +468,9 @@ export default function CourseWatch() {
                                         <HStack
                                             w={{
                                                 base: '100%',
-                                                lg: widthWatchStepper,
+                                                xl: widthWatchStepper,
                                             }}
-                                            display={{ base: 'flex', md: 'none' }}
+                                            display={{ base: 'flex', xl: 'none' }}
                                             bg="#212B36"
                                             p={widthWatchStepper === '27%' ? 6 : 2}
                                             rounded="xl"
@@ -531,9 +531,9 @@ export default function CourseWatch() {
                                         <HStack
                                             w={{
                                                 base: '100%',
-                                                lg: widthWatchStepper,
+                                                xl: widthWatchStepper,
                                             }}
-                                            display={{ base: 'flex', md: 'none' }}
+                                            display={{ base: 'flex', lg: 'none' }}
                                             bg="#212B36"
                                             p={widthWatchStepper === '27%' ? 6 : 2}
                                             rounded="xl"
@@ -560,7 +560,7 @@ export default function CourseWatch() {
                                 base: '100%',
                                 lg: widthWatchStepper,
                             }}
-                            display={{ base: 'none', md: 'flex' }}
+                            display={{ base: 'none', xl: 'flex' }}
                             bg="#212B36"
                             p={widthWatchStepper === '27%' ? 6 : 2}
                             h={1050}
