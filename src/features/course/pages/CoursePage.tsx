@@ -27,6 +27,24 @@ import { CourseWatchContext, WatchIdsProps } from '../contexts/CourseWatchContex
 import { LuLoader2 } from 'react-icons/lu';
 import { GetUserProps } from '../types/userStorage';
 
+const formatTime = (seconds: string | number): string => {
+  if (!seconds) return '00:00:00';
+  
+  if (typeof seconds === 'string' && seconds.includes(':')) {
+    return seconds;
+  }
+  
+  const totalSeconds = Math.round(typeof seconds === 'string' ? parseFloat(seconds) : seconds);
+  
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const remainingSeconds = Math.floor(totalSeconds % 60);
+
+  return [hours, minutes, remainingSeconds]
+    .map(val => val.toString().padStart(2, '0'))
+    .join(':');
+};
+
 const CoursePage = () => {
   const [course, setCourse] = useState<ClassesProps[]>([]);
   const [search, setSearch] = useState('');
@@ -377,7 +395,10 @@ const CoursePage = () => {
                                 <Text fontWeight="bold" fontSize="md" mb="1">
                                   {lesson?.nomeAula}
                                 </Text>
-                                <Text fontSize="sm" color="gray">{lesson?.duracaoAula}</Text>
+                                <Text fontSize="sm" color="gray">
+                                    {lesson?.isCompleted ? `${lesson?.duracaoAula}/${lesson?.duracaoAula}` : `${formatTime(lesson?.currentTime)}/${lesson?.duracaoAula}`}
+                                  </Text>
+                                {/* <Text fontSize="sm" color="gray">{lesson?.duracaoAula}</Text> */}
                                 <Progress
                                   value={Number(lesson?.currentTime) || 0}
                                   sx={{
@@ -585,9 +606,11 @@ const CoursePage = () => {
                                   <Text fontWeight="bold" fontSize="xl" mb="2">
                                     {course?.nome}
                                   </Text>
-                                  <Text fontSize="sm" color="gray">{course?.duracaoAula}</Text>
+                                  <Text fontSize="sm" color="gray">
+                                    {course?.isCompleted ? `${course?.duracaoAula}/${course?.duracaoAula}` : `${formatTime(course?.currentTime)}/${course?.duracaoAula}`}
+                                  </Text>
                                   <Progress
-                                    value={Number(course?.currentTime) || 0}
+                                    value={course?.isCompleted ? 100 : Number(course?.currentTime) || 0}
                                     sx={{
                                       '& > div': {
                                         backgroundColor: colorPrimary,
@@ -606,7 +629,7 @@ const CoursePage = () => {
                                       fontFamily="mono"
                                       color="white"
                                     >
-                                      {Number(course?.currentTime) || 0}
+                                      {course?.isCompleted ? course?.duracaoAula : Number(course?.currentTime) || 0}
                                     </Box>
                                   </Progress>
                                   <Box

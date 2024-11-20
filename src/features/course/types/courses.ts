@@ -46,6 +46,7 @@ export interface ClassesProps {
   duration: string;
   currentTime: string;
   posicao: number;
+  isCompleted: boolean;
   moduloId: string;
   thumbnail: string;
   assistida: boolean;
@@ -62,6 +63,7 @@ export interface LastClasse {
   duration: string;
   logoCurso: string;
   moduloNome: string;
+  isCompleted: boolean;
   moduloId: string;
   description: string;
   notaAula: number;
