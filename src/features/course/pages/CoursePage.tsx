@@ -430,7 +430,7 @@ const CoursePage = () => {
                       <Box>
                         <Text>{lesson?.nome}</Text>
                         <Flex gap={1}>
-                          <Text color={isLightMode ? 'gray' : 'white'}>{lesson?.aulas} {lesson?.aulas > 1 ? 'Aulas' : 'Aula'} . {lesson?.somaDuracaoAulas}</Text>
+                          <Text color="gray">{lesson?.aulas} {lesson?.aulas > 1 ? 'Aulas' : 'Aula'} . {lesson?.somaDuracaoAulas}</Text>
                           {/* <Text color="green">R$ 0.00</Text> */}
                         </Flex>
                       </Box>
